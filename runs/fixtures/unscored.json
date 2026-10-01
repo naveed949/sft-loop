@@ -1,0 +1,13 @@
+{
+  "schema_version": "1",
+  "run_id": "fixture-unscored-placeholder",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "stack": {
+    "unsloth": "2026.9.12",
+    "trl": "0.24.0",
+    "method": "sft-lora"
+  },
+  "status": "unscored",
+  "metric_role": "task_score_not_safety",
+  "weight_change_claimed": false
+}

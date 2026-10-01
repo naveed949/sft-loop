@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.env
+
+# Hugging Face / local caches
+.cache/
+hf_cache/
+
+# Ephemeral train artifacts. Portfolio JSON under runs/fixtures/ stays tracked.
+outputs/
+checkpoints/
+adapters/
+lora_out/
+wandb/
+mlruns/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+*.onnx
+
+# Local dumps dropped directly under runs/ are ignored.
+# The negation below is the carve-out for checked-in portfolio fixtures.
+runs/*
+!runs/fixtures/
+!runs/fixtures/**
