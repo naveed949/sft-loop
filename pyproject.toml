@@ -1,7 +1,7 @@
 [project]
 name = "sft-loop"
 version = "0.0.1"
-description = "Schema-locked scaffold for a <=3B Unsloth/TRL SFT loop. Does not train."
+description = "Same-seed <=3B Unsloth/TRL PEFT SFT loop. Fail-closed when the stack cannot train."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -12,6 +12,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "pytest>=8",
+]
+train = [
+  "unsloth==2026.9.12",
+  "trl==0.24.0",
 ]
 
 [build-system]

@@ -17,7 +17,7 @@ from sft_loop.report import (
     TRL_VERSION,
     UNSLOTH_VERSION,
     load_schema,
-    train_block_reason,
+    stack_block_reason,
     unsupported_report,
     validate_report,
 )
@@ -99,7 +99,8 @@ def test_schema_locks_objects_and_pins():
     ]
     assert schema["properties"]["model_id"]["const"] == MODEL_ID
     assert schema["properties"]["metric_role"]["const"] == "task_score_not_safety"
-    assert schema["properties"]["weight_change_claimed"]["const"] is False
+    assert schema["properties"]["weight_change_claimed"]["type"] == "boolean"
+    assert "const" not in schema["properties"]["weight_change_claimed"]
     stack = schema["$defs"]["stack"]["properties"]
     assert stack["unsloth"]["const"] == UNSLOTH_VERSION
     assert stack["trl"]["const"] == TRL_VERSION
@@ -171,15 +172,27 @@ def test_schema_rejects_closed_failures():
     assert list(validator.iter_errors(claimed))
 
 
-def test_cuda_present_still_unsupported_without_metrics():
+def test_cuda_present_without_stack_still_unsupported():
     report = unsupported_report(cuda_available=lambda: True)
     validate_report(report)
-    assert train_block_reason(lambda: True) == "train_not_run"
+    assert stack_block_reason(lambda: True) == "gpu_or_train_deps_unavailable"
     assert report["status"] == "unsupported"
-    assert report["unsupported"]["reason"] == "train_not_run"
+    assert report["unsupported"]["reason"] == "gpu_or_train_deps_unavailable"
     assert report["weight_change_claimed"] is False
     assert "before" not in report
     assert "after" not in report
+    assert "train_proof" not in report
+    assert REFUSAL_SENTENCE in report["unsupported"]["detail"]
+
+
+def test_explicit_train_not_run_has_no_metrics():
+    report = unsupported_report(run_id="train-not-run", reason="train_not_run")
+    validate_report(report)
+    assert report["status"] == "unsupported"
+    assert report["weight_change_claimed"] is False
+    assert "before" not in report
+    assert "after" not in report
+    assert "train_proof" not in report
     assert REFUSAL_SENTENCE in report["unsupported"]["detail"]
 
 
@@ -187,8 +200,8 @@ def test_default_reason_without_cuda():
     def unavailable() -> bool:
         raise RuntimeError("no gpu")
 
-    assert train_block_reason(lambda: False) == "gpu_or_train_deps_unavailable"
-    assert train_block_reason(unavailable) == "gpu_or_train_deps_unavailable"
+    assert stack_block_reason(lambda: False) == "gpu_or_train_deps_unavailable"
+    assert stack_block_reason(unavailable) == "gpu_or_train_deps_unavailable"
 
 
 def test_cli_prints_unsupported_report():
@@ -270,9 +283,10 @@ def test_json_files_omit_forbidden_keys_and_scored_status():
                 assert node["status"] not in BANNED_STATUSES
 
 
-def test_train_and_eval_modules_are_absent():
-    assert importlib.util.find_spec("sft_loop.train") is None
-    assert importlib.util.find_spec("sft_loop.eval") is None
+def test_train_and_eval_modules_are_importable():
+    assert importlib.util.find_spec("sft_loop.train") is not None
+    assert importlib.util.find_spec("sft_loop.eval") is not None
+    assert importlib.util.find_spec("sft_loop.loop") is not None
 
 
 def test_gitignore_carve_out_for_fixtures():
@@ -287,6 +301,11 @@ def test_gitignore_carve_out_for_fixtures():
     assert not excluded("runs/fixtures/unsupported.json")
     assert not excluded("runs/fixtures/unscored.json")
     assert not excluded("runs/fixtures/nested/later.json")
+    assert not excluded("runs/phase3/unsupported.json")
+    assert not excluded("runs/phase3/proof/adapter_config.json")
+    assert not excluded("runs/phase3/proof/train_log.txt")
     assert excluded("runs/scratch/unsupported.json")
+    assert excluded("runs/phase3/scratch.json")
+    assert excluded("runs/phase3/proof/adapter_model.safetensors")
     assert excluded("checkpoints/adapter.safetensors")
     assert excluded("adapters/run/adapter_model.safetensors")

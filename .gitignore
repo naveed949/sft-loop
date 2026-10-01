@@ -30,7 +30,14 @@ mlruns/
 *.onnx
 
 # Local dumps dropped directly under runs/ are ignored.
-# The negation below is the carve-out for checked-in portfolio fixtures.
+# Negations below are the carve-out for checked-in portfolio files.
 runs/*
 !runs/fixtures/
 !runs/fixtures/**
+!runs/phase3/
+runs/phase3/**
+!runs/phase3/unsupported.json
+!runs/phase3/proof/
+runs/phase3/proof/**
+!runs/phase3/proof/adapter_config.json
+!runs/phase3/proof/train_log.txt
