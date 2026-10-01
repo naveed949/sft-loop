@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/naveed949/sft-loop/schema/run_report.schema.json",
   "title": "sft-loop run report",
-  "description": "Schema-locked report for the pinned <=3B Unsloth + TRL SFT loop. status unsupported means train did not run. status unscored means no task scores are present. status scored means before and after task scores share one seed and train_proof is present, so weight_change_claimed is true. weight_change_claimed is false on unsupported and unscored reports. A task score is not a safety judgment (metric_role is task_score_not_safety). No qualification field is defined. additionalProperties is false on every object.",
+  "description": "Schema-locked report for the pinned <=3B SFT loop. The scored path is TRL + PEFT LoRA on MPS (device mps, backend trl-peft, stack.unsloth unused). Unsloth is optional and CUDA-only (device cuda, backend unsloth). status unsupported means train did not run. status unscored means no task scores are present. status scored means before and after task scores share one seed and train_proof is present, so weight_change_claimed is true. weight_change_claimed is false on unsupported and unscored reports. A task score is not a safety judgment (metric_role is task_score_not_safety). No qualification field is defined. additionalProperties is false on every object.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -29,6 +29,16 @@
     },
     "stack": {
       "$ref": "#/$defs/stack"
+    },
+    "device": {
+      "type": "string",
+      "enum": ["mps", "cuda"],
+      "description": "Device that ran the scored train. mps is the TRL + PEFT path. cuda is the optional Unsloth path. Absent unless status is scored."
+    },
+    "backend": {
+      "type": "string",
+      "enum": ["trl-peft", "unsloth"],
+      "description": "trl-peft does not use Unsloth. unsloth is CUDA-only."
     },
     "seed": {
       "type": "integer",
@@ -141,6 +151,96 @@
           "unsupported": false
         }
       }
+    },
+    {
+      "if": {
+        "required": ["device"]
+      },
+      "then": {
+        "required": ["backend", "status"],
+        "properties": {
+          "status": { "const": "scored" }
+        },
+        "description": "device is labeled only on a scored report. An unsupported report must not claim mps or cuda."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": { "const": "mps" }
+        },
+        "required": ["device"]
+      },
+      "then": {
+        "required": ["backend"],
+        "properties": {
+          "backend": { "const": "trl-peft" },
+          "stack": {
+            "properties": {
+              "unsloth": { "const": "unused" }
+            }
+          }
+        },
+        "description": "MPS scored reports use TRL + PEFT and do not claim Unsloth."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend": { "const": "trl-peft" }
+        },
+        "required": ["backend"]
+      },
+      "then": {
+        "required": ["device"],
+        "properties": {
+          "device": { "const": "mps" },
+          "stack": {
+            "properties": {
+              "unsloth": { "const": "unused" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "device": { "const": "cuda" }
+        },
+        "required": ["device"]
+      },
+      "then": {
+        "required": ["backend"],
+        "properties": {
+          "backend": { "const": "unsloth" },
+          "stack": {
+            "properties": {
+              "unsloth": { "const": "2026.9.12" }
+            }
+          }
+        },
+        "description": "CUDA device label is the optional Unsloth backend."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend": { "const": "unsloth" }
+        },
+        "required": ["backend"]
+      },
+      "then": {
+        "required": ["device"],
+        "properties": {
+          "device": { "const": "cuda" },
+          "stack": {
+            "properties": {
+              "unsloth": { "const": "2026.9.12" }
+            }
+          }
+        }
+      }
     }
   ],
   "$defs": {
@@ -149,7 +249,10 @@
       "additionalProperties": false,
       "required": ["unsloth", "trl", "method"],
       "properties": {
-        "unsloth": { "const": "2026.9.12" },
+        "unsloth": {
+          "enum": ["2026.9.12", "unused"],
+          "description": "2026.9.12 is the optional CUDA pin. unused means that package was not the train backend."
+        },
         "trl": { "const": "0.24.0" },
         "method": { "const": "sft-lora" }
       }

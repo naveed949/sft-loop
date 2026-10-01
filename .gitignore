@@ -37,6 +37,7 @@ runs/*
 !runs/phase3/
 runs/phase3/**
 !runs/phase3/unsupported.json
+!runs/phase3/scored.json
 !runs/phase3/proof/
 runs/phase3/proof/**
 !runs/phase3/proof/adapter_config.json

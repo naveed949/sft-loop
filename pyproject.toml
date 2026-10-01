@@ -1,7 +1,7 @@
 [project]
 name = "sft-loop"
 version = "0.0.1"
-description = "Same-seed <=3B Unsloth/TRL PEFT SFT loop. Fail-closed when the stack cannot train."
+description = "Same-seed <=3B TRL + PEFT LoRA SFT loop. MPS scored path does not use Unsloth. Fail-closed when the device or train dependencies are unavailable."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -14,8 +14,15 @@ dev = [
   "pytest>=8",
 ]
 train = [
-  "unsloth==2026.9.12",
+  "torch>=2.2",
+  "transformers>=4.56.1",
+  "accelerate>=1.4.0",
+  "datasets>=3.0.0",
+  "peft>=0.8.0",
   "trl==0.24.0",
+]
+unsloth = [
+  "unsloth==2026.9.12",
 ]
 
 [build-system]

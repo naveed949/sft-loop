@@ -18,6 +18,7 @@ from sft_loop.task import EVAL_WORDS, METRIC_NAME, TASK_ID
 
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 UNSLOTH_VERSION = "2026.9.12"
+UNSLOTH_UNUSED = "unused"
 TRL_VERSION = "0.24.0"
 SCHEMA_VERSION = "1"
 REFUSAL_SENTENCE = "Soft-PASS is unused and is refused."
@@ -141,18 +142,25 @@ def render_train_log(
     max_steps: int,
     lora_r: int,
     log_history: list[dict[str, Any]],
+    device: str | None = None,
+    backend: str | None = None,
 ) -> str:
     history = json.dumps(log_history, separators=(",", ":"), sort_keys=True)
-    return (
-        f"trainer={TRAINER_NAME}\n"
-        f"model_id={MODEL_ID}\n"
-        f"seed={seed}\n"
-        f"global_step={global_step}\n"
-        f"train_loss={format_loss(train_loss)}\n"
-        f"max_steps={max_steps}\n"
-        f"lora_r={lora_r}\n"
-        f"log_history={history}\n"
-    )
+    lines = [
+        f"trainer={TRAINER_NAME}",
+        f"model_id={MODEL_ID}",
+        f"seed={seed}",
+        f"global_step={global_step}",
+        f"train_loss={format_loss(train_loss)}",
+        f"max_steps={max_steps}",
+        f"lora_r={lora_r}",
+    ]
+    if device is not None:
+        lines.append(f"device={device}")
+    if backend is not None:
+        lines.append(f"backend={backend}")
+    lines.append(f"log_history={history}")
+    return "\n".join(lines) + "\n"
 
 
 def _parse_log(text: str) -> dict[str, str]:
@@ -234,6 +242,21 @@ def _verify_train_proof(
         raise ValueError("train log trainer is not TRL SFTTrainer")
     if fields["model_id"] != MODEL_ID:
         raise ValueError("train log model is not the pinned model")
+    report_device = report.get("device")
+    report_backend = report.get("backend")
+    if report_device is not None or report_backend is not None:
+        if "device" not in fields or "backend" not in fields:
+            raise ValueError("train log is missing device or backend")
+        if fields["device"] != report_device:
+            raise ValueError("train log device does not match the report")
+        if fields["backend"] != report_backend:
+            raise ValueError("train log backend does not match the report")
+        if report_backend == stack_mod.BACKEND_TRL_PEFT and "unsloth" in log_bytes.decode("utf-8").lower():
+            raise ValueError("trl-peft train log must not claim unsloth")
+        if report_device == stack_mod.DEVICE_MPS and fields["backend"] != stack_mod.BACKEND_TRL_PEFT:
+            raise ValueError("mps train log must use the trl-peft backend")
+        if fields["backend"] == stack_mod.BACKEND_UNSLOTH and fields["device"] != stack_mod.DEVICE_CUDA:
+            raise ValueError("unsloth train log is cuda-only")
     if int(fields["seed"]) != report["seed"]:
         raise ValueError("train log seed does not match the report seed")
     if int(fields["global_step"]) != proof["global_step"]:
@@ -289,6 +312,15 @@ def validate_report(
         _verify_train_proof(report, proof_dir if proof_dir is not None else default_proof_dir())
 
 
+def _stack_for_backend(backend: str | None) -> dict[str, str]:
+    unsloth = UNSLOTH_UNUSED if backend == stack_mod.BACKEND_TRL_PEFT else UNSLOTH_VERSION
+    return {
+        "unsloth": unsloth,
+        "trl": TRL_VERSION,
+        "method": "sft-lora",
+    }
+
+
 def build_scored_report(
     *,
     run_id: str,
@@ -297,18 +329,29 @@ def build_scored_report(
     after: dict[str, Any],
     train_proof: dict[str, Any],
     proof_dir: Path,
+    device: str | None = None,
+    backend: str | None = None,
 ) -> dict[str, Any]:
-    """Assemble a scored report. The weight-change claim is checked against proof files."""
+    """Assemble a scored report. The weight-change claim is checked against proof files.
 
+    ``device="mps"`` is stored only with backend ``trl-peft``. That pair sets
+    ``stack.unsloth`` to ``unused``. The optional CUDA backend is the only
+    path that records the Unsloth pin.
+    """
+
+    if (device is None) != (backend is None):
+        raise ValueError("device and backend are set together")
+    pairs = {
+        stack_mod.DEVICE_MPS: stack_mod.BACKEND_TRL_PEFT,
+        stack_mod.DEVICE_CUDA: stack_mod.BACKEND_UNSLOTH,
+    }
+    if device is not None and pairs.get(device) != backend:
+        raise ValueError("device and backend do not match a scored path")
     report = {
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
         "model_id": MODEL_ID,
-        "stack": {
-            "unsloth": UNSLOTH_VERSION,
-            "trl": TRL_VERSION,
-            "method": "sft-lora",
-        },
+        "stack": _stack_for_backend(backend),
         "seed": seed,
         "status": "scored",
         "metric_role": "task_score_not_safety",
@@ -318,6 +361,9 @@ def build_scored_report(
         "after": after,
         "train_proof": train_proof,
     }
+    if device is not None and backend is not None:
+        report["device"] = device
+        report["backend"] = backend
     validate_report(report, proof_dir=proof_dir)
     return report
 

@@ -59,7 +59,14 @@ def _slice(seed: int, score: float) -> dict:
     }
 
 
-def _write_proof(directory: Path, *, seed: int = 0, history: list | None = None) -> dict:
+def _write_proof(
+    directory: Path,
+    *,
+    seed: int = 0,
+    history: list | None = None,
+    device: str | None = None,
+    backend: str | None = None,
+) -> dict:
     directory.mkdir(parents=True, exist_ok=True)
     config = {
         "peft_type": "LORA",
@@ -77,6 +84,8 @@ def _write_proof(directory: Path, *, seed: int = 0, history: list | None = None)
         max_steps=2,
         lora_r=8,
         log_history=log_history,
+        device=device,
+        backend=backend,
     )
     (directory / "adapter_config.json").write_bytes(config_bytes)
     (directory / "train_log.txt").write_text(log_text, encoding="utf-8")
@@ -128,6 +137,9 @@ def test_runs_json_never_claims_weight_change_or_scores():
         document = json.loads(path.read_text(encoding="utf-8"))
         assert document["weight_change_claimed"] is False
         assert document["status"] in {"unsupported", "unscored"}
+        assert "device" not in document
+        assert "backend" not in document
+        assert document.get("stack", {}).get("unsloth") != "unused"
         assert "before" not in document
         assert "after" not in document
         assert "train_proof" not in document
@@ -362,3 +374,246 @@ def test_eval_report_helper_has_no_score():
     validate_report(report)
     assert report["status"] == "unsupported"
     assert not _has_key(report, "task_score")
+
+
+def test_mps_path_is_ready_without_unsloth(monkeypatch):
+    peft_modules = {"torch", "transformers", "peft", "trl", "datasets", "accelerate"}
+
+    monkeypatch.setattr(stack_mod, "module_available", lambda name: name in peft_modules)
+    assert stack_mod.resolve_train_target(
+        "mps",
+        mps_available=lambda: True,
+        cuda_available=lambda: False,
+    ) == ("mps", "trl-peft")
+    assert (
+        stack_mod.stack_block_reason(
+            lambda: False,
+            "mps",
+            mps_available=lambda: True,
+        )
+        is None
+    )
+    assert (
+        stack_mod.resolve_train_target(
+            "cuda",
+            mps_available=lambda: True,
+            cuda_available=lambda: True,
+        )
+        is None
+    )
+
+
+def test_auto_prefers_mps_peft_and_cuda_stays_unsloth(monkeypatch):
+    monkeypatch.setattr(stack_mod, "module_available", lambda name: True)
+    assert stack_mod.resolve_train_target(
+        None,
+        mps_available=lambda: True,
+        cuda_available=lambda: True,
+    ) == ("mps", "trl-peft")
+    assert stack_mod.resolve_train_target(
+        "mps",
+        mps_available=lambda: True,
+        cuda_available=lambda: True,
+    ) == ("mps", "trl-peft")
+    assert stack_mod.resolve_train_target(
+        "cuda",
+        mps_available=lambda: True,
+        cuda_available=lambda: True,
+    ) == ("cuda", "unsloth")
+
+
+def test_explicit_mps_does_not_fall_through_to_unsloth(monkeypatch):
+    monkeypatch.setattr(
+        stack_mod,
+        "module_available",
+        lambda name: name in {"unsloth", "trl", "torch"},
+    )
+    assert (
+        stack_mod.resolve_train_target(
+            "mps",
+            mps_available=lambda: True,
+            cuda_available=lambda: True,
+        )
+        is None
+    )
+    assert stack_mod.resolve_train_target(
+        "cuda",
+        mps_available=lambda: False,
+        cuda_available=lambda: True,
+    ) == ("cuda", "unsloth")
+
+
+def test_unknown_device_is_rejected():
+    with pytest.raises(ValueError, match="device"):
+        stack_mod.resolve_train_target("cpu")
+
+
+def test_execute_train_refuses_mps_when_stack_missing(tmp_path):
+    assert stack_mod.resolve_train_target("mps") is None
+    with pytest.raises(RuntimeError, match="gpu_or_train_deps_unavailable"):
+        execute_train(
+            seed=0,
+            proof_dir=tmp_path / "proof",
+            adapter_dir=tmp_path / "adapter",
+            device="mps",
+        )
+    assert list(tmp_path.rglob("*")) == []
+
+
+def test_mps_flag_on_unavailable_device_does_not_label_or_score(capsys):
+    assert stack_mod.resolve_train_target("mps") is None
+    assert loop_main(["--model-id", MODEL_ID, "--seed", "0", "--device", "mps"]) == 0
+    report = json.loads(capsys.readouterr().out)
+    validate_report(report)
+    assert report["status"] == "unsupported"
+    assert report["unsupported"]["reason"] == "gpu_or_train_deps_unavailable"
+    assert report["weight_change_claimed"] is False
+    assert "device" not in report
+    assert "backend" not in report
+    assert "mps" in report["unsupported"]["detail"]
+    assert REFUSAL_SENTENCE in report["unsupported"]["detail"]
+    assert not _has_key(report, "task_score")
+    assert not (ROOT / "runs" / "phase3" / "scored.json").exists()
+    assert not (ROOT / "runs" / "phase3" / "proof" / "adapter_config.json").exists()
+
+
+def test_peft_train_and_eval_sources_do_not_reference_unsloth():
+    import inspect
+
+    from sft_loop.eval import _execute_eval_trl_peft
+    from sft_loop.train import _execute_train_trl_peft
+
+    train_source = inspect.getsource(_execute_train_trl_peft)
+    eval_source = inspect.getsource(_execute_eval_trl_peft)
+    assert "unsloth" not in train_source.lower()
+    assert "unsloth" not in eval_source.lower()
+    assert "SFTTrainer" in train_source
+    assert "LoraConfig" in train_source
+    assert "peft" in eval_source
+    from sft_loop.train import _execute_train_unsloth
+
+    assert "from unsloth import FastLanguageModel" in inspect.getsource(_execute_train_unsloth)
+
+
+def test_mps_scored_report_requires_matching_proof_and_same_seed(tmp_path):
+    proof = _write_proof(tmp_path, seed=4, device="mps", backend="trl-peft")
+    report = build_scored_report(
+        run_id="unit-mps-same-seed",
+        seed=4,
+        before=_slice(4, 0.0),
+        after=_slice(4, 0.25),
+        train_proof=proof,
+        proof_dir=tmp_path,
+        device="mps",
+        backend="trl-peft",
+    )
+    validate_report(report, proof_dir=tmp_path)
+    assert report["weight_change_claimed"] is True
+    assert report["device"] == "mps"
+    assert report["backend"] == "trl-peft"
+    assert report["stack"]["unsloth"] == "unused"
+    assert report["before"]["seed"] == report["after"]["seed"] == 4
+    assert report["metric_role"] == "task_score_not_safety"
+    assert "adaptiveSandboxQualified" not in report
+    log_text = (tmp_path / "train_log.txt").read_text(encoding="utf-8")
+    assert "device=mps" in log_text
+    assert "backend=trl-peft" in log_text
+    assert "global_step=2" in log_text
+    assert "unsloth" not in log_text.lower()
+
+    missing_device = _write_proof(tmp_path / "plain", seed=4)
+    with pytest.raises(ValueError, match="device"):
+        build_scored_report(
+            run_id="unit-mps-no-device-log",
+            seed=4,
+            before=_slice(4, 0.0),
+            after=_slice(4, 0.25),
+            train_proof=missing_device,
+            proof_dir=tmp_path / "plain",
+            device="mps",
+            backend="trl-peft",
+        )
+
+
+def test_mps_report_rejects_unsloth_claim(tmp_path):
+    from jsonschema import Draft202012Validator
+
+    from sft_loop.report import UNSLOTH_VERSION, load_schema
+
+    proof = _write_proof(tmp_path, seed=0, device="mps", backend="trl-peft")
+    report = build_scored_report(
+        run_id="unit-mps-clean",
+        seed=0,
+        before=_slice(0, 0.0),
+        after=_slice(0, 0.0),
+        train_proof=proof,
+        proof_dir=tmp_path,
+        device="mps",
+        backend="trl-peft",
+    )
+    claimed = json.loads(json.dumps(report))
+    claimed["backend"] = "unsloth"
+    claimed["device"] = "mps"
+    claimed["stack"]["unsloth"] = UNSLOTH_VERSION
+    assert list(Draft202012Validator(load_schema()).iter_errors(claimed))
+
+    log_path = tmp_path / "train_log.txt"
+    tainted = log_path.read_text(encoding="utf-8") + "note=unsloth\n"
+    log_path.write_text(tainted, encoding="utf-8")
+    tainted_proof = dict(proof)
+    tainted_proof["train_log_sha256"] = sha256_bytes(tainted.encode("utf-8"))
+    with pytest.raises(ValueError, match="unsloth"):
+        build_scored_report(
+            run_id="unit-mps-tainted-log",
+            seed=0,
+            before=_slice(0, 0.0),
+            after=_slice(0, 0.0),
+            train_proof=tainted_proof,
+            proof_dir=tmp_path,
+            device="mps",
+            backend="trl-peft",
+        )
+
+
+def test_real_loop_labels_mps_from_resolved_backend(monkeypatch, tmp_path):
+    from sft_loop.train import weights_dir
+
+    def ready(cuda_available=None, device=None, **kwargs):
+        return None
+
+    monkeypatch.setattr(stack_mod, "stack_block_reason", ready)
+    monkeypatch.setattr(
+        stack_mod,
+        "resolve_train_target",
+        lambda device=None, **kwargs: ("mps", "trl-peft"),
+    )
+
+    def eval_impl(*, seed, split, adapter_dir, device=None):
+        assert device == "mps"
+        return _slice(seed, 0.0 if split == "before" else 0.25)
+
+    def train_impl(*, seed, proof_dir, adapter_dir, device=None):
+        assert device == "mps"
+        assert adapter_dir == weights_dir()
+        return _write_proof(proof_dir, seed=seed, device="mps", backend="trl-peft")
+
+    monkeypatch.setattr("sft_loop.loop.execute_train", train_impl)
+    monkeypatch.setattr("sft_loop.eval.execute_eval", eval_impl)
+    report = run_loop(
+        seed=0,
+        model_id=MODEL_ID,
+        run_id="phase3-mps-seed0",
+        proof_dir=tmp_path,
+        device="mps",
+    )
+    assert report["status"] == "scored"
+    assert report["device"] == "mps"
+    assert report["backend"] == "trl-peft"
+    assert report["stack"]["unsloth"] == "unused"
+    assert report["weight_change_claimed"] is True
+    assert report["before"]["seed"] == report["after"]["seed"] == 0
+    assert report["metric_role"] == "task_score_not_safety"
+    assert "adaptiveSandboxQualified" not in report
+    assert not (ROOT / "runs" / "phase3" / "scored.json").exists()
+    log_text = (tmp_path / "train_log.txt").read_text(encoding="utf-8")
+    assert "unsloth" not in log_text.lower()
