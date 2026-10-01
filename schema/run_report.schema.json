@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/naveed949/sft-loop/schema/run_report.schema.json",
   "title": "sft-loop run report",
-  "description": "Schema-locked report for the pinned <=3B Unsloth + TRL SFT loop. status unsupported means train did not run. status unscored means no task scores are present. status scored means before and after task scores are present for the same seed; schema version 1 still sets weight_change_claimed to false, so a weight-change claim is not representable. A task score is not a safety judgment (metric_role is task_score_not_safety). No qualification field is defined. additionalProperties is false on every object.",
+  "description": "Schema-locked report for the pinned <=3B Unsloth + TRL SFT loop. status unsupported means train did not run. status unscored means no task scores are present. status scored means before and after task scores share one seed and train_proof is present, so weight_change_claimed is true. weight_change_claimed is false on unsupported and unscored reports. A task score is not a safety judgment (metric_role is task_score_not_safety). No qualification field is defined. additionalProperties is false on every object.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -42,7 +42,7 @@
       "const": "task_score_not_safety"
     },
     "weight_change_claimed": {
-      "const": false
+      "type": "boolean"
     },
     "task_id": {
       "type": "string",
@@ -54,6 +54,9 @@
     },
     "after": {
       "$ref": "#/$defs/eval_slice"
+    },
+    "train_proof": {
+      "$ref": "#/$defs/train_proof"
     },
     "unsupported": {
       "$ref": "#/$defs/unsupported"
@@ -71,7 +74,9 @@
         "required": ["unsupported"],
         "properties": {
           "before": false,
-          "after": false
+          "after": false,
+          "train_proof": false,
+          "weight_change_claimed": { "const": false }
         }
       }
     },
@@ -86,7 +91,9 @@
         "properties": {
           "before": false,
           "after": false,
-          "unsupported": false
+          "unsupported": false,
+          "train_proof": false,
+          "weight_change_claimed": { "const": false }
         }
       }
     },
@@ -98,11 +105,41 @@
         "required": ["status"]
       },
       "then": {
-        "required": ["seed", "task_id", "before", "after"],
+        "required": ["seed", "task_id", "before", "after", "train_proof"],
         "properties": {
-          "unsupported": false
+          "unsupported": false,
+          "weight_change_claimed": { "const": true }
         },
-        "description": "before.seed and after.seed must equal seed when a measured report exists. This scaffold checks in no scored report and no metric values."
+        "description": "before.seed and after.seed must equal seed. weight_change_claimed is true only together with train_proof of a finished PEFT step."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "weight_change_claimed": { "const": false }
+        },
+        "required": ["weight_change_claimed"]
+      },
+      "then": {
+        "properties": {
+          "train_proof": false,
+          "status": { "enum": ["unsupported", "unscored"] }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "weight_change_claimed": { "const": true }
+        },
+        "required": ["weight_change_claimed"]
+      },
+      "then": {
+        "required": ["train_proof", "seed", "task_id", "before", "after"],
+        "properties": {
+          "status": { "const": "scored" },
+          "unsupported": false
+        }
       }
     }
   ],
@@ -128,9 +165,7 @@
           "minimum": 0
         },
         "metric_name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128
+          "const": "exact_match"
         },
         "task_score": {
           "type": "number",
@@ -141,6 +176,39 @@
           "type": "integer",
           "minimum": 1
         }
+      }
+    },
+    "train_proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Evidence that a TRL SFTTrainer PEFT step finished. Hashes must match runs/phase3/proof/adapter_config.json and runs/phase3/proof/train_log.txt.",
+      "required": [
+        "trainer",
+        "global_step",
+        "train_loss",
+        "lora_r",
+        "max_steps",
+        "adapter_config_sha256",
+        "train_log_sha256",
+        "adapter_config_path",
+        "train_log_path"
+      ],
+      "properties": {
+        "trainer": { "const": "trl.SFTTrainer" },
+        "global_step": { "type": "integer", "minimum": 1 },
+        "train_loss": { "type": "number" },
+        "lora_r": { "type": "integer", "minimum": 1, "maximum": 64 },
+        "max_steps": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "adapter_config_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "train_log_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "adapter_config_path": { "const": "adapter_config.json" },
+        "train_log_path": { "const": "train_log.txt" }
       }
     },
     "unsupported": {

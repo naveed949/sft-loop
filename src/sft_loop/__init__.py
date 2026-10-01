@@ -1,4 +1,8 @@
-"""Scaffold for a schema-locked <=3B SFT loop. This package does not train."""
+"""Same-seed <=3B Unsloth + TRL PEFT SFT loop.
+
+Training runs only when CUDA and the pinned stack import. Otherwise report
+builders emit status ``unsupported`` and do not invent task scores.
+"""
 
 from sft_loop.report import (
     MODEL_ID,
