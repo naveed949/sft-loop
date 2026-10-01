@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/naveed949/sft-loop/schema/run_report.schema.json",
+  "title": "sft-loop run report",
+  "description": "Schema-locked report for the pinned <=3B Unsloth + TRL SFT loop. status unsupported means train did not run. status unscored means no task scores are present. status scored means before and after task scores are present for the same seed; schema version 1 still sets weight_change_claimed to false, so a weight-change claim is not representable. A task score is not a safety judgment (metric_role is task_score_not_safety). No qualification field is defined. additionalProperties is false on every object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "model_id",
+    "stack",
+    "status",
+    "metric_role",
+    "weight_change_claimed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    },
+    "model_id": {
+      "const": "Qwen/Qwen2.5-1.5B-Instruct"
+    },
+    "stack": {
+      "$ref": "#/$defs/stack"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": ["unsupported", "unscored", "scored"]
+    },
+    "metric_role": {
+      "const": "task_score_not_safety"
+    },
+    "weight_change_claimed": {
+      "const": false
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "before": {
+      "$ref": "#/$defs/eval_slice"
+    },
+    "after": {
+      "$ref": "#/$defs/eval_slice"
+    },
+    "unsupported": {
+      "$ref": "#/$defs/unsupported"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "unsupported" }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["unsupported"],
+        "properties": {
+          "before": false,
+          "after": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "unscored" }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "properties": {
+          "before": false,
+          "after": false,
+          "unsupported": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": { "const": "scored" }
+        },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["seed", "task_id", "before", "after"],
+        "properties": {
+          "unsupported": false
+        },
+        "description": "before.seed and after.seed must equal seed when a measured report exists. This scaffold checks in no scored report and no metric values."
+      }
+    }
+  ],
+  "$defs": {
+    "stack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unsloth", "trl", "method"],
+      "properties": {
+        "unsloth": { "const": "2026.9.12" },
+        "trl": { "const": "0.24.0" },
+        "method": { "const": "sft-lora" }
+      }
+    },
+    "eval_slice": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One eval split. task_score is a task metric in [0, 1]. It is not a safety judgment. Same seed is required on before and after when status is scored.",
+      "required": ["seed", "metric_name", "task_score", "n"],
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "metric_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "task_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "unsupported": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "detail"],
+      "properties": {
+        "reason": {
+          "type": "string",
+          "enum": ["gpu_or_train_deps_unavailable", "train_not_run"]
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "run_id": "fixture-unsupported-no-gpu",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "stack": {
+    "unsloth": "2026.9.12",
+    "trl": "0.24.0",
+    "method": "sft-lora"
+  },
+  "status": "unsupported",
+  "metric_role": "task_score_not_safety",
+  "weight_change_claimed": false,
+  "unsupported": {
+    "reason": "gpu_or_train_deps_unavailable",
+    "detail": "GPU or train dependencies are unavailable. No train step ran. No before/after metrics were produced. Status is unsupported. Soft-PASS is unused and is refused."
+  }
+}
