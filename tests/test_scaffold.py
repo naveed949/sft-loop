@@ -102,10 +102,12 @@ def test_schema_locks_objects_and_pins():
     assert schema["properties"]["weight_change_claimed"]["type"] == "boolean"
     assert "const" not in schema["properties"]["weight_change_claimed"]
     stack = schema["$defs"]["stack"]["properties"]
-    assert stack["unsloth"]["const"] == UNSLOTH_VERSION
+    assert stack["unsloth"]["enum"] == [UNSLOTH_VERSION, "unused"]
     assert stack["trl"]["const"] == TRL_VERSION
     assert stack["method"]["const"] == "sft-lora"
-    assert set(schema["properties"]) >= {"before", "after", "unsupported"}
+    assert schema["properties"]["device"]["enum"] == ["mps", "cuda"]
+    assert schema["properties"]["backend"]["enum"] == ["trl-peft", "unsloth"]
+    assert set(schema["properties"]) >= {"before", "after", "unsupported", "device", "backend"}
 
     property_names = set()
     for node in _walk_objects(schema):
@@ -256,6 +258,13 @@ def test_readme_pins_and_honesty():
     assert "gpu_or_train_deps_unavailable" in text
     assert "sft_loop.train" in text
     assert "sft_loop.eval" in text
+    assert "--device mps" in text
+    assert "M1 Pro" in text
+    assert "CUDA-only" in text
+    assert "runs/phase3/proof/adapter_config.json" in text
+    assert "runs/phase3/proof/train_log.txt" in text
+    assert "Not required for `weight_change_claimed`" in text
+    assert "stack.unsloth` is `unused`" in text
 
 
 def test_soft_pass_token_only_inside_refusal_sentence():
@@ -302,6 +311,7 @@ def test_gitignore_carve_out_for_fixtures():
     assert not excluded("runs/fixtures/unscored.json")
     assert not excluded("runs/fixtures/nested/later.json")
     assert not excluded("runs/phase3/unsupported.json")
+    assert not excluded("runs/phase3/scored.json")
     assert not excluded("runs/phase3/proof/adapter_config.json")
     assert not excluded("runs/phase3/proof/train_log.txt")
     assert excluded("runs/scratch/unsupported.json")

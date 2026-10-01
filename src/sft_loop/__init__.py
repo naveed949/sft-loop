@@ -1,7 +1,8 @@
-"""Same-seed <=3B Unsloth + TRL PEFT SFT loop.
+"""Same-seed <=3B TRL + PEFT SFT loop.
 
-Training runs only when CUDA and the pinned stack import. Otherwise report
-builders emit status ``unsupported`` and do not invent task scores.
+The scored path trains with TRL and PEFT on MPS and does not require Unsloth.
+Unsloth is an optional CUDA-only backend. Otherwise report builders emit
+status ``unsupported`` and do not invent task scores.
 """
 
 from sft_loop.report import (
