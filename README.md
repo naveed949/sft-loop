@@ -49,9 +49,9 @@ Every object sets `additionalProperties` to `false`. Status is `unsupported`, `u
 | [`runs/fixtures/unsupported.json`](runs/fixtures/unsupported.json) | `unsupported` | Scaffold fixture for the blocked shape. No `before` or `after`. |
 | [`runs/fixtures/unscored.json`](runs/fixtures/unscored.json) | `unscored` | Placeholder with no scores and no weight-change claim. |
 | [`runs/phase3/unsupported.json`](runs/phase3/unsupported.json) | `unsupported` | Live Phase 3 loop result for seed 0 on a machine with no MPS and no CUDA Unsloth stack. Same seed was requested for both eval splits. Neither split ran. |
-| `runs/phase3/scored.json` | `scored` | Not in this checkout. Cap writes it on the M1 after a real train. Gitignore allows that filename. |
-| `runs/phase3/proof/adapter_config.json` | proof | Not in this checkout. Copied from the PEFT adapter after `global_step >= 1`. |
-| `runs/phase3/proof/train_log.txt` | proof | Not in this checkout. TRL log with `device=mps` and `backend=trl-peft` when the MPS path ran. |
+| [`runs/phase3/scored.json`](runs/phase3/scored.json) | `scored` | Cap M1 seed 0, `Qwen/Qwen2.5-1.5B-Instruct`, TRL + PEFT, `device` `mps`. Held-out exact match is 0.375 before and 0.375 after (`n` 8). `weight_change_claimed` is true because the proof files match. |
+| [`runs/phase3/proof/adapter_config.json`](runs/phase3/proof/adapter_config.json) | proof | PEFT LoRA config from that run (`r` 8). Adapter weights stay gitignored. |
+| [`runs/phase3/proof/train_log.txt`](runs/phase3/proof/train_log.txt) | proof | TRL `SFTTrainer` log: `global_step` 2, `train_loss` 4.7694361, `device=mps`, `backend=trl-peft`. |
 
 `.gitignore` ignores scratch files under `runs/` and un-ignores the fixture directory, `runs/phase3/unsupported.json`, `runs/phase3/scored.json`, and the two proof filenames. Adapter weights (`*.safetensors` and the `adapters/` directory) stay ignored.
 
