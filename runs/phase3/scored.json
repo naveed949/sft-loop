@@ -1,0 +1,40 @@
+{
+  "schema_version": "1",
+  "run_id": "phase3-mps-seed0",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "stack": {
+    "unsloth": "unused",
+    "trl": "0.24.0",
+    "method": "sft-lora"
+  },
+  "seed": 0,
+  "status": "scored",
+  "metric_role": "task_score_not_safety",
+  "weight_change_claimed": true,
+  "task_id": "uppercase-word-v1",
+  "before": {
+    "seed": 0,
+    "metric_name": "exact_match",
+    "task_score": 0.375,
+    "n": 8
+  },
+  "after": {
+    "seed": 0,
+    "metric_name": "exact_match",
+    "task_score": 0.375,
+    "n": 8
+  },
+  "train_proof": {
+    "trainer": "trl.SFTTrainer",
+    "global_step": 2,
+    "train_loss": 4.7694361,
+    "lora_r": 8,
+    "max_steps": 2,
+    "adapter_config_sha256": "c054bb33569bede62d2bd073e3a9727da05213f48516c26515b8c0e9e85f0e87",
+    "train_log_sha256": "4962b47f4ca9564fd7bca79240d90eac43eae81509f14604cddd2e6c9c952359",
+    "adapter_config_path": "adapter_config.json",
+    "train_log_path": "train_log.txt"
+  },
+  "device": "mps",
+  "backend": "trl-peft"
+}
