@@ -10,9 +10,9 @@
     "reason": "missing_cuda",
     "status": "unsupported"
   },
-  "comparison_sha256": "cee40c23bf4faa31afee55c0f4614ff9c2299aab7eb5f8d2a9fd9476850dbc50",
+  "comparison_sha256": "588aba4f6884b1634a6e655effd357928a1a0c8b07fccb3fc0d2ac3e866977f2",
   "document_kind": "quant-arm-projection",
   "precision": "nf4",
-  "protocol_sha256": "d4c84d7165101534468ae30590a5577aeec0cee32232ab315a9116fc3c196fd3",
+  "protocol_sha256": "b5fe0ba1136866ad026fdf874d16ead047e506f65f2e6acab2c574e99a2dd32b",
   "schema_version": "1"
 }

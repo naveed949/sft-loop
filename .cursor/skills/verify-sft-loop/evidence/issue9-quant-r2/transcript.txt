@@ -1,0 +1,543 @@
+
+# verify all run_id=issue9-quant-r2 cwd=/workspace evidence=/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2 scratch=/tmp/sft-loop-verify-issue9-quant-r2
+
+== install ==
+$ /workspace/.venv/bin/python -m pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.2.1)
+Collecting pip
+  Downloading pip-26.2.2-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.2.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 32.9 MB/s  0:00:00
+
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 26.2.1
+    Uninstalling pip-26.2.1:
+      Successfully uninstalled pip-26.2.1
+Successfully installed pip-26.2.2
+exit 0
+$ /workspace/.venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Requirement already satisfied: torch in ./.venv/lib/python3.12/site-packages (2.14.1+cpu)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch) (3.32.3)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.12/site-packages (from torch) (4.16.0)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./.venv/lib/python3.12/site-packages (from torch) (2026.7.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch) (3.0.3)
+exit 0
+$ /workspace/.venv/bin/python -m pip install jsonschema>=4.18 pytest>=8 transformers>=4.56.1 accelerate>=1.4.0 datasets>=3.0.0 peft>=0.8.0 trl==0.24.0
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (4.26.0)
+Requirement already satisfied: pytest>=8 in ./.venv/lib/python3.12/site-packages (9.1.1)
+Requirement already satisfied: transformers>=4.56.1 in ./.venv/lib/python3.12/site-packages (5.20.2)
+Requirement already satisfied: accelerate>=1.4.0 in ./.venv/lib/python3.12/site-packages (1.15.0)
+Requirement already satisfied: datasets>=3.0.0 in ./.venv/lib/python3.12/site-packages (5.1.0)
+Requirement already satisfied: peft>=0.8.0 in ./.venv/lib/python3.12/site-packages (0.21.2)
+Requirement already satisfied: trl==0.24.0 in ./.venv/lib/python3.12/site-packages (0.24.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (2026.9.1)
+Requirement already satisfied: iniconfig>=1.0.1 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (2.3.1)
+Requirement already satisfied: packaging>=22 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (26.3)
+Requirement already satisfied: pluggy<2,>=1.5 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (1.7.0)
+Requirement already satisfied: pygments>=2.7.2 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (2.21.0)
+Requirement already satisfied: huggingface-hub<3.0,>=1.31.0 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2.2.0)
+Requirement already satisfied: numpy>=1.17 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2.5.4)
+Requirement already satisfied: pyyaml>=5.1 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (6.0.3)
+Requirement already satisfied: regex>=2025.10.22 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2026.9.29)
+Requirement already satisfied: tokenizers<0.24.0,>=0.23.1 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.23.3)
+Requirement already satisfied: typer in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.27.3)
+Requirement already satisfied: safetensors>=0.8.0 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.8.0)
+Requirement already satisfied: tqdm>=4.60 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (4.70.1)
+Requirement already satisfied: click<9.0.0,>=8.4.2 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (8.5.0)
+Requirement already satisfied: filelock>=3.10.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.32.3)
+Requirement already satisfied: fsspec>=2023.5.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2026.7.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.6.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (1.7.0)
+Requirement already satisfied: httpx2<3,>=2.0.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2.15.1)
+Requirement already satisfied: typing-extensions>=4.1.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.16.0)
+Requirement already satisfied: anyio>=4.10 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.15.1)
+Requirement already satisfied: httpcore2==2.15.1 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2.15.1)
+Requirement already satisfied: idna>=3.18 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.20)
+Requirement already satisfied: truststore>=0.10 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (0.10.5)
+Requirement already satisfied: h11>=0.16 in ./.venv/lib/python3.12/site-packages (from httpcore2==2.15.1->httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (0.16.0)
+Requirement already satisfied: psutil in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (7.2.2)
+Requirement already satisfied: torch>=2.0.0 in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (2.14.1+cpu)
+Requirement already satisfied: pyarrow>=24.0.0 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (26.0.0)
+Requirement already satisfied: dill<0.4.2,>=0.3.0 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (0.4.1)
+Requirement already satisfied: pandas in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (3.0.6)
+Requirement already satisfied: xxhash in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (4.0.2)
+Requirement already satisfied: multiprocess<0.70.20 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (0.70.19)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in ./.venv/lib/python3.12/site-packages (from fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (3.14.5)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (2.7.1)
+Requirement already satisfied: aiosignal>=1.4.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.4.0)
+Requirement already satisfied: frozenlist>=1.1.1 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.8.0)
+Requirement already satisfied: multidict<8.0,>=4.5 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (7.1.0)
+Requirement already satisfied: propcache>=0.2.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (0.5.4)
+Requirement already satisfied: yarl<2.0,>=1.25.1 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.25.1)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.1.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate>=1.4.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch>=2.0.0->accelerate>=1.4.0) (3.0.3)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./.venv/lib/python3.12/site-packages (from pandas->datasets>=3.0.0) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas->datasets>=3.0.0) (1.17.0)
+Requirement already satisfied: shellingham>=1.3.0 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (1.5.4)
+Requirement already satisfied: rich>=13.8.0 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (15.0.0)
+Requirement already satisfied: annotated-doc>=0.0.2 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (0.0.5)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./.venv/lib/python3.12/site-packages (from rich>=13.8.0->typer->transformers>=4.56.1) (4.2.0)
+Requirement already satisfied: mdurl~=0.1 in ./.venv/lib/python3.12/site-packages (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.56.1) (0.1.2)
+exit 0
+$ /workspace/.venv/bin/python -m pip install -e /workspace
+Obtaining file:///workspace
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (from sft-loop==0.0.1) (4.26.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2026.9.1)
+Requirement already satisfied: typing-extensions>=4.4.0 in ./.venv/lib/python3.12/site-packages (from referencing>=0.28.4->jsonschema>=4.18->sft-loop==0.0.1) (4.16.0)
+Building wheels for collected packages: sft-loop
+  Building editable for sft-loop (pyproject.toml): started
+  Building editable for sft-loop (pyproject.toml): finished with status 'done'
+  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=6176 sha256=b9171c057fc2c9d4c0241a95ff06860fd014766f1afb74587adbf87664dd845a
+  Stored in directory: /tmp/pip-ephem-wheel-cache-u0er2zck/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8
+Successfully built sft-loop
+Installing collected packages: sft-loop
+  Attempting uninstall: sft-loop
+    Found existing installation: sft-loop 0.0.1
+    Not uninstalling sft-loop at /workspace/src, outside environment /workspace/.venv
+    Can't uninstall 'sft-loop'. No files were found to uninstall.
+Successfully installed sft-loop-0.0.1
+exit 0
+$ /workspace/.venv/bin/python -m pip freeze
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
+aiosignal==1.4.0
+annotated-doc==0.0.5
+anyio==4.15.1
+attrs==26.1.0
+click==8.5.0
+datasets==5.1.0
+dill==0.4.1
+filelock==3.32.3
+flatbuffers==25.12.19
+frozenlist==1.8.0
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.7.0
+httpcore2==2.15.1
+httpx2==2.15.1
+huggingface_hub==2.2.0
+idna==3.20
+iniconfig==2.3.1
+Jinja2==3.1.6
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+ml_dtypes==0.6.0
+mpmath==1.3.0
+multidict==7.1.0
+multiprocess==0.70.19
+networkx==3.6.1
+numpy==2.5.4
+onnx==1.23.2
+onnx-ir==1.0.0
+onnxruntime==1.31.0
+onnxscript==0.7.2
+packaging==26.3
+pandas==3.0.6
+peft==0.21.2
+pluggy==1.7.0
+propcache==0.5.4
+protobuf==7.36.2
+psutil==7.2.2
+pyarrow==26.0.0
+Pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+referencing==0.37.0
+regex==2026.9.29
+rich==15.0.0
+rpds-py==2026.9.1
+safetensors==0.8.0
+setuptools==78.1.0
+sft-loop==0.0.1
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tokenizers==0.23.3
+torch==2.14.1+cpu
+tqdm==4.70.1
+transformers==5.20.2
+trl==0.24.0
+truststore==0.10.5
+typer==0.27.3
+typing_extensions==4.16.0
+xxhash==4.0.2
+yarl==1.25.1
+exit 0
+
+== doctor ==
+doctor python>=3.10: ok (3.12.3)
+doctor schema: ok (/workspace/schema/run_report.schema.json)
+doctor tests/: ok (/workspace/tests)
+doctor pyproject: ok (/workspace/pyproject.toml)
+doctor venv_pip: ok (/workspace/.venv/bin/python)
+$ /workspace/.venv/bin/python -c import jsonschema, pytest, sft_loop, sft_loop.train, sft_loop.eval, sft_loop.loop, sft_loop.report
+exit 0
+doctor imports: ok (jsonschema pytest sft_loop)
+doctor cuda_absent_or_unused: ok (cuda=False)
+doctor mps_absent_on_linux_cpu: ok (mps=False)
+wrote /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/doctor.json
+
+== test ==
+$ /workspace/.venv/bin/python -m pytest -q --color=no
+........................................................................ [ 98%]
+.                                                                        [100%]
+73 passed in 9.58s
+exit 0
+
+== unsupported ==
+$ /workspace/.venv/bin/python -m sft_loop --run-id verify-cli-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/cli-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-loop-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/loop-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps --run-id verify-loop-mps --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/loop-mps.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda --run-id verify-loop-cuda --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/loop-cuda.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-train-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/train-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --run-id verify-eval-before --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/eval-before.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split after --run-id verify-eval-after --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/reports/eval-after.json
+exit 0
+
+== smoke ==
+$ /workspace/.venv/bin/python -c 
+import json, math, shutil, sys, traceback
+from pathlib import Path
+
+adapter_dir = Path(sys.argv[1])
+proof_dir = Path(sys.argv[2])
+out_path = Path(sys.argv[3])
+fail_path = Path(sys.argv[4])
+model_id = sys.argv[5]
+revision = sys.argv[6] or None
+sys.path.insert(0, sys.argv[7])
+from verify_sft_loop import measure_lora_b, require_smoke_train
+
+from datasets import Dataset
+from peft import LoraConfig, PeftModel, get_peft_model
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from trl import SFTConfig, SFTTrainer
+import torch
+
+from sft_loop.task import METRIC_NAME, eval_examples, grade, prediction_token, train_examples
+
+SEED = 0
+LORA_R = 8
+LORA_ALPHA = 16
+MAX_STEPS = 2
+MAX_SEQ_LENGTH = 128
+MAX_NEW_TOKENS = 8
+TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+global_step = 0
+train_loss = None
+lora_b = None
+
+
+def text_rows(tokenizer):
+    rows = []
+    for example in train_examples():
+        messages = [
+            {"role": "user", "content": example["prompt"]},
+            {"role": "assistant", "content": example["completion"]},
+        ]
+        if getattr(tokenizer, "chat_template", None):
+            text = tokenizer.apply_chat_template(messages, tokenize=False)
+        else:
+            text = example["prompt"] + " " + example["completion"]
+        rows.append({"text": text})
+    return rows
+
+
+def load_model():
+    kwargs = {"torch_dtype": torch.float32, "attn_implementation": "eager", "low_cpu_mem_usage": True}
+    tok_kwargs = {}
+    if revision:
+        kwargs["revision"] = revision
+        tok_kwargs["revision"] = revision
+    tokenizer = AutoTokenizer.from_pretrained(model_id, **tok_kwargs)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
+    model.config.use_cache = False
+    return model, tokenizer
+
+
+def generate_scores(model, tokenizer):
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    examples = eval_examples()
+    predictions = []
+    completions = []
+    for example in examples:
+        messages = [{"role": "user", "content": example["prompt"]}]
+        if getattr(tokenizer, "chat_template", None):
+            tokenized = tokenizer.apply_chat_template(
+                messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
+            )
+        else:
+            tokenized = tokenizer(example["prompt"], return_tensors="pt").input_ids
+        if hasattr(tokenized, "input_ids"):
+            input_ids = tokenized.input_ids.to("cpu")
+        else:
+            input_ids = tokenized.to("cpu")
+        with torch.inference_mode():
+            output = model.generate(
+                input_ids,
+                max_new_tokens=MAX_NEW_TOKENS,
+                do_sample=False,
+                pad_token_id=tokenizer.pad_token_id,
+            )
+        new_tokens = output[0][input_ids.shape[-1]:]
+        text = tokenizer.decode(new_tokens, skip_special_tokens=True)
+        predictions.append(prediction_token(text))
+        completions.append(example["completion"])
+    return {
+        "seed": SEED,
+        "metric_name": METRIC_NAME,
+        "task_score": grade(predictions, completions),
+        "n": len(completions),
+        "role": "plumbing_not_quality",
+    }
+
+try:
+    torch.manual_seed(SEED)
+    model, tokenizer = load_model()
+    model.to("cpu")
+    model.eval()
+    before = generate_scores(model, tokenizer)
+    del model
+    if adapter_dir.exists():
+        shutil.rmtree(adapter_dir)
+    adapter_dir.mkdir(parents=True, exist_ok=True)
+    proof_dir.mkdir(parents=True, exist_ok=True)
+    model, tokenizer = load_model()
+    if hasattr(model, "enable_input_require_grads"):
+        model.enable_input_require_grads()
+    lora = LoraConfig(
+        r=LORA_R,
+        lora_alpha=LORA_ALPHA,
+        lora_dropout=0.0,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules=list(TARGET_MODULES),
+        base_model_name_or_path=model_id,
+    )
+    model = get_peft_model(model, lora)
+    model.to("cpu")
+    args = SFTConfig(
+        output_dir=str(adapter_dir),
+        max_steps=MAX_STEPS,
+        per_device_train_batch_size=1,
+        gradient_accumulation_steps=1,
+        learning_rate=2e-4,
+        logging_steps=1,
+        save_strategy="no",
+        report_to="none",
+        seed=SEED,
+        data_seed=SEED,
+        dataset_text_field="text",
+        max_length=MAX_SEQ_LENGTH,
+        packing=False,
+        bf16=False,
+        fp16=False,
+        dataloader_pin_memory=False,
+        gradient_checkpointing=False,
+        optim="adamw_torch",
+        remove_unused_columns=False,
+    )
+    trainer = SFTTrainer(
+        model=model,
+        args=args,
+        train_dataset=Dataset.from_list(text_rows(tokenizer)),
+        processing_class=tokenizer,
+    )
+    result = trainer.train()
+    global_step = int(getattr(result, "global_step", 0) or 0)
+    train_loss = float(getattr(result, "training_loss"))
+    model.save_pretrained(str(adapter_dir))
+    tokenizer.save_pretrained(str(adapter_dir))
+    lora_b = measure_lora_b(adapter_dir)
+    require_smoke_train(
+        global_step=global_step,
+        train_loss=train_loss,
+        max_steps=MAX_STEPS,
+        lora_b=lora_b,
+    )
+    config_src = adapter_dir / "adapter_config.json"
+    shutil.copyfile(config_src, proof_dir / "adapter_config.json")
+    log_history = list(getattr(trainer.state, "log_history", []) or [])
+    log_lines = [
+        "trainer=trl.SFTTrainer",
+        f"model_id={model_id}",
+        f"seed={SEED}",
+        f"global_step={global_step}",
+        f"train_loss={format(train_loss, '.8g')}",
+        f"max_steps={MAX_STEPS}",
+        f"lora_r={LORA_R}",
+        f"lora_b_max_abs={format(lora_b['max_abs'], '.8g')}",
+        f"lora_b_nonzero={lora_b['n_nonzero']}",
+        "device=cpu",
+        "backend=trl-peft",
+        f"log_history={json.dumps(log_history, separators=(',', ':'), sort_keys=True)}",
+    ]
+    (proof_dir / "train_log.txt").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+    del model
+    model, tokenizer = load_model()
+    model = PeftModel.from_pretrained(model, str(adapter_dir))
+    model.to("cpu")
+    model.eval()
+    after = generate_scores(model, tokenizer)
+    payload = {
+        "kind": "plumbing_smoke_not_quality",
+        "status": "plumbing",
+        "weight_change_claimed": False,
+        "device": "cpu",
+        "backend": "trl-peft",
+        "stack": {"unsloth": "unused", "trl": "0.24.0", "method": "sft-lora"},
+        "model_id": model_id,
+        "model_revision": revision,
+        "seed": SEED,
+        "before": before,
+        "after": after,
+        "lora_b_max_abs": lora_b["max_abs"],
+        "train": {
+            "trainer": "trl.SFTTrainer",
+            "global_step": global_step,
+            "train_loss": float(format(train_loss, ".8g")),
+            "lora_r": LORA_R,
+            "max_steps": MAX_STEPS,
+            "device": "cpu",
+            "backend": "trl-peft",
+            "lora_b_max_abs": lora_b["max_abs"],
+            "lora_b_tensors": lora_b["n_tensors"],
+            "lora_b_nonzero": lora_b["n_nonzero"],
+        },
+    }
+    out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print("smoke-plumbing")
+except Exception as exc:
+    fail_payload = {
+        "type": type(exc).__name__,
+        "error": str(exc),
+        "trace": traceback.format_exc(),
+        "global_step": global_step,
+        "train_loss": train_loss,
+        "lora_b": lora_b,
+    }
+    fail_path.write_text(json.dumps(fail_payload, indent=2) + "\n", encoding="utf-8")
+    raise
+ /tmp/sft-loop-verify-issue9-quant-r2/adapters /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/smoke /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/smoke/plumbing.json /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/smoke/smoke-exception.json trl-internal-testing/tiny-Qwen2ForCausalLM-2.5 ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda /workspace/.cursor/skills/verify-sft-loop/scripts
+{'loss': '11.93', 'grad_norm': '0.03125', 'learning_rate': '0.0002', 'entropy': '11.93', 'num_tokens': '42', 'mean_token_accuracy': '0', 'epoch': '0.0625'}
+{'loss': '11.93', 'grad_norm': '0.02711', 'learning_rate': '0.0001', 'entropy': '11.93', 'num_tokens': '84', 'mean_token_accuracy': '0', 'epoch': '0.125'}
+{'train_runtime': '0.2547', 'train_samples_per_second': '7.854', 'train_steps_per_second': '7.854', 'train_loss': '11.93', 'epoch': '0.125'}
+smoke-plumbing
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Adding EOS to train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 16/16 [00:00<00:00, 2106.96 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Tokenizing train dataset: 100%|██████████| 16/16 [00:00<00:00, 1247.79 examples/s]
+
+Truncating train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 16/16 [00:00<00:00, 10217.55 examples/s]
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 151643}.
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:00<00:00,  5.40it/s]
+                                             
+
+ 50%|█████     | 1/2 [00:00<00:00,  5.40it/s]
+                                             
+
+100%|██████████| 2/2 [00:00<00:00,  5.40it/s]
+                                             
+
+100%|██████████| 2/2 [00:00<00:00,  5.40it/s]
+100%|██████████| 2/2 [00:00<00:00,  7.87it/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+exit 0
+smoke plumbing artifact at /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/smoke/plumbing.json
+
+== quant ==
+$ /workspace/.venv/bin/python -m sft_loop.quant probe-nf4 --dest /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/quant/nf4.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.quant validate
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.quant table --check /workspace/README.md
+exit 0
+
+== cleanup ==
+removed scratch /tmp/sft-loop-verify-issue9-quant-r2
+evidence remains at /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2 (16 files)
+{
+  "run_id": "issue9-quant-r2",
+  "elapsed_s": 39.611,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 0
+    },
+    {
+      "step": "unsupported",
+      "exit": 0
+    },
+    {
+      "step": "smoke",
+      "exit": 0
+    },
+    {
+      "step": "quant",
+      "exit": 0
+    },
+    {
+      "step": "cleanup",
+      "exit": 0
+    }
+  ],
+  "failed_step": null,
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-r2",
+  "exit": 0,
+  "pinned_model": false,
+  "smoke_model_id": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+  "smoke_model_revision": "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda"
+}
