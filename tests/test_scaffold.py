@@ -25,7 +25,19 @@ from sft_loop.report import (
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "runs" / "fixtures"
 README = ROOT / "README.md"
-SKIP_DIRS = {".git", ".venv", "venv", "__pycache__", ".pytest_cache", "tests"}
+SKIP_DIRS = {
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".pytest_cache",
+    "tests",
+    "hf_cache",
+    ".cache",
+    "adapters",
+    "outputs",
+    "checkpoints",
+}
 BANNED_STATUSES = {
     "soft-pass",
     "soft_pass",

@@ -1,0 +1,1329 @@
+
+# verify all run_id=cpu-linux-seed0 cwd=/workspace
+
+== install ==
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt install python3.12-venv
+
+You may need to use sudo with that command.  After installing the python3-venv
+package, recreate your virtual environment.
+
+Failing command: /workspace/.venv/bin/python3
+
+venv create failed
+{
+  "run_id": "cpu-linux-seed0",
+  "elapsed_s": 0.076,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 1
+    }
+  ],
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0",
+  "exit": 1
+}
+
+# verify cleanup run_id=cpu-linux-seed0 cwd=/workspace
+no scratch at /tmp/sft-loop-verify-cpu-linux-seed0
+evidence remains at /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0 (3 files)
+
+# verify all run_id=cpu-linux-seed0 cwd=/workspace
+
+== install ==
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt install python3.12-venv
+
+You may need to use sudo with that command.  After installing the python3-venv
+package, recreate your virtual environment.
+
+Failing command: /workspace/.venv/bin/python3
+
+stdlib venv failed. falling back to pip virtualenv.
+Requirement already satisfied: virtualenv in /home/ubuntu/.local/lib/python3.12/site-packages (21.14.11)
+Requirement already satisfied: distlib<1,>=0.4.3 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (0.4.4)
+Requirement already satisfied: filelock<5,>=3.24.2 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (4.2.4)
+Requirement already satisfied: packaging>=26.3 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (26.3)
+Requirement already satisfied: platformdirs<5,>=4.4 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (4.13.5)
+Requirement already satisfied: python-discovery>=1.6.1 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (1.6.4)
+created virtual environment CPython3.12.3.final.0-64-x86_64 in 176ms
+  creator CPython3Posix(dest=/workspace/.venv, clear=False, no_vcs_ignore=False, venv_redirect=None, global=False)
+  seeder FromAppData(download=False, pip=bundle, via=copy, app_data_dir=/home/ubuntu/.cache/virtualenv)
+    added seed packages: pip==26.2.1
+  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator,XonshActivator
+$ /workspace/.venv/bin/python -m pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.2.1)
+exit 0
+$ /workspace/.venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Collecting torch
+  Downloading torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (37 kB)
+Collecting filelock (from torch)
+  Downloading filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.10.0 (from torch)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting setuptools>=77.0.3 (from torch)
+  Downloading setuptools-78.1.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy>=1.13.3 (from torch)
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx>=2.5.1 (from torch)
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch)
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec>=0.8.5 (from torch)
+  Downloading fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch)
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch)
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl (196.3 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/196.3 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;197m━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m74.7/196.3 MB[0m [31m374.9 MB/s[0m eta [36m0:00:01[0m
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━[0m [32m150.5/196.3 MB[0m [31m375.4 MB/s[0m eta [36m0:00:01[0m
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m [32m196.1/196.3 MB[0m [31m371.5 MB/s[0m eta [36m0:00:01[0m
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m [32m196.1/196.3 MB[0m [31m371.5 MB/s[0m eta [36m0:00:01[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m196.3/196.3 MB[0m [31m226.3 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading fsspec-2026.7.0-py3-none-any.whl (206 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/2.1 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m2.1/2.1 MB[0m [31m193.0 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading setuptools-78.1.0-py3-none-any.whl (1.3 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/1.3 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m1.3/1.3 MB[0m [31m160.9 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/6.3 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m6.3/6.3 MB[0m [31m228.7 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/536.2 kB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m536.2/536.2 kB[0m [31m99.8 MB/s[0m  [33m0:00:00[0m
+[?25hUsing cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading filelock-3.32.3-py3-none-any.whl (98 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Installing collected packages: mpmath, typing-extensions, sympy, setuptools, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+[?25l
+[2K   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 0/10[0m [mpmath]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 2/10[0m [sympy]
+[2K   [38;5;197m━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 3/10[0m [setuptools]
+[2K   [38;5;197m━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 3/10[0m [setuptools]
+[2K   [38;5;197m━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 3/10[0m [setuptools]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 4/10[0m [networkx]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 4/10[0m [networkx]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 4/10[0m [networkx]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 4/10[0m [networkx]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 4/10[0m [networkx]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━[0m [32m 6/10[0m [fsspec]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━[0m [32m 8/10[0m [jinja2]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m 9/10[0m [torch]
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/10[0m [torch]
+[?25h
+[1A[2KSuccessfully installed MarkupSafe-3.0.3 filelock-3.32.3 fsspec-2026.7.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 setuptools-78.1.0 sympy-1.14.0 torch-2.14.1+cpu typing-extensions-4.16.0
+exit 0
+$ /workspace/.venv/bin/python -m pip install jsonschema>=4.18 pytest>=8 transformers>=4.56.1 accelerate>=1.4.0 datasets>=3.0.0 peft>=0.8.0 trl==0.24.0
+Collecting jsonschema>=4.18
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest>=8
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting transformers>=4.56.1
+  Downloading transformers-5.20.2-py3-none-any.whl.metadata (31 kB)
+Collecting accelerate>=1.4.0
+  Downloading accelerate-1.15.0-py3-none-any.whl.metadata (19 kB)
+Collecting datasets>=3.0.0
+  Downloading datasets-5.1.0-py3-none-any.whl.metadata (24 kB)
+Collecting peft>=0.8.0
+  Downloading peft-0.21.2-py3-none-any.whl.metadata (15 kB)
+Collecting trl==0.24.0
+  Downloading trl-0.24.0-py3-none-any.whl.metadata (11 kB)
+Collecting attrs>=22.2.0 (from jsonschema>=4.18)
+  Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=4.18)
+  Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema>=4.18)
+  Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema>=4.18)
+  Using cached rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=8)
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting packaging>=22 (from pytest>=8)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=8)
+  Using cached pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+Collecting pygments>=2.7.2 (from pytest>=8)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting huggingface-hub<3.0,>=1.31.0 (from transformers>=4.56.1)
+  Downloading huggingface_hub-2.2.0-py3-none-any.whl.metadata (16 kB)
+Collecting numpy>=1.17 (from transformers>=4.56.1)
+  Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting pyyaml>=5.1 (from transformers>=4.56.1)
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting regex>=2025.10.22 (from transformers>=4.56.1)
+  Downloading regex-2026.9.29-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting tokenizers<0.24.0,>=0.23.1 (from transformers>=4.56.1)
+  Downloading tokenizers-0.23.3-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (9.8 kB)
+Collecting typer (from transformers>=4.56.1)
+  Downloading typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+Collecting safetensors>=0.8.0 (from transformers>=4.56.1)
+  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Collecting tqdm>=4.60 (from transformers>=4.56.1)
+  Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+Collecting click<9.0.0,>=8.4.2 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Requirement already satisfied: filelock>=3.10.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.32.3)
+Requirement already satisfied: fsspec>=2023.5.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2026.7.0)
+Collecting hf-xet<2.0.0,>=1.6.0 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Collecting httpx2<3,>=2.0.0 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading httpx2-2.15.1-py3-none-any.whl.metadata (9.6 kB)
+Requirement already satisfied: typing-extensions>=4.1.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.16.0)
+Collecting anyio>=4.10 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting httpcore2==2.15.1 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading httpcore2-2.15.1-py3-none-any.whl.metadata (27 kB)
+Collecting idna>=3.18 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting truststore>=0.10 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading truststore-0.10.5-py3-none-any.whl.metadata (4.5 kB)
+Collecting h11>=0.16 (from httpcore2==2.15.1->httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting psutil (from accelerate>=1.4.0)
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Requirement already satisfied: torch>=2.0.0 in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (2.14.1+cpu)
+Collecting pyarrow>=24.0.0 (from datasets>=3.0.0)
+  Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+Collecting dill<0.4.2,>=0.3.0 (from datasets>=3.0.0)
+  Downloading dill-0.4.1-py3-none-any.whl.metadata (10 kB)
+Collecting pandas (from datasets>=3.0.0)
+  Downloading pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Collecting xxhash (from datasets>=3.0.0)
+  Downloading xxhash-4.0.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (17 kB)
+Collecting multiprocess<0.70.20 (from datasets>=3.0.0)
+  Downloading multiprocess-0.70.19-py312-none-any.whl.metadata (7.5 kB)
+Collecting aiohttp!=4.0.0a0,!=4.0.0a1 (from fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading aiohttp-3.14.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+Collecting aiohappyeyeballs>=2.5.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl.metadata (5.9 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting frozenlist>=1.1.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (20 kB)
+Collecting multidict<8.0,>=4.5 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading multidict-7.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (6.2 kB)
+Collecting propcache>=0.2.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading propcache-0.5.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (25 kB)
+Collecting yarl<2.0,>=1.25.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading yarl-1.25.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (111 kB)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.1.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate>=1.4.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch>=2.0.0->accelerate>=1.4.0) (3.0.3)
+Collecting python-dateutil>=2.8.2 (from pandas->datasets>=3.0.0)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas->datasets>=3.0.0)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting shellingham>=1.3.0 (from typer->transformers>=4.56.1)
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=13.8.0 (from typer->transformers>=4.56.1)
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting annotated-doc>=0.0.2 (from typer->transformers>=4.56.1)
+  Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers>=4.56.1)
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.56.1)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Downloading trl-0.24.0-py3-none-any.whl (423 kB)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Using cached pytest-9.1.1-py3-none-any.whl (386 kB)
+Using cached pluggy-1.7.0-py3-none-any.whl (27 kB)
+Downloading transformers-5.20.2-py3-none-any.whl (12.8 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/12.8 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m12.8/12.8 MB[0m [31m366.0 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading huggingface_hub-2.2.0-py3-none-any.whl (839 kB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/839.9 kB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m839.9/839.9 kB[0m [31m138.7 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading click-8.5.0-py3-none-any.whl (125 kB)
+Downloading hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/4.2 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m4.2/4.2 MB[0m [31m247.4 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading httpx2-2.15.1-py3-none-any.whl (96 kB)
+Downloading httpcore2-2.15.1-py3-none-any.whl (85 kB)
+Downloading tokenizers-0.23.3-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.4 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/3.4 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m3.4/3.4 MB[0m [31m307.0 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading accelerate-1.15.0-py3-none-any.whl (394 kB)
+Downloading datasets-5.1.0-py3-none-any.whl (604 kB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/604.4 kB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m604.4/604.4 kB[0m [31m123.7 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading dill-0.4.1-py3-none-any.whl (120 kB)
+Downloading multiprocess-0.70.19-py312-none-any.whl (150 kB)
+Downloading peft-0.21.2-py3-none-any.whl (835 kB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/835.4 kB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m835.4/835.4 kB[0m [31m154.2 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading aiohttp-3.14.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.9 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/1.9 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m1.9/1.9 MB[0m [31m281.9 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading multidict-7.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (483 kB)
+Downloading yarl-1.25.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (117 kB)
+Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl (15 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+Using cached attrs-26.1.0-py3-none-any.whl (67 kB)
+Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (242 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading idna-3.20-py3-none-any.whl (69 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/16.7 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m16.7/16.7 MB[0m [31m346.5 MB/s[0m  [33m0:00:00[0m
+[?25hUsing cached packaging-26.3-py3-none-any.whl (129 kB)
+Downloading propcache-0.5.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (250 kB)
+Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (53.9 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/53.9 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m53.9/53.9 MB[0m [31m280.3 MB/s[0m  [33m0:00:00[0m
+[?25hUsing cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/807.9 kB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m807.9/807.9 kB[0m [31m53.9 MB/s[0m  [33m0:00:00[0m
+[?25hUsing cached referencing-0.37.0-py3-none-any.whl (26 kB)
+Downloading regex-2026.9.29-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/807.8 kB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m807.8/807.8 kB[0m [31m44.0 MB/s[0m  [33m0:00:00[0m
+[?25hUsing cached rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+Downloading truststore-0.10.5-py3-none-any.whl (19 kB)
+Downloading pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.8 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/10.8 MB[0m [31m?[0m eta [36m-:--:--[0m
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10.8/10.8 MB[0m [31m353.0 MB/s[0m  [33m0:00:00[0m
+[?25hDownloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading typer-0.27.3-py3-none-any.whl (123 kB)
+Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Downloading xxhash-4.0.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (261 kB)
+Installing collected packages: xxhash, truststore, tqdm, six, shellingham, safetensors, rpds-py, regex, pyyaml, pygments, pyarrow, psutil, propcache, pluggy, packaging, numpy, multidict, mdurl, iniconfig, idna, hf-xet, h11, frozenlist, dill, click, attrs, annotated-doc, aiohappyeyeballs, yarl, referencing, python-dateutil, pytest, multiprocess, markdown-it-py, httpcore2, anyio, aiosignal, rich, pandas, jsonschema-specifications, httpx2, aiohttp, typer, jsonschema, huggingface-hub, tokenizers, datasets, accelerate, transformers, trl, peft
+[?25l
+[2K   [38;5;197m━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 8/51[0m [pyyaml]
+[2K   [38;5;197m━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 9/51[0m [pygments]
+[2K   [38;5;197m━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 9/51[0m [pygments]
+[2K   [38;5;197m━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m 9/51[0m [pygments]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m10/51[0m [pyarrow]
+[2K   [38;5;197m━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m11/51[0m [psutil]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m15/51[0m [numpy]
+[2K   [38;5;197m━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m20/51[0m [hf-xet]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━━━━━[0m [32m24/51[0m [click]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━━━━━━━━[0m [32m29/51[0m [referencing]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━━[0m [32m31/51[0m [pytest]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━━━[0m [32m32/51[0m [multiprocess]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━━━[0m [32m35/51[0m [anyio]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━━━[0m [32m37/51[0m [rich]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━━━━━━[0m [32m38/51[0m [pandas]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━━[0m [32m40/51[0m [httpx2]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━━━━[0m [32m41/51[0m [aiohttp]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━[0m [32m44/51[0m [huggingface-hub]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━━━[0m [32m44/51[0m [huggingface-hub]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━━[0m [32m45/51[0m [tokenizers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━━━[0m [32m46/51[0m [datasets]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━[0m [32m47/51[0m [accelerate]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━━[0m [32m47/51[0m [accelerate]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;197m╸[0m[38;5;237m━━[0m [32m48/51[0m [transformers]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m[38;5;237m━[0m [32m49/51[0m [trl]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m [32m50/51[0m [peft]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m [32m50/51[0m [peft]
+[2K   [38;5;197m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[38;5;237m╺[0m [32m50/51[0m [peft]
+[2K   [38;5;70m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m51/51[0m [peft]
+[?25h
+[1A[2KSuccessfully installed accelerate-1.15.0 aiohappyeyeballs-2.7.1 aiohttp-3.14.5 aiosignal-1.4.0 annotated-doc-0.0.5 anyio-4.15.1 attrs-26.1.0 click-8.5.0 datasets-5.1.0 dill-0.4.1 frozenlist-1.8.0 h11-0.16.0 hf-xet-1.7.0 httpcore2-2.15.1 httpx2-2.15.1 huggingface-hub-2.2.0 idna-3.20 iniconfig-2.3.1 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 markdown-it-py-4.2.0 mdurl-0.1.2 multidict-7.1.0 multiprocess-0.70.19 numpy-2.5.4 packaging-26.3 pandas-3.0.6 peft-0.21.2 pluggy-1.7.0 propcache-0.5.4 psutil-7.2.2 pyarrow-26.0.0 pygments-2.21.0 pytest-9.1.1 python-dateutil-2.9.0.post0 pyyaml-6.0.3 referencing-0.37.0 regex-2026.9.29 rich-15.0.0 rpds-py-2026.9.1 safetensors-0.8.0 shellingham-1.5.4 six-1.17.0 tokenizers-0.23.3 tqdm-4.70.1 transformers-5.20.2 trl-0.24.0 truststore-0.10.5 typer-0.27.3 xxhash-4.0.2 yarl-1.25.1
+exit 0
+$ /workspace/.venv/bin/python -m pip install -e /workspace
+Obtaining file:///workspace
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (from sft-loop==0.0.1) (4.26.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2026.9.1)
+Requirement already satisfied: typing-extensions>=4.4.0 in ./.venv/lib/python3.12/site-packages (from referencing>=0.28.4->jsonschema>=4.18->sft-loop==0.0.1) (4.16.0)
+Building wheels for collected packages: sft-loop
+  Building editable for sft-loop (pyproject.toml): started
+  Building editable for sft-loop (pyproject.toml): finished with status 'done'
+  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=5346 sha256=99dd88af77947fa0f3073d9349e6afb4ae92ef8da3ba0ee2f2927f44b295dc82
+  Stored in directory: /tmp/pip-ephem-wheel-cache-_ncs15j7/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8
+Successfully built sft-loop
+Installing collected packages: sft-loop
+  Attempting uninstall: sft-loop
+    Found existing installation: sft-loop 0.0.1
+    Not uninstalling sft-loop at /workspace/src, outside environment /workspace/.venv
+    Can't uninstall 'sft-loop'. No files were found to uninstall.
+Successfully installed sft-loop-0.0.1
+exit 0
+$ /workspace/.venv/bin/python -m pip freeze
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
+aiosignal==1.4.0
+annotated-doc==0.0.5
+anyio==4.15.1
+attrs==26.1.0
+click==8.5.0
+datasets==5.1.0
+dill==0.4.1
+filelock==3.32.3
+frozenlist==1.8.0
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.7.0
+httpcore2==2.15.1
+httpx2==2.15.1
+huggingface_hub==2.2.0
+idna==3.20
+iniconfig==2.3.1
+Jinja2==3.1.6
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+multidict==7.1.0
+multiprocess==0.70.19
+networkx==3.6.1
+numpy==2.5.4
+packaging==26.3
+pandas==3.0.6
+peft==0.21.2
+pluggy==1.7.0
+propcache==0.5.4
+psutil==7.2.2
+pyarrow==26.0.0
+Pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+referencing==0.37.0
+regex==2026.9.29
+rich==15.0.0
+rpds-py==2026.9.1
+safetensors==0.8.0
+setuptools==78.1.0
+sft-loop==0.0.1
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tokenizers==0.23.3
+torch==2.14.1+cpu
+tqdm==4.70.1
+transformers==5.20.2
+trl==0.24.0
+truststore==0.10.5
+typer==0.27.3
+typing_extensions==4.16.0
+xxhash==4.0.2
+yarl==1.25.1
+exit 0
+
+== doctor ==
+doctor python>=3.10: ok (3.12.3)
+doctor schema: ok (/workspace/schema/run_report.schema.json)
+doctor tests/: ok (/workspace/tests)
+doctor pyproject: ok (/workspace/pyproject.toml)
+doctor venv_python: ok (/workspace/.venv/bin/python)
+$ /workspace/.venv/bin/python -c import jsonschema, pytest, sft_loop, sft_loop.train, sft_loop.eval, sft_loop.loop, sft_loop.report
+exit 0
+doctor imports: ok (jsonschema pytest sft_loop)
+doctor cuda_absent_or_unused: ok (cuda=False)
+doctor mps_absent_on_linux_cpu: ok (mps=False)
+wrote /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/doctor.json
+
+== test ==
+$ /workspace/.venv/bin/python -m pytest -q --color=no
+......................................                                   [100%]
+38 passed in 5.84s
+exit 0
+
+== unsupported ==
+$ /workspace/.venv/bin/python -m sft_loop --run-id verify-cli-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/cli-default.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/cli-default.json invented metrics
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-loop-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-default.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-default.json invented metrics
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps --run-id verify-loop-mps --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-mps.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-mps.json invented metrics
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda --run-id verify-loop-cuda --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-cuda.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-cuda.json invented metrics
+$ /workspace/.venv/bin/python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-train-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/train-default.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/train-default.json invented metrics
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --run-id verify-eval-before --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/eval-before.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/eval-before.json invented metrics
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split after --run-id verify-eval-after --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/eval-after.json
+exit 0
+/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/eval-after.json invented metrics
+
+== smoke ==
+$ /workspace/.venv/bin/python -c 
+import json, os, sys, traceback
+from pathlib import Path
+
+adapter_dir = Path(sys.argv[1])
+proof_dir = Path(sys.argv[2])
+out_path = Path(sys.argv[3])
+fail_path = Path(sys.argv[4])
+
+from sft_loop.eval import _execute_eval_trl_peft
+from sft_loop.report import build_scored_report, dump_report, validate_report
+from sft_loop.train import _execute_train_trl_peft
+
+SEED = 0
+try:
+    before = _execute_eval_trl_peft(seed=SEED, adapter_dir=None, device="cpu")
+    proof = _execute_train_trl_peft(
+        seed=SEED,
+        proof_dir=proof_dir,
+        adapter_dir=adapter_dir,
+        device="cpu",
+    )
+    after = _execute_eval_trl_peft(seed=SEED, adapter_dir=adapter_dir, device="cpu")
+    report = build_scored_report(
+        run_id="verify-cpu-smoke-seed0",
+        seed=SEED,
+        before=before,
+        after=after,
+        train_proof=proof,
+        proof_dir=proof_dir,
+    )
+    validate_report(report, proof_dir=proof_dir)
+    out_path.write_text(dump_report(report), encoding="utf-8")
+    print("smoke-scored")
+except Exception as exc:
+    fail_path.write_text(
+        json.dumps({"type": type(exc).__name__, "error": str(exc), "trace": traceback.format_exc()}, indent=2)
+        + "\n",
+        encoding="utf-8",
+    )
+    raise
+ /tmp/sft-loop-verify-cpu-linux-seed0/adapters /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke/run_report.json /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke/smoke-exception.json
+{'loss': '5.098', 'grad_norm': '11.21', 'learning_rate': '0.0002', 'entropy': '1.545', 'num_tokens': '42', 'mean_token_accuracy': '0.4634', 'epoch': '0.0625'}
+{'loss': '4.44', 'grad_norm': '7.248', 'learning_rate': '0.0001', 'entropy': '1.634', 'num_tokens': '84', 'mean_token_accuracy': '0.5366', 'epoch': '0.125'}
+{'train_runtime': '2.346', 'train_samples_per_second': '0.852', 'train_steps_per_second': '0.852', 'train_loss': '4.769', 'epoch': '0.125'}
+smoke-scored
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Adding EOS to train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 16/16 [00:00<00:00, 3973.53 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Tokenizing train dataset: 100%|██████████| 16/16 [00:00<00:00, 2333.57 examples/s]
+
+Truncating train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 16/16 [00:00<00:00, 5917.89 examples/s]
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 151643}.
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:01<00:01,  1.25s/it]
+                                             
+
+ 50%|█████     | 1/2 [00:01<00:01,  1.25s/it]
+100%|██████████| 2/2 [00:02<00:00,  1.16s/it]
+                                             
+
+100%|██████████| 2/2 [00:02<00:00,  1.16s/it]
+                                             
+
+100%|██████████| 2/2 [00:02<00:00,  1.16s/it]
+100%|██████████| 2/2 [00:02<00:00,  1.17s/it]
+exit 0
+smoke report valid at /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke/run_report.json
+
+== cleanup ==
+removed scratch /tmp/sft-loop-verify-cpu-linux-seed0
+evidence remains at /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0 (20 files)
+{
+  "run_id": "cpu-linux-seed0",
+  "elapsed_s": 114.452,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 0
+    },
+    {
+      "step": "unsupported",
+      "exit": 1
+    },
+    {
+      "step": "smoke",
+      "exit": 0
+    },
+    {
+      "step": "cleanup",
+      "exit": 0
+    }
+  ],
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0",
+  "exit": 1
+}
+
+# verify all run_id=cpu-linux-seed0 cwd=/workspace
+
+== install ==
+$ /workspace/.venv/bin/python -m pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.2.1)
+exit 0
+$ /workspace/.venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Requirement already satisfied: torch in ./.venv/lib/python3.12/site-packages (2.14.1+cpu)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch) (3.32.3)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.12/site-packages (from torch) (4.16.0)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./.venv/lib/python3.12/site-packages (from torch) (2026.7.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch) (3.0.3)
+exit 0
+$ /workspace/.venv/bin/python -m pip install jsonschema>=4.18 pytest>=8 transformers>=4.56.1 accelerate>=1.4.0 datasets>=3.0.0 peft>=0.8.0 trl==0.24.0
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (4.26.0)
+Requirement already satisfied: pytest>=8 in ./.venv/lib/python3.12/site-packages (9.1.1)
+Requirement already satisfied: transformers>=4.56.1 in ./.venv/lib/python3.12/site-packages (5.20.2)
+Requirement already satisfied: accelerate>=1.4.0 in ./.venv/lib/python3.12/site-packages (1.15.0)
+Requirement already satisfied: datasets>=3.0.0 in ./.venv/lib/python3.12/site-packages (5.1.0)
+Requirement already satisfied: peft>=0.8.0 in ./.venv/lib/python3.12/site-packages (0.21.2)
+Requirement already satisfied: trl==0.24.0 in ./.venv/lib/python3.12/site-packages (0.24.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (2026.9.1)
+Requirement already satisfied: iniconfig>=1.0.1 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (2.3.1)
+Requirement already satisfied: packaging>=22 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (26.3)
+Requirement already satisfied: pluggy<2,>=1.5 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (1.7.0)
+Requirement already satisfied: pygments>=2.7.2 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (2.21.0)
+Requirement already satisfied: huggingface-hub<3.0,>=1.31.0 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2.2.0)
+Requirement already satisfied: numpy>=1.17 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2.5.4)
+Requirement already satisfied: pyyaml>=5.1 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (6.0.3)
+Requirement already satisfied: regex>=2025.10.22 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2026.9.29)
+Requirement already satisfied: tokenizers<0.24.0,>=0.23.1 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.23.3)
+Requirement already satisfied: typer in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.27.3)
+Requirement already satisfied: safetensors>=0.8.0 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.8.0)
+Requirement already satisfied: tqdm>=4.60 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (4.70.1)
+Requirement already satisfied: click<9.0.0,>=8.4.2 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (8.5.0)
+Requirement already satisfied: filelock>=3.10.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.32.3)
+Requirement already satisfied: fsspec>=2023.5.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2026.7.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.6.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (1.7.0)
+Requirement already satisfied: httpx2<3,>=2.0.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2.15.1)
+Requirement already satisfied: typing-extensions>=4.1.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.16.0)
+Requirement already satisfied: anyio>=4.10 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.15.1)
+Requirement already satisfied: httpcore2==2.15.1 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2.15.1)
+Requirement already satisfied: idna>=3.18 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.20)
+Requirement already satisfied: truststore>=0.10 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (0.10.5)
+Requirement already satisfied: h11>=0.16 in ./.venv/lib/python3.12/site-packages (from httpcore2==2.15.1->httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (0.16.0)
+Requirement already satisfied: psutil in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (7.2.2)
+Requirement already satisfied: torch>=2.0.0 in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (2.14.1+cpu)
+Requirement already satisfied: pyarrow>=24.0.0 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (26.0.0)
+Requirement already satisfied: dill<0.4.2,>=0.3.0 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (0.4.1)
+Requirement already satisfied: pandas in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (3.0.6)
+Requirement already satisfied: xxhash in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (4.0.2)
+Requirement already satisfied: multiprocess<0.70.20 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (0.70.19)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in ./.venv/lib/python3.12/site-packages (from fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (3.14.5)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (2.7.1)
+Requirement already satisfied: aiosignal>=1.4.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.4.0)
+Requirement already satisfied: frozenlist>=1.1.1 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.8.0)
+Requirement already satisfied: multidict<8.0,>=4.5 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (7.1.0)
+Requirement already satisfied: propcache>=0.2.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (0.5.4)
+Requirement already satisfied: yarl<2.0,>=1.25.1 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.25.1)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.1.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate>=1.4.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch>=2.0.0->accelerate>=1.4.0) (3.0.3)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./.venv/lib/python3.12/site-packages (from pandas->datasets>=3.0.0) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas->datasets>=3.0.0) (1.17.0)
+Requirement already satisfied: shellingham>=1.3.0 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (1.5.4)
+Requirement already satisfied: rich>=13.8.0 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (15.0.0)
+Requirement already satisfied: annotated-doc>=0.0.2 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (0.0.5)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./.venv/lib/python3.12/site-packages (from rich>=13.8.0->typer->transformers>=4.56.1) (4.2.0)
+Requirement already satisfied: mdurl~=0.1 in ./.venv/lib/python3.12/site-packages (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.56.1) (0.1.2)
+exit 0
+$ /workspace/.venv/bin/python -m pip install -e /workspace
+Obtaining file:///workspace
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (from sft-loop==0.0.1) (4.26.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2026.9.1)
+Requirement already satisfied: typing-extensions>=4.4.0 in ./.venv/lib/python3.12/site-packages (from referencing>=0.28.4->jsonschema>=4.18->sft-loop==0.0.1) (4.16.0)
+Building wheels for collected packages: sft-loop
+  Building editable for sft-loop (pyproject.toml): started
+  Building editable for sft-loop (pyproject.toml): finished with status 'done'
+  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=5346 sha256=b5e196b4787c62ac0246a7cd594393440dbfe926a657c5205ac94f4686730d7a
+  Stored in directory: /tmp/pip-ephem-wheel-cache-5gacrl9l/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8
+Successfully built sft-loop
+Installing collected packages: sft-loop
+  Attempting uninstall: sft-loop
+    Found existing installation: sft-loop 0.0.1
+    Not uninstalling sft-loop at /workspace/src, outside environment /workspace/.venv
+    Can't uninstall 'sft-loop'. No files were found to uninstall.
+Successfully installed sft-loop-0.0.1
+exit 0
+$ /workspace/.venv/bin/python -m pip freeze
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
+aiosignal==1.4.0
+annotated-doc==0.0.5
+anyio==4.15.1
+attrs==26.1.0
+click==8.5.0
+datasets==5.1.0
+dill==0.4.1
+filelock==3.32.3
+frozenlist==1.8.0
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.7.0
+httpcore2==2.15.1
+httpx2==2.15.1
+huggingface_hub==2.2.0
+idna==3.20
+iniconfig==2.3.1
+Jinja2==3.1.6
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+multidict==7.1.0
+multiprocess==0.70.19
+networkx==3.6.1
+numpy==2.5.4
+packaging==26.3
+pandas==3.0.6
+peft==0.21.2
+pluggy==1.7.0
+propcache==0.5.4
+psutil==7.2.2
+pyarrow==26.0.0
+Pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+referencing==0.37.0
+regex==2026.9.29
+rich==15.0.0
+rpds-py==2026.9.1
+safetensors==0.8.0
+setuptools==78.1.0
+sft-loop==0.0.1
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tokenizers==0.23.3
+torch==2.14.1+cpu
+tqdm==4.70.1
+transformers==5.20.2
+trl==0.24.0
+truststore==0.10.5
+typer==0.27.3
+typing_extensions==4.16.0
+xxhash==4.0.2
+yarl==1.25.1
+exit 0
+
+== doctor ==
+doctor python>=3.10: ok (3.12.3)
+doctor schema: ok (/workspace/schema/run_report.schema.json)
+doctor tests/: ok (/workspace/tests)
+doctor pyproject: ok (/workspace/pyproject.toml)
+doctor venv_python: ok (/workspace/.venv/bin/python)
+$ /workspace/.venv/bin/python -c import jsonschema, pytest, sft_loop, sft_loop.train, sft_loop.eval, sft_loop.loop, sft_loop.report
+exit 0
+doctor imports: ok (jsonschema pytest sft_loop)
+doctor cuda_absent_or_unused: ok (cuda=False)
+doctor mps_absent_on_linux_cpu: ok (mps=False)
+wrote /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/doctor.json
+
+== test ==
+$ /workspace/.venv/bin/python -m pytest -q --color=no
+...................................F..                                   [100%]
+=================================== FAILURES ===================================
+____________ test_json_files_omit_forbidden_keys_and_scored_status _____________
+
+    def test_json_files_omit_forbidden_keys_and_scored_status():
+        for path, text in _repo_texts():
+            if path.suffix != ".json":
+                continue
+            assert "adaptiveSandboxQualified" not in text
+>           document = json.loads(text)
+                       ^^^^^^^^^^^^^^^^
+
+tests/test_scaffold.py:287: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/lib/python3.12/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.12/json/decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.decoder.JSONDecoder object at 0x7fcab7fbf500>, s = '', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+            obj, end = self.scan_once(s, idx)
+        except StopIteration as err:
+>           raise JSONDecodeError("Expecting value", s, err.value) from None
+E           json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+/usr/lib/python3.12/json/decoder.py:355: JSONDecodeError
+=========================== short test summary info ============================
+FAILED tests/test_scaffold.py::test_json_files_omit_forbidden_keys_and_scored_status
+1 failed, 37 passed in 7.40s
+exit 1
+{
+  "run_id": "cpu-linux-seed0",
+  "elapsed_s": 14.654,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 1
+    }
+  ],
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0",
+  "exit": 1
+}
+
+# verify all run_id=cpu-linux-seed0 cwd=/workspace
+
+== install ==
+$ /workspace/.venv/bin/python -m pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.2.1)
+exit 0
+$ /workspace/.venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Requirement already satisfied: torch in ./.venv/lib/python3.12/site-packages (2.14.1+cpu)
+Requirement already satisfied: filelock in ./.venv/lib/python3.12/site-packages (from torch) (3.32.3)
+Requirement already satisfied: typing-extensions>=4.10.0 in ./.venv/lib/python3.12/site-packages (from torch) (4.16.0)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in ./.venv/lib/python3.12/site-packages (from torch) (2026.7.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch) (3.0.3)
+exit 0
+$ /workspace/.venv/bin/python -m pip install jsonschema>=4.18 pytest>=8 transformers>=4.56.1 accelerate>=1.4.0 datasets>=3.0.0 peft>=0.8.0 trl==0.24.0
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (4.26.0)
+Requirement already satisfied: pytest>=8 in ./.venv/lib/python3.12/site-packages (9.1.1)
+Requirement already satisfied: transformers>=4.56.1 in ./.venv/lib/python3.12/site-packages (5.20.2)
+Requirement already satisfied: accelerate>=1.4.0 in ./.venv/lib/python3.12/site-packages (1.15.0)
+Requirement already satisfied: datasets>=3.0.0 in ./.venv/lib/python3.12/site-packages (5.1.0)
+Requirement already satisfied: peft>=0.8.0 in ./.venv/lib/python3.12/site-packages (0.21.2)
+Requirement already satisfied: trl==0.24.0 in ./.venv/lib/python3.12/site-packages (0.24.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18) (2026.9.1)
+Requirement already satisfied: iniconfig>=1.0.1 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (2.3.1)
+Requirement already satisfied: packaging>=22 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (26.3)
+Requirement already satisfied: pluggy<2,>=1.5 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (1.7.0)
+Requirement already satisfied: pygments>=2.7.2 in ./.venv/lib/python3.12/site-packages (from pytest>=8) (2.21.0)
+Requirement already satisfied: huggingface-hub<3.0,>=1.31.0 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2.2.0)
+Requirement already satisfied: numpy>=1.17 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2.5.4)
+Requirement already satisfied: pyyaml>=5.1 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (6.0.3)
+Requirement already satisfied: regex>=2025.10.22 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (2026.9.29)
+Requirement already satisfied: tokenizers<0.24.0,>=0.23.1 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.23.3)
+Requirement already satisfied: typer in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.27.3)
+Requirement already satisfied: safetensors>=0.8.0 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (0.8.0)
+Requirement already satisfied: tqdm>=4.60 in ./.venv/lib/python3.12/site-packages (from transformers>=4.56.1) (4.70.1)
+Requirement already satisfied: click<9.0.0,>=8.4.2 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (8.5.0)
+Requirement already satisfied: filelock>=3.10.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.32.3)
+Requirement already satisfied: fsspec>=2023.5.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2026.7.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.6.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (1.7.0)
+Requirement already satisfied: httpx2<3,>=2.0.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2.15.1)
+Requirement already satisfied: typing-extensions>=4.1.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.16.0)
+Requirement already satisfied: anyio>=4.10 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.15.1)
+Requirement already satisfied: httpcore2==2.15.1 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2.15.1)
+Requirement already satisfied: idna>=3.18 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.20)
+Requirement already satisfied: truststore>=0.10 in ./.venv/lib/python3.12/site-packages (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (0.10.5)
+Requirement already satisfied: h11>=0.16 in ./.venv/lib/python3.12/site-packages (from httpcore2==2.15.1->httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (0.16.0)
+Requirement already satisfied: psutil in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (7.2.2)
+Requirement already satisfied: torch>=2.0.0 in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (2.14.1+cpu)
+Requirement already satisfied: pyarrow>=24.0.0 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (26.0.0)
+Requirement already satisfied: dill<0.4.2,>=0.3.0 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (0.4.1)
+Requirement already satisfied: pandas in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (3.0.6)
+Requirement already satisfied: xxhash in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (4.0.2)
+Requirement already satisfied: multiprocess<0.70.20 in ./.venv/lib/python3.12/site-packages (from datasets>=3.0.0) (0.70.19)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in ./.venv/lib/python3.12/site-packages (from fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (3.14.5)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (2.7.1)
+Requirement already satisfied: aiosignal>=1.4.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.4.0)
+Requirement already satisfied: frozenlist>=1.1.1 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.8.0)
+Requirement already satisfied: multidict<8.0,>=4.5 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (7.1.0)
+Requirement already satisfied: propcache>=0.2.0 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (0.5.4)
+Requirement already satisfied: yarl<2.0,>=1.25.1 in ./.venv/lib/python3.12/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0) (1.25.1)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.1.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate>=1.4.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch>=2.0.0->accelerate>=1.4.0) (3.0.3)
+Requirement already satisfied: python-dateutil>=2.8.2 in ./.venv/lib/python3.12/site-packages (from pandas->datasets>=3.0.0) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in ./.venv/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas->datasets>=3.0.0) (1.17.0)
+Requirement already satisfied: shellingham>=1.3.0 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (1.5.4)
+Requirement already satisfied: rich>=13.8.0 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (15.0.0)
+Requirement already satisfied: annotated-doc>=0.0.2 in ./.venv/lib/python3.12/site-packages (from typer->transformers>=4.56.1) (0.0.5)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./.venv/lib/python3.12/site-packages (from rich>=13.8.0->typer->transformers>=4.56.1) (4.2.0)
+Requirement already satisfied: mdurl~=0.1 in ./.venv/lib/python3.12/site-packages (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.56.1) (0.1.2)
+exit 0
+$ /workspace/.venv/bin/python -m pip install -e /workspace
+Obtaining file:///workspace
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (from sft-loop==0.0.1) (4.26.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2026.9.1)
+Requirement already satisfied: typing-extensions>=4.4.0 in ./.venv/lib/python3.12/site-packages (from referencing>=0.28.4->jsonschema>=4.18->sft-loop==0.0.1) (4.16.0)
+Building wheels for collected packages: sft-loop
+  Building editable for sft-loop (pyproject.toml): started
+  Building editable for sft-loop (pyproject.toml): finished with status 'done'
+  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=5346 sha256=25c7a63131459d81d7bafd8d1a27b0666662ae8bc0c87329cf63d747c6fbae64
+  Stored in directory: /tmp/pip-ephem-wheel-cache-k1klf8ta/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8
+Successfully built sft-loop
+Installing collected packages: sft-loop
+  Attempting uninstall: sft-loop
+    Found existing installation: sft-loop 0.0.1
+    Not uninstalling sft-loop at /workspace/src, outside environment /workspace/.venv
+    Can't uninstall 'sft-loop'. No files were found to uninstall.
+Successfully installed sft-loop-0.0.1
+exit 0
+$ /workspace/.venv/bin/python -m pip freeze
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
+aiosignal==1.4.0
+annotated-doc==0.0.5
+anyio==4.15.1
+attrs==26.1.0
+click==8.5.0
+datasets==5.1.0
+dill==0.4.1
+filelock==3.32.3
+frozenlist==1.8.0
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.7.0
+httpcore2==2.15.1
+httpx2==2.15.1
+huggingface_hub==2.2.0
+idna==3.20
+iniconfig==2.3.1
+Jinja2==3.1.6
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+multidict==7.1.0
+multiprocess==0.70.19
+networkx==3.6.1
+numpy==2.5.4
+packaging==26.3
+pandas==3.0.6
+peft==0.21.2
+pluggy==1.7.0
+propcache==0.5.4
+psutil==7.2.2
+pyarrow==26.0.0
+Pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+referencing==0.37.0
+regex==2026.9.29
+rich==15.0.0
+rpds-py==2026.9.1
+safetensors==0.8.0
+setuptools==78.1.0
+sft-loop==0.0.1
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tokenizers==0.23.3
+torch==2.14.1+cpu
+tqdm==4.70.1
+transformers==5.20.2
+trl==0.24.0
+truststore==0.10.5
+typer==0.27.3
+typing_extensions==4.16.0
+xxhash==4.0.2
+yarl==1.25.1
+exit 0
+
+== doctor ==
+doctor python>=3.10: ok (3.12.3)
+doctor schema: ok (/workspace/schema/run_report.schema.json)
+doctor tests/: ok (/workspace/tests)
+doctor pyproject: ok (/workspace/pyproject.toml)
+doctor venv_python: ok (/workspace/.venv/bin/python)
+$ /workspace/.venv/bin/python -c import jsonschema, pytest, sft_loop, sft_loop.train, sft_loop.eval, sft_loop.loop, sft_loop.report
+exit 0
+doctor imports: ok (jsonschema pytest sft_loop)
+doctor cuda_absent_or_unused: ok (cuda=False)
+doctor mps_absent_on_linux_cpu: ok (mps=False)
+wrote /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/doctor.json
+
+== test ==
+$ /workspace/.venv/bin/python -m pytest -q --color=no
+......................................                                   [100%]
+38 passed in 6.10s
+exit 0
+
+== unsupported ==
+$ /workspace/.venv/bin/python -m sft_loop --run-id verify-cli-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/cli-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-loop-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps --run-id verify-loop-mps --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-mps.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda --run-id verify-loop-cuda --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/loop-cuda.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-train-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/train-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --run-id verify-eval-before --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/eval-before.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split after --run-id verify-eval-after --out /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/reports/eval-after.json
+exit 0
+
+== smoke ==
+$ /workspace/.venv/bin/python -c 
+import json, os, sys, traceback
+from pathlib import Path
+
+adapter_dir = Path(sys.argv[1])
+proof_dir = Path(sys.argv[2])
+out_path = Path(sys.argv[3])
+fail_path = Path(sys.argv[4])
+
+from sft_loop.eval import _execute_eval_trl_peft
+from sft_loop.report import build_scored_report, dump_report, validate_report
+from sft_loop.train import _execute_train_trl_peft
+
+SEED = 0
+try:
+    before = _execute_eval_trl_peft(seed=SEED, adapter_dir=None, device="cpu")
+    proof = _execute_train_trl_peft(
+        seed=SEED,
+        proof_dir=proof_dir,
+        adapter_dir=adapter_dir,
+        device="cpu",
+    )
+    after = _execute_eval_trl_peft(seed=SEED, adapter_dir=adapter_dir, device="cpu")
+    report = build_scored_report(
+        run_id="verify-cpu-smoke-seed0",
+        seed=SEED,
+        before=before,
+        after=after,
+        train_proof=proof,
+        proof_dir=proof_dir,
+    )
+    validate_report(report, proof_dir=proof_dir)
+    out_path.write_text(dump_report(report), encoding="utf-8")
+    print("smoke-scored")
+except Exception as exc:
+    fail_path.write_text(
+        json.dumps({"type": type(exc).__name__, "error": str(exc), "trace": traceback.format_exc()}, indent=2)
+        + "\n",
+        encoding="utf-8",
+    )
+    raise
+ /tmp/sft-loop-verify-cpu-linux-seed0/adapters /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke/run_report.json /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke/smoke-exception.json
+{'loss': '5.098', 'grad_norm': '11.21', 'learning_rate': '0.0002', 'entropy': '1.545', 'num_tokens': '42', 'mean_token_accuracy': '0.4634', 'epoch': '0.0625'}
+{'loss': '4.44', 'grad_norm': '7.248', 'learning_rate': '0.0001', 'entropy': '1.634', 'num_tokens': '84', 'mean_token_accuracy': '0.5366', 'epoch': '0.125'}
+{'train_runtime': '3.284', 'train_samples_per_second': '0.609', 'train_steps_per_second': '0.609', 'train_loss': '4.769', 'epoch': '0.125'}
+smoke-scored
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Adding EOS to train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 16/16 [00:00<00:00, 6382.81 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Tokenizing train dataset: 100%|██████████| 16/16 [00:00<00:00, 2438.19 examples/s]
+
+Truncating train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 16/16 [00:00<00:00, 9292.28 examples/s]
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 151643}.
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+ 50%|█████     | 1/2 [00:02<00:02,  2.12s/it]
+                                             
+
+ 50%|█████     | 1/2 [00:02<00:02,  2.12s/it]
+100%|██████████| 2/2 [00:03<00:00,  1.56s/it]
+                                             
+
+100%|██████████| 2/2 [00:03<00:00,  1.56s/it]
+                                             
+
+100%|██████████| 2/2 [00:03<00:00,  1.56s/it]
+100%|██████████| 2/2 [00:03<00:00,  1.64s/it]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+exit 0
+smoke report valid at /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/smoke/run_report.json
+
+== cleanup ==
+removed scratch /tmp/sft-loop-verify-cpu-linux-seed0
+evidence remains at /workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0 (20 files)
+{
+  "run_id": "cpu-linux-seed0",
+  "elapsed_s": 51.399,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 0
+    },
+    {
+      "step": "unsupported",
+      "exit": 0
+    },
+    {
+      "step": "smoke",
+      "exit": 0
+    },
+    {
+      "step": "cleanup",
+      "exit": 0
+    }
+  ],
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/cpu-linux-seed0",
+  "exit": 0
+}

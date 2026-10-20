@@ -1,0 +1,24 @@
+{
+  "kind": "plumbing_smoke_not_quality",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "seed": 0,
+  "split": "held-out uppercase-word-v1 eval words, n=8, exact_match, greedy do_sample=False",
+  "max_steps": 2,
+  "lora_r": 8,
+  "dtype": "float32",
+  "attn_implementation": "eager",
+  "device_requested": "cpu",
+  "hardware": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "torch": "2.14.1+cpu",
+    "cuda": false,
+    "mps": false,
+    "cpu_count": 4,
+    "ram_bytes": 16780574720
+  },
+  "note": "before/after exact_match values from this run are plumbing checks that the TRL+PEFT train and eval functions ran on CPU. They are not quality results and are not an MPS or CUDA scored path. Schema device labels mps and cuda are omitted on purpose.",
+  "elapsed_s": 28.573,
+  "exit": 0
+}

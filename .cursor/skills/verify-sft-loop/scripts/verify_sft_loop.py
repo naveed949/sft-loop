@@ -461,7 +461,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
         if report.get("status") != "unsupported" or report.get("weight_change_claimed") is not False:
             failed = True
             append_log(log, f"{path} is not a fail-closed unsupported report\n")
-        if "before" in report or "after" in report or "task_score" in json.dumps(report):
+        if "before" in report or "after" in report or "task_score" in report:
             failed = True
             append_log(log, f"{path} invented metrics\n")
     write_json(evidence.parent / "unsupported-validation.json", validations)
