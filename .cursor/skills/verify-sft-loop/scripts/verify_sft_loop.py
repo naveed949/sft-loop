@@ -183,22 +183,53 @@ def hardware_probe(py: str, cwd: Path, env: dict[str, str]) -> dict[str, Any]:
     return json.loads(completed.stdout)
 
 
+def _create_venv(root: Path, log: TextIO | None) -> int:
+    target = root / ".venv"
+    created = subprocess.run(
+        [sys.executable, "-m", "venv", str(target)],
+        cwd=root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    append_log(log, created.stdout or "")
+    append_log(log, created.stderr or "")
+    if created.returncode == 0 and venv_python(root).is_file():
+        return 0
+    append_log(log, "stdlib venv failed. falling back to pip virtualenv.\n")
+    shutil.rmtree(target, ignore_errors=True)
+    bootstrap = subprocess.run(
+        [sys.executable, "-m", "pip", "install", "--user", "virtualenv"],
+        cwd=root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    append_log(log, bootstrap.stdout or "")
+    append_log(log, bootstrap.stderr or "")
+    if bootstrap.returncode != 0:
+        return bootstrap.returncode
+    created = subprocess.run(
+        [sys.executable, "-m", "virtualenv", str(target)],
+        cwd=root,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    append_log(log, created.stdout or "")
+    append_log(log, created.stderr or "")
+    if created.returncode != 0 or not venv_python(root).is_file():
+        append_log(log, "virtualenv create failed\n")
+        return created.returncode or 1
+    return 0
+
+
 def cmd_install(root: Path, log: TextIO | None) -> int:
-    py_venv = venv_python(root)
-    if not py_venv.is_file():
-        created = subprocess.run(
-            [sys.executable, "-m", "venv", str(root / ".venv")],
-            cwd=root,
-            check=False,
-            text=True,
-            capture_output=True,
-        )
-        append_log(log, created.stdout or "")
-        append_log(log, created.stderr or "")
-        if created.returncode != 0:
-            append_log(log, "venv create failed\n")
-            return created.returncode
-    py = str(py_venv)
+    if not venv_python(root).is_file():
+        code = _create_venv(root, log)
+        if code != 0:
+            return code
+    py = str(venv_python(root))
     env = base_env(root)
     steps = [
         [py, "-m", "pip", "install", "-U", "pip"],

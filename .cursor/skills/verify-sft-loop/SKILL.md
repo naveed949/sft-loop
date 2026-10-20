@@ -27,7 +27,7 @@ python3 -m venv .venv
 
 Default `VERIFY_RUN_ID` is `cpu-linux-seed0`. Ready means `doctor` exits 0, `.venv/bin/python` exists, `schema/run_report.schema.json` exists, and `doctor.json` shows `cuda=false` and `mps=false`.
 
-Install uses the CPU PyTorch wheel index, then the pins in `pyproject.toml` (`jsonschema`, `pytest`, `transformers`, `accelerate`, `datasets`, `peft`, `trl==0.24.0`) and `pip install -e .`. It does not install `[unsloth]`.
+Install uses the CPU PyTorch wheel index, then the pins in `pyproject.toml` (`jsonschema`, `pytest`, `transformers`, `accelerate`, `datasets`, `peft`, `trl==0.24.0`) and `pip install -e .`. It does not install `[unsloth]`. If `python3 -m venv` lacks `ensurepip` (Debian images without `python3-venv`), install falls back to `python3 -m pip install --user virtualenv` and `python3 -m virtualenv .venv`.
 
 Teardown is `scripts/verify cleanup --run-id "$VERIFY_RUN_ID"`. Cleanup deletes `/tmp/sft-loop-verify-$VERIFY_RUN_ID` only. It does not delete `.venv`, `hf_cache/`, or evidence.
 
