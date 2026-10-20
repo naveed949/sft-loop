@@ -5,7 +5,7 @@ Four CPU quantization arms on one pinned model share one seed, one held-out spli
 ## Sub-features
 
 - `quant-fp32` is the CPU float32 baseline for `Qwen/Qwen2.5-1.5B-Instruct`.
-- `quant-int8` is post-training dynamic int8 on Linear layers.
+- `quant-int8` is per-tensor symmetric dynamic PTQ (`default_dynamic_qconfig`) on every `nn.Linear`, including `lm_head`.
 - `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8.
 - `quant-nf4` is bitsandbytes NF4. On this CPU VM it is `unsupported`.
 - `quant-table` is the README region generated from `runs/quant/comparison.json`.
@@ -39,3 +39,4 @@ Preconditions:
 - Torch 2.14 ONNX export needs `onnxscript`. A missing module is `dependency_missing`. Export that dies after `model.onnx.data` is written is `oom`.
 - Do not write quant output into `runs/phase3/`.
 - `verify quant` does not reload the 1.5B weights. That is `python -m sft_loop.quant run`.
+- scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass (`min_new_tokens == max_new_tokens == 8`). Do not treat scored emitted tokens / scored wall as matched throughput.

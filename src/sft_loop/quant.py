@@ -34,7 +34,9 @@ THREADS = 1
 DOCUMENT_KIND = "quant-comparison"
 PROJECTION_KIND = "quant-arm-projection"
 METRIC_ROLE = "task_score_not_safety"
-ARM_BUDGET_S = 3600
+ARM_BUDGET_S = 7200
+DECODE_NEW_TOKENS = 8
+IGNORE_INDEX = -100
 NF4_CUDA_DETAIL = (
     "NF4 needs CUDA. torch.cuda.is_available is false on this host. "
     "No NF4 numbers were produced. " + REFUSAL_SENTENCE
@@ -55,6 +57,7 @@ __all__ = [
     "tracked_relpaths",
     "assert_tracked_quant_file",
     "paired_difference",
+    "apply_prompt_mask",
 ]
 
 
@@ -132,7 +135,12 @@ def load_protocol(*, revision: str = PINNED_REVISION, seed: int = 0) -> dict[str
         "split_sha256": sha256_text(heldout_path().read_text(encoding="utf-8")),
         "item_ids": list(item_ids),
         "grader": "exact_match",
-        "decode": {"do_sample": False, "max_new_tokens": 8},
+        "decode": {"do_sample": False, "max_new_tokens": DECODE_NEW_TOKENS},
+        "throughput_decode": {
+            "do_sample": False,
+            "min_new_tokens": DECODE_NEW_TOKENS,
+            "max_new_tokens": DECODE_NEW_TOKENS,
+        },
         "threads": THREADS,
         "warmup_iters": WARMUP_ITERS,
         "repeats_per_item": REPEATS_PER_ITEM,
@@ -185,17 +193,25 @@ def _bootstrap_ci(values: list[float], seed: int) -> tuple[float, float]:
     return _round(means[low_i]), _round(means[high_i])
 
 
+def apply_prompt_mask(labels: list[int], prefix_len: int) -> list[int]:
+    if prefix_len < 0 or prefix_len > len(labels):
+        raise ValueError("prefix_len is outside the label sequence")
+    return [IGNORE_INDEX] * prefix_len + list(labels[prefix_len:])
+
+
 def _summarize_items(items: list[dict[str, Any]]) -> dict[str, float]:
     correct = [1.0 if row["correct"] else 0.0 for row in items]
     latencies = [float(row["latency_ms"]) for row in items]
-    tokens = sum(int(row["generated_tokens"]) for row in items)
-    seconds = sum(float(row["latency_ms"]) for row in items) / 1000.0
+    scored_tokens = [float(row["generated_tokens"]) for row in items]
+    decode_tokens = sum(int(row["decode_generated_tokens"]) for row in items)
+    decode_seconds = sum(float(row["decode_latency_ms"]) for row in items) / 1000.0
     return {
         "task_score": _round(_mean(correct)),
         "task_score_se": _round(_se(correct)),
         "latency_p50_ms": _round(_percentile_nearest(latencies, 0.5)),
         "latency_p95_ms": _round(_percentile_nearest(latencies, 0.95)),
-        "tokens_per_s": _round(tokens / seconds if seconds else 0.0),
+        "mean_generated_tokens": _round(_mean(scored_tokens)),
+        "decode_tokens_per_s": _round(decode_tokens / decode_seconds if decode_seconds else 0.0),
     }
 
 
@@ -204,6 +220,10 @@ def _check_item_alignment(protocol: dict[str, Any], items: list[dict[str, Any]])
     got = [row["item_id"] for row in items]
     if got != expected:
         raise ValueError("item rows must equal protocol.item_ids in order")
+    expected_decode = int(protocol["throughput_decode"]["max_new_tokens"])
+    for row in items:
+        if int(row["decode_generated_tokens"]) != expected_decode:
+            raise ValueError("decode pass must emit a fixed token count")
 
 
 def measured_arm(
@@ -268,7 +288,9 @@ def paired_difference(
     score_vals = []
     latency_vals = []
     nll_vals = []
+    sequence_nll_vals = []
     have_nll = True
+    have_sequence = True
     for left, right in zip(fp32["items"], int8["items"]):
         if left["item_id"] != right["item_id"]:
             raise ValueError("paired item ids drifted")
@@ -278,8 +300,10 @@ def paired_difference(
             have_nll = False
         else:
             nll_vals.append(float(right["nll"]) - float(left["nll"]))
-    fp32_tps = float(_summarize_items(fp32["items"])["tokens_per_s"])
-    int8_tps = float(_summarize_items(int8["items"])["tokens_per_s"])
+        if "sequence_nll" not in left or "sequence_nll" not in right:
+            have_sequence = False
+        else:
+            sequence_nll_vals.append(float(right["sequence_nll"]) - float(left["sequence_nll"]))
     low, high = _bootstrap_ci(score_vals, int(protocol["seed"]))
     outcome = {
         "kind": "paired",
@@ -292,7 +316,8 @@ def paired_difference(
         "latency_ms_delta_se": _round(_se(latency_vals)),
         "nll_delta": _round(_mean(nll_vals)) if have_nll else None,
         "nll_delta_se": _round(_se(nll_vals)) if have_nll else None,
-        "tokens_per_s_ratio": _round(int8_tps / fp32_tps if fp32_tps else 0.0),
+        "sequence_nll_delta": _round(_mean(sequence_nll_vals)) if have_sequence else None,
+        "sequence_nll_delta_se": _round(_se(sequence_nll_vals)) if have_sequence else None,
         "bootstrap_draws": BOOTSTRAP_DRAWS,
         "bootstrap_seed": int(protocol["seed"]),
         "method": "paired-item-mean",
@@ -341,6 +366,8 @@ def assemble_comparison(
                 "latency_p50_ms",
                 "latency_p95_ms",
                 "tokens_per_s",
+                "mean_generated_tokens",
+                "decode_tokens_per_s",
             ):
                 if banned in arm:
                     raise ValueError(f"unsupported {key} has {banned}")
@@ -490,10 +517,13 @@ def render_table(comparison: dict[str, Any]) -> str:
         f"Fixture `{protocol['split_id']}` sha256 `{protocol['split_sha256']}` "
         f"revision `{protocol['revision']}` seed `{protocol['seed']}` "
         f"items `{len(protocol['item_ids'])}` threads `{protocol['threads']}` "
-        f"warmup `{protocol['warmup_iters']}` repeats `{protocol['repeats_per_item']}`.",
+        f"warmup `{protocol['warmup_iters']}` repeats `{protocol['repeats_per_item']}` "
+        f"scored decode greedy `max_new_tokens {protocol['decode']['max_new_tokens']}` "
+        f"throughput decode `min_new_tokens={protocol['throughput_decode']['min_new_tokens']}` "
+        f"`max_new_tokens={protocol['throughput_decode']['max_new_tokens']}`.",
         "",
-        "| precision | status | on-disk bytes | peak rss bytes | p50 ms | p95 ms | tokens/s | exact match | n | limiter |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| precision | status | on-disk bytes | peak rss bytes | scored p50 ms | scored p95 ms | mean generated tokens | decode tokens/s (min=max=8) | exact match | n | limiter |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for precision in Precision:
         arm = comparison["arms"][precision.value]
@@ -501,13 +531,14 @@ def render_table(comparison: dict[str, Any]) -> str:
             lines.append(
                 f"| {precision.value} | unsupported | unsupported | unsupported | "
                 f"unsupported | unsupported | unsupported | unsupported | unsupported | "
-                f"{arm['reason']} |"
+                f"unsupported | {arm['reason']} |"
             )
             continue
         lines.append(
             f"| {precision.value} | measured | {arm['on_disk_bytes']} | {arm['peak_rss_bytes']} | "
-            f"{arm['latency_p50_ms']} | {arm['latency_p95_ms']} | {arm['tokens_per_s']} | "
-            f"{arm['task_score']} | {len(arm['items'])} | {arm['limiter']['kind']} |"
+            f"{arm['latency_p50_ms']} | {arm['latency_p95_ms']} | {arm['mean_generated_tokens']} | "
+            f"{arm['decode_tokens_per_s']} | {arm['task_score']} | {len(arm['items'])} | "
+            f"{arm['limiter']['kind']} |"
         )
     lines.extend(
         [
@@ -531,7 +562,8 @@ def render_table(comparison: dict[str, Any]) -> str:
         lines.append("")
         lines.append(
             f"Paired method `{outcome['method']}` on the same {outcome['n']} items. "
-            "A score delta whose interval covers 0 is no measurable difference."
+            "A score delta whose interval covers 0 is no measurable difference. "
+            "scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass."
         )
     return "\n".join(lines) + "\n"
 
@@ -558,10 +590,22 @@ def splice_table(readme: Path, markdown: str) -> None:
     readme.write_text(before + start + "\n" + markdown + end + after, encoding="utf-8")
 
 
+def _cpu_model() -> str:
+    try:
+        for line in Path("/proc/cpuinfo").read_text(encoding="utf-8").splitlines():
+            if line.lower().startswith("model name"):
+                name = line.split(":", 1)[1].strip()
+                if name:
+                    return name[:200]
+    except OSError:
+        pass
+    return (platform.processor() or platform.machine() or "unknown")[:200]
+
+
 def probe_hardware() -> dict[str, Any]:
     ram = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
     return {
-        "cpu_model": platform.processor() or platform.machine(),
+        "cpu_model": _cpu_model(),
         "logical_cpus": os.cpu_count() or 1,
         "ram_bytes": int(ram),
         "cuda": False,
@@ -654,14 +698,33 @@ def _commit(out_dir: Path, comparison: dict[str, Any]) -> None:
         os.replace(tmp, dest)
 
 
-def run_comparison(*, out_dir: Path | None = None) -> dict[str, Any]:
+def _reuse_unsupported(dest: Path, precision: Precision) -> dict[str, Any] | None:
+    path = dest / "comparison.json"
+    if not path.is_file():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        arm = payload["arms"][precision.value]
+    except (OSError, KeyError, json.JSONDecodeError, TypeError):
+        return None
+    if arm.get("status") == "unsupported" and arm.get("precision") == precision.value:
+        return arm
+    return None
+
+
+def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = True) -> dict[str, Any]:
     dest = out_dir if out_dir is not None else repo_root() / "runs" / "quant"
     protocol = load_protocol()
     hardware = probe_hardware()
+    onnx = (
+        _reuse_unsupported(dest, Precision.ONNX_INT8)
+        if reuse_unsupported
+        else None
+    )
     arms = {
         Precision.FP32.value: _run_child(Precision.FP32, protocol),
         Precision.INT8.value: _run_child(Precision.INT8, protocol),
-        Precision.ONNX_INT8.value: _run_child(Precision.ONNX_INT8, protocol),
+        Precision.ONNX_INT8.value: onnx if onnx is not None else _run_child(Precision.ONNX_INT8, protocol),
         Precision.NF4.value: probe_nf4(),
     }
     comparison = assemble_comparison(protocol, arms, hardware)
@@ -787,7 +850,35 @@ def _child_main(precision: str, protocol_path: Path, out_path: Path) -> int:
     return 0
 
 
-def _measure_prepared(protocol: dict[str, Any], generate, nll_fn, *, precision: Precision, on_disk_bytes: int, libraries: dict[str, str]) -> dict[str, Any]:
+def _repeat_generate(generate, prompt: str, *, warmup: int, repeats: int) -> tuple[str, int, float]:
+    latencies = []
+    prediction = None
+    tokens = 0
+    for step in range(warmup + repeats):
+        text, n_tokens, elapsed_ms = generate(prompt)
+        if step < warmup:
+            continue
+        latencies.append(elapsed_ms)
+        if prediction is None:
+            prediction = text
+            tokens = n_tokens
+        elif text != prediction:
+            raise RuntimeError("greedy prediction drifted across repeats")
+        elif n_tokens != tokens:
+            raise RuntimeError("generated token count drifted across repeats")
+    return prediction or "", int(tokens), _round(_mean(latencies))
+
+
+def _measure_prepared(
+    protocol: dict[str, Any],
+    generate,
+    decode_generate,
+    nll_fn,
+    *,
+    precision: Precision,
+    on_disk_bytes: int,
+    libraries: dict[str, str],
+) -> dict[str, Any]:
     import resource
     import time
 
@@ -796,33 +887,32 @@ def _measure_prepared(protocol: dict[str, Any], generate, nll_fn, *, precision: 
     cpu0 = time.process_time()
     items = []
     peak = 0
+    warmup = int(protocol["warmup_iters"])
+    repeats = int(protocol["repeats_per_item"])
     for item_id in protocol["item_ids"]:
         prompt = prompt_for(item_id)
         target = target_for(item_id)
-        latencies = []
-        prediction = None
-        tokens = 0
-        for step in range(protocol["warmup_iters"] + protocol["repeats_per_item"]):
-            text, n_tokens, elapsed_ms = generate(prompt)
-            if step < protocol["warmup_iters"]:
-                continue
-            latencies.append(elapsed_ms)
-            if prediction is None:
-                prediction = text
-                tokens = n_tokens
-            elif text != prediction:
-                raise RuntimeError("greedy prediction drifted across repeats")
+        prediction, tokens, latency_ms = _repeat_generate(
+            generate, prompt, warmup=warmup, repeats=repeats
+        )
+        _, decode_tokens, decode_latency_ms = _repeat_generate(
+            decode_generate, prompt, warmup=warmup, repeats=repeats
+        )
         from sft_loop.task import prediction_token
 
-        token = prediction_token(prediction or "")
+        token = prediction_token(prediction)
         row: dict[str, Any] = {
             "item_id": item_id,
             "correct": token == target,
-            "latency_ms": _round(_mean(latencies)),
+            "latency_ms": latency_ms,
             "generated_tokens": int(tokens),
+            "decode_latency_ms": decode_latency_ms,
+            "decode_generated_tokens": int(decode_tokens),
         }
         if nll_fn is not None:
-            row["nll"] = _round(float(nll_fn(prompt, target)))
+            target_nll, sequence_nll = nll_fn(prompt, target)
+            row["nll"] = _round(float(target_nll))
+            row["sequence_nll"] = _round(float(sequence_nll))
         items.append(row)
         peak = max(peak, _rss_bytes())
     wall = time.perf_counter() - start
@@ -887,7 +977,7 @@ def _load_causal_lm(protocol: dict[str, Any]):
     return torch, tokenizer, model
 
 
-def _generate_fn(torch, tokenizer, model):
+def _generate_fn(torch, tokenizer, model, *, min_new_tokens: int | None = None):
     def generate(prompt: str) -> tuple[str, int, float]:
         import time
 
@@ -895,14 +985,16 @@ def _generate_fn(torch, tokenizer, model):
         text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         encoded = tokenizer(text, return_tensors="pt")
         encoded = {key: value.to(model.device) for key, value in encoded.items()}
+        kwargs = {
+            "max_new_tokens": DECODE_NEW_TOKENS,
+            "do_sample": False,
+            "pad_token_id": tokenizer.pad_token_id,
+        }
+        if min_new_tokens is not None:
+            kwargs["min_new_tokens"] = min_new_tokens
         start = time.perf_counter()
         with torch.no_grad():
-            out = model.generate(
-                **encoded,
-                max_new_tokens=8,
-                do_sample=False,
-                pad_token_id=tokenizer.pad_token_id,
-            )
+            out = model.generate(**encoded, **kwargs)
         elapsed = (time.perf_counter() - start) * 1000.0
         new_tokens = out[0, encoded["input_ids"].shape[1] :]
         decoded = tokenizer.decode(new_tokens, skip_special_tokens=True)
@@ -912,15 +1004,30 @@ def _generate_fn(torch, tokenizer, model):
 
 
 def _nll_fn(torch, tokenizer, model):
-    def nll(prompt: str, target: str) -> float:
+    def nll(prompt: str, target: str) -> tuple[float, float]:
+        F = torch.nn.functional
+
         messages = [{"role": "user", "content": prompt}]
-        text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        text = text + target
-        encoded = tokenizer(text, return_tensors="pt")
+        prefix = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        prefix_len = tokenizer(prefix, return_tensors="pt")["input_ids"].shape[1]
+        encoded = tokenizer(prefix + target, return_tensors="pt")
         labels = encoded["input_ids"].clone()
+        target_labels = labels.clone()
+        target_labels[:, :prefix_len] = IGNORE_INDEX
         with torch.no_grad():
-            loss = model(input_ids=encoded["input_ids"], labels=labels).loss
-        return float(loss.item())
+            logits = model(input_ids=encoded["input_ids"]).logits
+        shift_logits = logits[:, :-1, :].contiguous()
+        sequence_loss = F.cross_entropy(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            labels[:, 1:].contiguous().view(-1),
+            ignore_index=IGNORE_INDEX,
+        )
+        target_loss = F.cross_entropy(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            target_labels[:, 1:].contiguous().view(-1),
+            ignore_index=IGNORE_INDEX,
+        )
+        return float(target_loss.item()), float(sequence_loss.item())
 
     return nll
 
@@ -946,6 +1053,7 @@ def _measure_fp32(protocol: dict[str, Any]) -> dict[str, Any]:
     return _measure_prepared(
         protocol,
         _generate_fn(torch_mod, tokenizer, model),
+        _generate_fn(torch_mod, tokenizer, model, min_new_tokens=DECODE_NEW_TOKENS),
         _nll_fn(torch_mod, tokenizer, model),
         precision=Precision.FP32,
         on_disk_bytes=max(_snapshot_bytes(protocol), 1),
@@ -962,7 +1070,11 @@ def _measure_int8(protocol: dict[str, Any]) -> dict[str, Any]:
     from importlib.metadata import version
 
     torch_mod, tokenizer, model = _load_causal_lm(protocol)
-    model = torch.ao.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
+    model = torch.ao.quantization.quantize_dynamic(
+        model,
+        {torch.nn.Linear: torch.ao.quantization.default_dynamic_qconfig},
+        dtype=torch.qint8,
+    )
     model.eval()
     work = Path(os.environ.get("TMPDIR", "/tmp")) / "sft-quant-int8.pt"
     torch.save(model.state_dict(), work)
@@ -971,6 +1083,7 @@ def _measure_int8(protocol: dict[str, Any]) -> dict[str, Any]:
     return _measure_prepared(
         protocol,
         _generate_fn(torch_mod, tokenizer, model),
+        _generate_fn(torch_mod, tokenizer, model, min_new_tokens=DECODE_NEW_TOKENS),
         _nll_fn(torch_mod, tokenizer, model),
         precision=Precision.INT8,
         on_disk_bytes=size,
@@ -978,6 +1091,7 @@ def _measure_int8(protocol: dict[str, Any]) -> dict[str, Any]:
             "kind": "torch",
             "torch": torch.__version__,
             "transformers": version("transformers"),
+            "qconfig": "default_dynamic_qconfig",
         },
     )
 
@@ -1055,39 +1169,46 @@ def _measure_onnx(protocol: dict[str, Any]) -> dict[str, Any]:
     size = max(int8_path.stat().st_size, 1)
     sess = ort.InferenceSession(str(int8_path), providers=["CPUExecutionProvider"])
 
-    def generate(prompt: str) -> tuple[str, int, float]:
-        text = tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}],
-            tokenize=False,
-            add_generation_prompt=True,
-        )
-        encoded = tokenizer(text, return_tensors="np")
-        input_ids = encoded["input_ids"]
-        attention_mask = encoded["attention_mask"]
-        start = time.perf_counter()
-        new_tokens: list[int] = []
-        for _ in range(int(protocol["decode"]["max_new_tokens"])):
-            logits = sess.run(
-                ["logits"],
-                {"input_ids": input_ids, "attention_mask": attention_mask},
-            )[0]
-            next_id = int(np.argmax(logits[0, -1]))
-            new_tokens.append(next_id)
-            input_ids = np.concatenate([input_ids, [[next_id]]], axis=1)
-            attention_mask = np.concatenate([attention_mask, [[1]]], axis=1)
-            if tokenizer.eos_token_id is not None and next_id == int(tokenizer.eos_token_id):
-                break
-        elapsed = (time.perf_counter() - start) * 1000.0
-        decoded = tokenizer.decode(new_tokens, skip_special_tokens=True)
-        return decoded, len(new_tokens), elapsed
+    def make_generate(*, stop_on_eos: bool):
+        def generate(prompt: str) -> tuple[str, int, float]:
+            text = tokenizer.apply_chat_template(
+                [{"role": "user", "content": prompt}],
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+            encoded = tokenizer(text, return_tensors="np")
+            input_ids = encoded["input_ids"]
+            attention_mask = encoded["attention_mask"]
+            start = time.perf_counter()
+            new_tokens: list[int] = []
+            for _ in range(DECODE_NEW_TOKENS):
+                logits = sess.run(
+                    ["logits"],
+                    {"input_ids": input_ids, "attention_mask": attention_mask},
+                )[0]
+                next_id = int(np.argmax(logits[0, -1]))
+                new_tokens.append(next_id)
+                input_ids = np.concatenate([input_ids, [[next_id]]], axis=1)
+                attention_mask = np.concatenate([attention_mask, [[1]]], axis=1)
+                if (
+                    stop_on_eos
+                    and tokenizer.eos_token_id is not None
+                    and next_id == int(tokenizer.eos_token_id)
+                ):
+                    break
+            elapsed = (time.perf_counter() - start) * 1000.0
+            decoded = tokenizer.decode(new_tokens, skip_special_tokens=True)
+            return decoded, len(new_tokens), elapsed
 
-    def nll(prompt: str, target: str) -> float:
+        return generate
+
+    def nll(prompt: str, target: str) -> tuple[float, float]:
         prefix = tokenizer.apply_chat_template(
             [{"role": "user", "content": prompt}],
             tokenize=False,
             add_generation_prompt=True,
         )
-        prefix_len = tokenizer(prefix, return_tensors="np")["input_ids"].shape[1]
+        prefix_ids = tokenizer(prefix, return_tensors="np")["input_ids"][0].tolist()
         full = tokenizer(prefix + target, return_tensors="np")
         logits = sess.run(
             ["logits"],
@@ -1096,18 +1217,25 @@ def _measure_onnx(protocol: dict[str, Any]) -> dict[str, Any]:
                 "attention_mask": full["attention_mask"],
             },
         )[0]
-        target_ids = full["input_ids"][0, prefix_len:]
-        if target_ids.size == 0:
-            return 0.0
-        pred = logits[0, prefix_len - 1 : prefix_len - 1 + target_ids.shape[0]]
+        label_ids = full["input_ids"][0].tolist()
+        target_labels = apply_prompt_mask(label_ids, len(prefix_ids))
+        pred = logits[0, :-1]
+        gold = label_ids[1:]
+        masked = target_labels[1:]
         shifted = pred - pred.max(axis=-1, keepdims=True)
         log_probs = shifted - np.log(np.exp(shifted).sum(axis=-1, keepdims=True))
-        return float(-log_probs[np.arange(target_ids.shape[0]), target_ids].mean())
+        sequence = float(-log_probs[np.arange(len(gold)), gold].mean()) if gold else 0.0
+        keep = [i for i, lab in enumerate(masked) if lab != IGNORE_INDEX]
+        target_nll = (
+            float(-log_probs[keep, np.array(gold)[keep]].mean()) if keep else 0.0
+        )
+        return target_nll, sequence
 
     try:
         return _measure_prepared(
             protocol,
-            generate,
+            make_generate(stop_on_eos=True),
+            make_generate(stop_on_eos=False),
             nll,
             precision=Precision.ONNX_INT8,
             on_disk_bytes=size,
@@ -1128,6 +1256,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     run = sub.add_parser("run")
     run.add_argument("--out", type=Path, default=None)
+    run.add_argument("--no-reuse-unsupported", action="store_true")
     validate = sub.add_parser("validate")
     validate.add_argument("path", nargs="?", type=Path)
     validate.add_argument("--rewrite-projections", action="store_true")
@@ -1143,7 +1272,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "run":
-            run_comparison(out_dir=args.out)
+            run_comparison(
+                out_dir=args.out,
+                reuse_unsupported=not args.no_reuse_unsupported,
+            )
             return 0
         if args.command == "validate":
             path = args.path or repo_root() / "runs" / "quant" / "comparison.json"

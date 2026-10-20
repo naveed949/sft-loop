@@ -9,6 +9,7 @@ from sft_loop.quant import (
     PINNED_REVISION,
     Precision,
     UnsupportedReason,
+    apply_prompt_mask,
     assemble_comparison,
     canonical_dumps,
     load_item_ids,
@@ -22,6 +23,7 @@ from sft_loop.quant import (
     splice_table,
     tracked_relpaths,
     unsupported_arm,
+    _summarize_items,
 )
 from sft_loop.report import MODEL_ID, REFUSAL_SENTENCE, validate_report
 
@@ -61,6 +63,10 @@ def _items(correct_prefix: int, latency: float = 10.0) -> list[dict]:
                 "correct": index < correct_prefix,
                 "latency_ms": latency,
                 "generated_tokens": 1,
+                "decode_latency_ms": 8.0,
+                "decode_generated_tokens": 8,
+                "nll": 0.5,
+                "sequence_nll": 4.6,
             }
         )
     return rows
@@ -134,6 +140,9 @@ def test_paired_difference_is_owned_by_the_comparison():
     assert comparison["outcome"]["score_delta"] == pytest.approx((60 - 64) / n)
     assert comparison["outcome"]["n"] == n
     assert "paired-item-mean" in render_table(comparison)
+    assert "tokens_per_s_ratio" not in comparison["outcome"]
+    assert "decode tokens/s (min=max=8)" in render_table(comparison)
+    assert "mean generated tokens" in render_table(comparison)
     again = assemble_comparison(protocol, arms, _hardware())
     assert project_tree(comparison) == project_tree(again)
     fp32 = json.loads(project_tree(comparison)["runs/quant/fp32.json"])
@@ -247,6 +256,18 @@ def test_revision_is_the_pinned_sha():
     protocol = load_protocol()
     assert protocol["revision"] == PINNED_REVISION
     assert len(load_item_ids()) >= 100
+
+
+def test_prompt_mask_keeps_only_target_labels():
+    assert apply_prompt_mask([11, 12, 13, 14], 2) == [-100, -100, 13, 14]
+
+
+def test_decode_tokens_per_s_is_not_scored_emitted_tokens():
+    items = _items(10)
+    summary = _summarize_items(items)
+    assert "tokens_per_s" not in summary
+    assert summary["mean_generated_tokens"] == 1.0
+    assert summary["decode_tokens_per_s"] == 1000.0
 
 
 def test_heldout_is_disjoint_from_sft_splits():

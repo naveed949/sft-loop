@@ -44,6 +44,7 @@
         "item_ids",
         "grader",
         "decode",
+        "throughput_decode",
         "threads",
         "warmup_iters",
         "repeats_per_item",
@@ -69,6 +70,16 @@
           "required": ["do_sample", "max_new_tokens"],
           "properties": {
             "do_sample": { "const": false },
+            "max_new_tokens": { "const": 8 }
+          }
+        },
+        "throughput_decode": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["do_sample", "min_new_tokens", "max_new_tokens"],
+          "properties": {
+            "do_sample": { "const": false },
+            "min_new_tokens": { "const": 8 },
             "max_new_tokens": { "const": 8 }
           }
         },
@@ -100,7 +111,8 @@
         "transformers": { "type": "string", "minLength": 1 },
         "onnx": { "type": "string", "minLength": 1 },
         "onnxruntime": { "type": "string", "minLength": 1 },
-        "bitsandbytes": { "type": "string", "minLength": 1 }
+        "bitsandbytes": { "type": "string", "minLength": 1 },
+        "qconfig": { "type": "string", "minLength": 1 }
       }
     },
     "limiter": {
@@ -124,13 +136,23 @@
     "item_row": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["item_id", "correct", "latency_ms", "generated_tokens"],
+      "required": [
+        "item_id",
+        "correct",
+        "latency_ms",
+        "generated_tokens",
+        "decode_latency_ms",
+        "decode_generated_tokens"
+      ],
       "properties": {
         "item_id": { "type": "string", "pattern": "^[a-z]+$" },
         "correct": { "type": "boolean" },
         "latency_ms": { "type": "number", "minimum": 0 },
         "generated_tokens": { "type": "integer", "minimum": 0 },
-        "nll": { "type": "number" }
+        "decode_latency_ms": { "type": "number", "minimum": 0 },
+        "decode_generated_tokens": { "type": "integer", "minimum": 0 },
+        "nll": { "type": "number" },
+        "sequence_nll": { "type": "number" }
       }
     },
     "probe": {
@@ -158,7 +180,8 @@
         "task_score_se",
         "latency_p50_ms",
         "latency_p95_ms",
-        "tokens_per_s",
+        "mean_generated_tokens",
+        "decode_tokens_per_s",
         "raw_sha256"
       ],
       "properties": {
@@ -177,7 +200,8 @@
         "task_score_se": { "type": "number", "minimum": 0 },
         "latency_p50_ms": { "type": "number", "minimum": 0 },
         "latency_p95_ms": { "type": "number", "minimum": 0 },
-        "tokens_per_s": { "type": "number", "minimum": 0 },
+        "mean_generated_tokens": { "type": "number", "minimum": 0 },
+        "decode_tokens_per_s": { "type": "number", "minimum": 0 },
         "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
       }
     },
@@ -208,7 +232,9 @@
           { "required": ["task_score"] },
           { "required": ["latency_p50_ms"] },
           { "required": ["latency_p95_ms"] },
-          { "required": ["tokens_per_s"] }
+          { "required": ["tokens_per_s"] },
+          { "required": ["mean_generated_tokens"] },
+          { "required": ["decode_tokens_per_s"] }
         ]
       }
     },
@@ -264,7 +290,8 @@
         "latency_ms_delta_se",
         "nll_delta",
         "nll_delta_se",
-        "tokens_per_s_ratio",
+        "sequence_nll_delta",
+        "sequence_nll_delta_se",
         "bootstrap_draws",
         "bootstrap_seed",
         "method"
@@ -280,7 +307,8 @@
         "latency_ms_delta_se": { "type": "number", "minimum": 0 },
         "nll_delta": { "type": ["number", "null"] },
         "nll_delta_se": { "type": ["number", "null"] },
-        "tokens_per_s_ratio": { "type": "number" },
+        "sequence_nll_delta": { "type": ["number", "null"] },
+        "sequence_nll_delta_se": { "type": ["number", "null"] },
         "bootstrap_draws": { "const": 1000 },
         "bootstrap_seed": { "type": "integer", "minimum": 0 },
         "method": { "const": "paired-item-mean" }
