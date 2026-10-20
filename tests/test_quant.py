@@ -1,5 +1,3 @@
-"""Quant comparison schema, pairing, projections, and NF4 fail-closed path."""
-
 from __future__ import annotations
 
 import json

@@ -608,16 +608,16 @@ def probe_nf4() -> dict[str, Any]:
                 "cuda_available": False,
             },
         )
-    try:
-        import bitsandbytes  # noqa: F401
-    except Exception as exc:
+    import importlib.util
+
+    if importlib.util.find_spec("bitsandbytes") is None:
         return unsupported_arm(
             precision=Precision.NF4,
             reason=UnsupportedReason.DEPENDENCY_MISSING,
             detail=NF4_DEP_DETAIL,
             probe={
-                "exception_type": type(exc).__name__,
-                "message": str(exc)[:200] or "bitsandbytes import failed",
+                "exception_type": "ModuleNotFoundError",
+                "message": "No module named 'bitsandbytes'",
                 "cuda_available": True,
             },
         )
@@ -985,7 +985,7 @@ def _measure_int8(protocol: dict[str, Any]) -> dict[str, Any]:
 def _measure_onnx(protocol: dict[str, Any]) -> dict[str, Any]:
     try:
         import numpy as np
-        import onnx  # noqa: F401
+        import onnx
         import onnxruntime as ort
         import torch
         from importlib.metadata import version
@@ -1115,7 +1115,7 @@ def _measure_onnx(protocol: dict[str, Any]) -> dict[str, Any]:
                 "kind": "onnx",
                 "torch": torch.__version__,
                 "transformers": version("transformers"),
-                "onnx": version("onnx"),
+                "onnx": onnx.__version__,
                 "onnxruntime": version("onnxruntime"),
             },
         )
