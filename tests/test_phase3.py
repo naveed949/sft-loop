@@ -37,6 +37,8 @@ from sft_loop.train import execute_train, main as train_main
 
 ROOT = Path(__file__).resolve().parents[1]
 PHASE3 = ROOT / "runs" / "phase3" / "unsupported.json"
+PHASE3_SCORED = ROOT / "runs" / "phase3" / "scored.json"
+PHASE3_PROOF = ROOT / "runs" / "phase3" / "proof"
 SRC = ROOT / "src"
 
 
@@ -130,11 +132,13 @@ def test_checked_in_phase3_report_matches_live_probe_and_has_no_uplift():
     assert "adaptiveSandboxQualified" not in json.dumps(checked)
 
 
-def test_runs_json_never_claims_weight_change_or_scores():
+def test_runs_json_unscored_reports_never_claim_weight_change_or_scores():
     reports = sorted((ROOT / "runs").rglob("*.json"))
     assert reports
     for path in reports:
         document = json.loads(path.read_text(encoding="utf-8"))
+        if path == PHASE3_SCORED or "status" not in document:
+            continue
         assert document["weight_change_claimed"] is False
         assert document["status"] in {"unsupported", "unscored"}
         assert "device" not in document
@@ -145,6 +149,20 @@ def test_runs_json_never_claims_weight_change_or_scores():
         assert "train_proof" not in document
         assert not _has_key(document, "task_score")
         assert "adaptiveSandboxQualified" not in json.dumps(document)
+
+
+def test_checked_in_scored_report_validates_against_proof():
+    document = json.loads(PHASE3_SCORED.read_text(encoding="utf-8"))
+    validate_report(document, proof_dir=PHASE3_PROOF)
+    assert document["status"] == "scored"
+    assert document["device"] == "mps"
+    assert document["backend"] == "trl-peft"
+    assert document["stack"]["unsloth"] == "unused"
+    assert document["weight_change_claimed"] is True
+    assert document["before"]["seed"] == document["after"]["seed"] == document["seed"]
+    assert document["metric_role"] == "task_score_not_safety"
+    assert document["task_id"] == TASK_ID
+    assert "adaptiveSandboxQualified" not in document
 
 
 def test_blocked_loop_does_not_call_train_or_eval():
@@ -473,8 +491,7 @@ def test_mps_flag_on_unavailable_device_does_not_label_or_score(capsys):
     assert "mps" in report["unsupported"]["detail"]
     assert REFUSAL_SENTENCE in report["unsupported"]["detail"]
     assert not _has_key(report, "task_score")
-    assert not (ROOT / "runs" / "phase3" / "scored.json").exists()
-    assert not (ROOT / "runs" / "phase3" / "proof" / "adapter_config.json").exists()
+    assert report != json.loads(PHASE3_SCORED.read_text(encoding="utf-8"))
 
 
 def test_peft_train_and_eval_sources_do_not_reference_unsloth():
@@ -614,6 +631,8 @@ def test_real_loop_labels_mps_from_resolved_backend(monkeypatch, tmp_path):
     assert report["before"]["seed"] == report["after"]["seed"] == 0
     assert report["metric_role"] == "task_score_not_safety"
     assert "adaptiveSandboxQualified" not in report
-    assert not (ROOT / "runs" / "phase3" / "scored.json").exists()
+    checked_scored = json.loads(PHASE3_SCORED.read_text(encoding="utf-8"))
+    assert report["run_id"] == checked_scored["run_id"]
+    assert report["before"] != checked_scored["before"]
     log_text = (tmp_path / "train_log.txt").read_text(encoding="utf-8")
     assert "unsloth" not in log_text.lower()
