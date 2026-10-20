@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import platform
 import shutil
@@ -194,6 +195,73 @@ def python_for(root: Path) -> str:
     if venv_usable(root):
         return str(venv_python(root))
     return sys.executable
+
+
+def _tensor_max_abs(value: Any) -> float:
+    if hasattr(value, "detach"):
+        return float(value.detach().float().abs().max().item())
+    import numpy as np
+
+    return float(np.abs(value).max())
+
+
+def _load_adapter_tensors(adapter_dir: Path) -> dict[str, Any]:
+    safe = adapter_dir / "adapter_model.safetensors"
+    bin_path = adapter_dir / "adapter_model.bin"
+    if safe.is_file():
+        from safetensors.torch import load_file
+
+        return dict(load_file(str(safe), device="cpu"))
+    if bin_path.is_file():
+        import torch
+
+        payload = torch.load(bin_path, map_location="cpu", weights_only=True)
+        if not isinstance(payload, dict):
+            raise RuntimeError("train_not_run: adapter_model.bin is not a state dict")
+        return payload
+    raise RuntimeError(f"train_not_run: no adapter weights under {adapter_dir}")
+
+
+def measure_lora_b(adapter_dir: Path) -> dict[str, Any]:
+    tensors = _load_adapter_tensors(adapter_dir)
+    keys = [key for key in tensors if "lora_B" in key]
+    max_abs = 0.0
+    n_nonzero = 0
+    for key in keys:
+        value = _tensor_max_abs(tensors[key])
+        if value > 0.0:
+            n_nonzero += 1
+        if value > max_abs:
+            max_abs = value
+    return {
+        "max_abs": max_abs,
+        "n_tensors": len(keys),
+        "n_nonzero": n_nonzero,
+        "keys": keys,
+    }
+
+
+def require_smoke_train(
+    *,
+    global_step: int,
+    train_loss: float,
+    max_steps: int,
+    lora_b: dict[str, Any],
+) -> None:
+    if not math.isfinite(float(train_loss)):
+        raise RuntimeError("train_not_run: train_loss is not finite")
+    if int(global_step) != int(max_steps):
+        raise RuntimeError(
+            f"train_not_run: global_step {global_step} != requested max_steps {max_steps}"
+        )
+    max_abs = float(lora_b.get("max_abs") or 0.0)
+    n_nonzero = int(lora_b.get("n_nonzero") or 0)
+    if n_nonzero < 1 or max_abs == 0.0:
+        raise RuntimeError(
+            "train_not_run: LoRA lora_B still at init "
+            f"(max_abs={max_abs}, n_nonzero={n_nonzero}, n_tensors={lora_b.get('n_tensors', 0)}). "
+            "delta W = B A and B starts at 0, so a zero B means the adapter did not update."
+        )
 
 
 def venv_usable(root: Path) -> bool:
@@ -627,11 +695,13 @@ def cmd_smoke(root: Path, log: TextIO | None) -> int:
         "lora_r": LORA_R,
         "dtype": "float32",
         "attn_implementation": "eager",
+        "lora_b_max_abs": None,
         "hardware": hardware,
         "note": (
             "CPU plumbing check only. Not a scored run report. "
             "device=cpu and backend=trl-peft are recorded here, not in schema/run_report.schema.json. "
-            "stack.unsloth is unused because this path is TRL+PEFT."
+            "stack.unsloth is unused because this path is TRL+PEFT. "
+            "Smoke fails unless train_loss is finite, global_step == max_steps, and a saved lora_B tensor is nonzero."
         ),
     }
     write_json(evidence / "plumbing.json", plumbing)
@@ -650,6 +720,8 @@ out_path = Path(sys.argv[3])
 fail_path = Path(sys.argv[4])
 model_id = sys.argv[5]
 revision = sys.argv[6] or None
+sys.path.insert(0, sys.argv[7])
+from verify_sft_loop import measure_lora_b, require_smoke_train
 
 from datasets import Dataset
 from peft import LoraConfig, PeftModel, get_peft_model
@@ -666,6 +738,9 @@ MAX_STEPS = 2
 MAX_SEQ_LENGTH = 128
 MAX_NEW_TOKENS = 8
 TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+global_step = 0
+train_loss = None
+lora_b = None
 
 
 def text_rows(tokenizer):
@@ -789,10 +864,15 @@ try:
     result = trainer.train()
     global_step = int(getattr(result, "global_step", 0) or 0)
     train_loss = float(getattr(result, "training_loss"))
-    if global_step < 1 or not math.isfinite(train_loss):
-        raise RuntimeError("train_not_run")
     model.save_pretrained(str(adapter_dir))
     tokenizer.save_pretrained(str(adapter_dir))
+    lora_b = measure_lora_b(adapter_dir)
+    require_smoke_train(
+        global_step=global_step,
+        train_loss=train_loss,
+        max_steps=MAX_STEPS,
+        lora_b=lora_b,
+    )
     config_src = adapter_dir / "adapter_config.json"
     shutil.copyfile(config_src, proof_dir / "adapter_config.json")
     log_history = list(getattr(trainer.state, "log_history", []) or [])
@@ -804,6 +884,8 @@ try:
         f"train_loss={format(train_loss, '.8g')}",
         f"max_steps={MAX_STEPS}",
         f"lora_r={LORA_R}",
+        f"lora_b_max_abs={format(lora_b['max_abs'], '.8g')}",
+        f"lora_b_nonzero={lora_b['n_nonzero']}",
         "device=cpu",
         "backend=trl-peft",
         f"log_history={json.dumps(log_history, separators=(',', ':'), sort_keys=True)}",
@@ -827,6 +909,7 @@ try:
         "seed": SEED,
         "before": before,
         "after": after,
+        "lora_b_max_abs": lora_b["max_abs"],
         "train": {
             "trainer": "trl.SFTTrainer",
             "global_step": global_step,
@@ -835,16 +918,23 @@ try:
             "max_steps": MAX_STEPS,
             "device": "cpu",
             "backend": "trl-peft",
+            "lora_b_max_abs": lora_b["max_abs"],
+            "lora_b_tensors": lora_b["n_tensors"],
+            "lora_b_nonzero": lora_b["n_nonzero"],
         },
     }
     out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print("smoke-plumbing")
 except Exception as exc:
-    fail_path.write_text(
-        json.dumps({"type": type(exc).__name__, "error": str(exc), "trace": traceback.format_exc()}, indent=2)
-        + "\n",
-        encoding="utf-8",
-    )
+    fail_payload = {
+        "type": type(exc).__name__,
+        "error": str(exc),
+        "trace": traceback.format_exc(),
+        "global_step": global_step,
+        "train_loss": train_loss,
+        "lora_b": lora_b,
+    }
+    fail_path.write_text(json.dumps(fail_payload, indent=2) + "\n", encoding="utf-8")
     raise
 """
     fail_path = evidence / "smoke-exception.json"
@@ -861,6 +951,7 @@ except Exception as exc:
             str(fail_path),
             model_id,
             revision or "",
+            str(SKILL_DIR / "scripts"),
         ],
         cwd=root,
         env=env,
@@ -876,6 +967,14 @@ except Exception as exc:
         plumbing["stack"] = {"unsloth": "unused", "trl": "0.24.0", "method": "sft-lora"}
         if fail_path.is_file():
             plumbing["error"] = json.loads(fail_path.read_text(encoding="utf-8"))
+            err = plumbing["error"]
+            if isinstance(err, dict):
+                plumbing["global_step"] = err.get("global_step")
+                plumbing["train_loss"] = err.get("train_loss")
+                lora_b = err.get("lora_b") or {}
+                plumbing["lora_b_max_abs"] = lora_b.get("max_abs")
+                plumbing["lora_b_tensors"] = lora_b.get("n_tensors")
+                plumbing["lora_b_nonzero"] = lora_b.get("n_nonzero")
         write_json(out_path, plumbing)
         try:
             assert_smoke_not_scored(evidence)

@@ -140,6 +140,87 @@ def test_committed_smoke_evidence_is_not_scored():
             assert document.get("weight_change_claimed") is not True
 
 
+def test_smoke_fails_when_global_step_lt_max_steps():
+    with pytest.raises(RuntimeError, match="global_step 1 != requested max_steps 2"):
+        verify.require_smoke_train(
+            global_step=1,
+            train_loss=1.25,
+            max_steps=verify.MAX_STEPS,
+            lora_b={"max_abs": 3e-4, "n_nonzero": 8, "n_tensors": 8},
+        )
+
+
+def test_smoke_fails_when_lora_b_is_zero(tmp_path):
+    torch = pytest.importorskip("torch")
+    adapter = tmp_path / "adapter"
+    adapter.mkdir()
+    torch.save(
+        {
+            "base_model.model.layers.0.self_attn.q_proj.lora_A.weight": torch.randn(8, 16),
+            "base_model.model.layers.0.self_attn.q_proj.lora_B.weight": torch.zeros(16, 8),
+        },
+        adapter / "adapter_model.bin",
+    )
+    stats = verify.measure_lora_b(adapter)
+    assert stats["n_tensors"] == 1
+    assert stats["max_abs"] == 0.0
+    assert stats["n_nonzero"] == 0
+    with pytest.raises(RuntimeError, match="lora_B still at init"):
+        verify.require_smoke_train(
+            global_step=verify.MAX_STEPS,
+            train_loss=1.25,
+            max_steps=verify.MAX_STEPS,
+            lora_b=stats,
+        )
+
+
+def test_require_smoke_train_accepts_nonzero_lora_b_and_full_steps(tmp_path):
+    torch = pytest.importorskip("torch")
+    adapter = tmp_path / "adapter"
+    adapter.mkdir()
+    weights = torch.zeros(16, 8)
+    weights[0, 0] = 3e-4
+    torch.save(
+        {"layers.0.self_attn.q_proj.lora_B.weight": weights},
+        adapter / "adapter_model.bin",
+    )
+    stats = verify.measure_lora_b(adapter)
+    assert stats["max_abs"] > 0.0
+    verify.require_smoke_train(
+        global_step=verify.MAX_STEPS,
+        train_loss=11.93,
+        max_steps=verify.MAX_STEPS,
+        lora_b=stats,
+    )
+
+
+def test_smoke_script_uses_lora_b_and_full_step_gate():
+    source = Path(verify.__file__).read_text(encoding="utf-8")
+    assert "require_smoke_train(" in source
+    assert "measure_lora_b(" in source
+    assert "lora_B" in source
+    assert "global_step < 1 or not math.isfinite(train_loss)" not in source
+
+
+def test_committed_smoke_recorded_lora_b_and_full_steps():
+    evidence_root = ROOT / ".cursor" / "skills" / "verify-sft-loop" / "evidence"
+    paths = sorted(evidence_root.glob("*/smoke/plumbing.json"))
+    if not paths:
+        pytest.skip("no committed plumbing yet")
+    for path in paths:
+        document = json.loads(path.read_text(encoding="utf-8"))
+        if document.get("status") != "plumbing":
+            continue
+        train = document.get("train") or {}
+        max_abs = train.get("lora_b_max_abs", document.get("lora_b_max_abs"))
+        if max_abs is None:
+            pytest.skip("committed plumbing predates the lora_B lock")
+        assert train.get("global_step") == verify.MAX_STEPS
+        assert train.get("max_steps") == verify.MAX_STEPS
+        assert float(max_abs) > 0.0
+        assert int(train.get("lora_b_nonzero") or 0) >= 1
+
+
 def test_venv_usable_false_when_python_missing(tmp_path):
     assert verify.venv_usable(tmp_path) is False
 

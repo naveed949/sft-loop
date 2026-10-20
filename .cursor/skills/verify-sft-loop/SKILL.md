@@ -118,6 +118,8 @@ Default model is the tiny pinned plumbing model `trl-internal-testing/tiny-Qwen2
 
 Smoke writes `smoke/plumbing.json` with `status: plumbing` (or `plumbing_failed`), `weight_change_claimed: false`, `device: cpu`, `backend: trl-peft`, and `stack.unsloth: unused`. It must never write `status: scored` or `weight_change_claimed: true`. No file under `smoke/` may validate as a scored run report.
 
+Smoke fails closed unless all of these hold after `trainer.train()`: `train_loss` is finite, `global_step == max_steps` (requested steps, 2), and at least one saved LoRA `lora_B` tensor has nonzero max-abs. PEFT inits B to zero, so `delta W = B A` is zero at step 0 and the base model's outputs are unchanged. Record `lora_b_max_abs` and `global_step` in `plumbing.json`. A 0.0/0.0 tiny-model `exact_match` cannot prove a step ran.
+
 If smoke cannot finish, keep the plumbing artifact and fail the step. Do not estimate scores. Do not mint a schema-scored report.
 
 Feature recipes: `features/cli-unsupported-report.md`, `features/train-lora.md`, `features/eval-same-seed.md`, `features/loop.md`, `features/report-schema.md`.
