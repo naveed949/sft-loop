@@ -68,6 +68,46 @@ def test_all_exits_nonzero_when_smoke_fails(monkeypatch, tmp_path):
     assert summary["exit"] == 7
 
 
+def test_all_exits_nonzero_when_quant_fails(monkeypatch, tmp_path):
+    monkeypatch.setattr(verify, "cmd_install", lambda *a, **k: 0)
+    monkeypatch.setattr(verify, "cmd_doctor", lambda *a, **k: 0)
+    monkeypatch.setattr(verify, "cmd_test", lambda *a, **k: 0)
+    monkeypatch.setattr(verify, "cmd_unsupported", lambda *a, **k: 0)
+    monkeypatch.setattr(verify, "cmd_smoke", lambda *a, **k: 0)
+    monkeypatch.setattr(verify, "cmd_quant", lambda *a, **k: 9)
+    monkeypatch.setattr(verify, "cmd_cleanup", lambda *a, **k: 0)
+    monkeypatch.setattr(
+        verify,
+        "hardware_probe",
+        lambda *a, **k: {
+            "cuda": False,
+            "mps": False,
+            "torch": None,
+            "python": "3.12.3",
+        },
+    )
+    monkeypatch.setattr(verify, "python_for", lambda root: sys.executable)
+    monkeypatch.setattr(verify, "base_env", lambda root: os.environ.copy())
+    monkeypatch.setattr(
+        verify,
+        "probe_imports",
+        lambda *a, **k: {
+            "bitsandbytes": {"ok": False, "error": "No module named bitsandbytes"},
+            "flash_attn": {"ok": False, "error": "No module named flash_attn"},
+            "unsloth": {"ok": False, "error": "No module named unsloth"},
+        },
+    )
+    monkeypatch.setattr(verify, "run_id_from_env", lambda: "unit-all-quant-fail")
+    monkeypatch.setattr(verify, "evidence_dir", lambda root, run_id: tmp_path / "evidence")
+    log = io.StringIO()
+    rc = verify.cmd_all(tmp_path, log)
+    assert rc == 9
+    assert "failed at step quant" in log.getvalue()
+    summary = json.loads((tmp_path / "evidence" / "summary.json").read_text(encoding="utf-8"))
+    assert summary["failed_step"] == "quant"
+    assert summary["exit"] == 9
+
+
 def test_smoke_json_never_validates_as_scored(tmp_path):
     smoke = tmp_path / "smoke"
     smoke.mkdir()
@@ -331,6 +371,7 @@ def test_surfaces_use_probe_errors(monkeypatch, tmp_path):
     assert by_id["train-mps"].status == "unsupported"
     assert by_id["train-cuda-unsloth"].status == "unsupported"
     assert by_id["cpu-trl-peft-smoke"].status == "supported"
+    assert by_id["quant-comparison"].status == "unsupported"
 
 
 def test_surfaces_record_hardware_probe_errors():
@@ -359,3 +400,4 @@ def test_surfaces_record_hardware_probe_errors():
     assert by_id["bitsandbytes"].status == "unsupported"
     assert "TimeoutExpired" in by_id["bitsandbytes"].detail
     assert by_id["cpu-trl-peft-smoke"].status == "unsupported"
+    assert by_id["quant-comparison"].status == "unsupported"

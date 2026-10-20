@@ -1,0 +1,8 @@
+{
+  "probe": {
+    "cuda_available": false,
+    "exception_type": "ChildExit",
+    "message": "quantize_dynamic killed with SIGKILL after torch.onnx.export succeeded"
+  },
+  "reason": "oom"
+}

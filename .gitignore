@@ -42,3 +42,17 @@ runs/phase3/**
 runs/phase3/proof/**
 !runs/phase3/proof/adapter_config.json
 !runs/phase3/proof/train_log.txt
+
+!runs/quant/
+runs/quant/**
+!runs/quant/comparison.json
+!runs/quant/fp32.json
+!runs/quant/int8.json
+!runs/quant/onnx-int8.json
+!runs/quant/nf4.json
+!runs/quant/raw/
+runs/quant/raw/**
+!runs/quant/raw/fp32.json
+!runs/quant/raw/int8.json
+!runs/quant/raw/onnx-int8.json
+!runs/quant/raw/nf4.json

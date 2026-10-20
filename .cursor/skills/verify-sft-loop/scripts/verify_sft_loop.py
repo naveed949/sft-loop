@@ -1005,6 +1005,7 @@ def build_surfaces(
     tests_ok: bool,
     unsupported_ok: bool,
     smoke_ok: bool,
+    quant_ok: bool = False,
 ) -> list[Surface]:
     cuda = hardware.get("cuda")
     mps = hardware.get("mps")
@@ -1139,6 +1140,16 @@ def build_surfaces(
                 "Not a scored report."
             ),
         ),
+        Surface(
+            id="quant-comparison",
+            command="python -m sft_loop.quant validate && python -m sft_loop.quant probe-nf4",
+            status="supported" if quant_ok else "unsupported",
+            reason=None if quant_ok else REASON_TRAIN,
+            detail=(
+                "Schema-valid quant comparison plus fail-closed NF4. "
+                "Not a scored SFT report."
+            ),
+        ),
     ]
 
 
@@ -1150,6 +1161,7 @@ def write_surfaces(
     smoke_ok: bool,
     tests_ok: bool,
     unsupported_ok: bool,
+    quant_ok: bool,
 ) -> Path:
     surfaces = build_surfaces(
         hardware,
@@ -1157,6 +1169,7 @@ def write_surfaces(
         tests_ok=tests_ok,
         unsupported_ok=unsupported_ok,
         smoke_ok=smoke_ok,
+        quant_ok=quant_ok,
     )
     payload = {
         "hardware": hardware,
@@ -1200,6 +1213,46 @@ def cmd_cleanup(root: Path, log: TextIO | None) -> int:
     return 0
 
 
+def cmd_quant(root: Path, log: TextIO | None) -> int:
+    py = python_for(root)
+    env = base_env(root)
+    evidence = ensure_dir(evidence_dir(root, run_id_from_env()) / "quant")
+    dest = evidence / "nf4.json"
+    probed = run_command(
+        [py, "-m", "sft_loop.quant", "probe-nf4", "--dest", str(dest)],
+        cwd=root,
+        env=env,
+        log=log,
+    )
+    if probed.returncode != 0:
+        return probed.returncode
+    document = json.loads(dest.read_text(encoding="utf-8"))
+    if document.get("status") != "unsupported" or document.get("precision") != "nf4":
+        append_log(log, "probe-nf4 did not write an unsupported nf4 arm\n")
+        return 1
+    if any(key in document for key in ("task_score", "items", "on_disk_bytes", "latency_p50_ms")):
+        append_log(log, "probe-nf4 wrote metric keys\n")
+        return 1
+    if "Soft-PASS is unused and is refused." not in str(document.get("detail", "")):
+        append_log(log, "probe-nf4 detail is missing the refusal sentence\n")
+        return 1
+    checked = run_command(
+        [py, "-m", "sft_loop.quant", "validate"],
+        cwd=root,
+        env=env,
+        log=log,
+    )
+    if checked.returncode != 0:
+        return checked.returncode
+    table = run_command(
+        [py, "-m", "sft_loop.quant", "table", "--check", str(root / "README.md")],
+        cwd=root,
+        env=env,
+        log=log,
+    )
+    return table.returncode
+
+
 def cmd_all(root: Path, log: TextIO | None) -> int:
     run_id = run_id_from_env()
     evidence = ensure_dir(evidence_dir(root, run_id))
@@ -1210,6 +1263,7 @@ def cmd_all(root: Path, log: TextIO | None) -> int:
         ("test", cmd_test),
         ("unsupported", cmd_unsupported),
         ("smoke", cmd_smoke),
+        ("quant", cmd_quant),
     ]
     results = []
     failed_step = None
@@ -1237,6 +1291,7 @@ def cmd_all(root: Path, log: TextIO | None) -> int:
     tests_ok = all(item.get("exit") == 0 for item in results if item["step"] == "test")
     unsupported_ok = all(item.get("exit") == 0 for item in results if item["step"] == "unsupported")
     smoke_ok = all(item.get("exit") == 0 for item in results if item["step"] == "smoke")
+    quant_ok = all(item.get("exit") == 0 for item in results if item["step"] == "quant")
     surfaces_path = write_surfaces(
         root,
         hardware,
@@ -1244,6 +1299,7 @@ def cmd_all(root: Path, log: TextIO | None) -> int:
         smoke_ok=smoke_ok,
         tests_ok=tests_ok,
         unsupported_ok=unsupported_ok,
+        quant_ok=quant_ok,
     )
     summary = {
         "run_id": run_id,
@@ -1266,7 +1322,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Verify sft-loop on a CPU VM.")
     parser.add_argument(
         "command",
-        choices=("install", "doctor", "test", "unsupported", "smoke", "cleanup", "all"),
+        choices=("install", "doctor", "test", "unsupported", "smoke", "quant", "cleanup", "all"),
     )
     parser.add_argument(
         "--run-id",
@@ -1300,6 +1356,7 @@ def main(argv: list[str] | None = None) -> int:
         "test": cmd_test,
         "unsupported": cmd_unsupported,
         "smoke": cmd_smoke,
+        "quant": cmd_quant,
         "cleanup": cmd_cleanup,
         "all": cmd_all,
     }

@@ -1,0 +1,18 @@
+{
+  "body": {
+    "detail": "NF4 needs CUDA. torch.cuda.is_available is false on this host. No NF4 numbers were produced. Soft-PASS is unused and is refused.",
+    "precision": "nf4",
+    "probe": {
+      "cuda_available": false,
+      "exception_type": "CUDAUnavailable",
+      "message": "torch.cuda.is_available() is False"
+    },
+    "reason": "missing_cuda",
+    "status": "unsupported"
+  },
+  "comparison_sha256": "588aba4f6884b1634a6e655effd357928a1a0c8b07fccb3fc0d2ac3e866977f2",
+  "document_kind": "quant-arm-projection",
+  "precision": "nf4",
+  "protocol_sha256": "b5fe0ba1136866ad026fdf874d16ead047e506f65f2e6acab2c574e99a2dd32b",
+  "schema_version": "1"
+}

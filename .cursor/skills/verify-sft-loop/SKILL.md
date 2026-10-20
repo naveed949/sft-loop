@@ -78,7 +78,7 @@ Two official CLI processes can run at once. They must not share scratch. Never w
 .cursor/skills/verify-sft-loop/scripts/verify all --run-id "$VERIFY_RUN_ID"
 ```
 
-That runs install, doctor, pytest, official fail-closed CLIs, CPU plumbing smoke, then cleanup. A nonzero exit from any named step fails the whole run. Cleanup still runs. `summary.json` records `failed_step`.
+That runs install, doctor, pytest, official fail-closed CLIs, CPU plumbing smoke, the quant check, then cleanup. A nonzero exit from any named step fails the whole run. Cleanup still runs. `summary.json` records `failed_step`.
 
 **Tests.**
 
@@ -108,6 +108,14 @@ Equivalent raw commands (same reports):
 
 `--device cpu` is not a product choice. argparse `choices` are `{mps,cuda}`; the CLI exits 2. `resolve_train_target("cpu")` raises `ValueError`. Do not add CPU to the product CLI.
 
+**Quant comparison (NF4 probe plus committed portfolio).**
+
+```bash
+.cursor/skills/verify-sft-loop/scripts/verify quant --run-id "$VERIFY_RUN_ID"
+```
+
+Writes `quant/nf4.json` under evidence. Validates `runs/quant/comparison.json`. Checks the README table markers. Does not reload the 1.5B weights and does not write `runs/phase3/`.
+
 **CPU plumbing smoke (not a quality result, not a scored report).**
 
 ```bash
@@ -122,7 +130,7 @@ Smoke fails closed unless all of these hold after `trainer.train()`: `train_loss
 
 If smoke cannot finish, keep the plumbing artifact and fail the step. Do not estimate scores. Do not mint a schema-scored report.
 
-Feature recipes: `features/cli-unsupported-report.md`, `features/train-lora.md`, `features/eval-same-seed.md`, `features/loop.md`, `features/report-schema.md`.
+Feature recipes: `features/cli-unsupported-report.md`, `features/train-lora.md`, `features/eval-same-seed.md`, `features/loop.md`, `features/report-schema.md`, `features/quant-comparison.md`.
 
 ## Evidence
 
@@ -174,6 +182,7 @@ All invocations from the repo root. Scripts are executable.
 | `scripts/verify test` | `python -m pytest -q` |
 | `scripts/verify unsupported` | Official CLIs, schema-validate fail-closed reports |
 | `scripts/verify smoke` | CPU LoRA plumbing on the tiny pinned model; writes `plumbing.json`, never a scored report |
+| `scripts/verify quant` | NF4 probe into evidence, validate `runs/quant/`, check the README table |
 | `scripts/verify cleanup` | Remove scratch, keep evidence |
 | `scripts/verify all` | The sequence above; any nonzero step fails the run and names that step |
 
