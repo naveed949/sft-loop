@@ -12,6 +12,8 @@ Do not export `VERIFY_EVIDENCE_DIR` or `VERIFY_SCRATCH_DIR` unless the path ends
 
 `issue9-quant/` is the later `scripts/verify all --run-id issue9-quant` run on the quantization branch. Every named step exited 0, including `quant`. That step probed NF4, validated `runs/quant/`, and checked the README table. It did not reload the 1.5B weights.
 
+`issue9-quant-r2/` is the remasurement proof after the throughput and NLL blockers. `scripts/verify all --run-id issue9-quant-r2` exited 0. The table now has scored p50/p95, mean generated tokens, and decode tokens/s from a `min_new_tokens == max_new_tokens == 8` pass.
+
 Read these first:
 
 - `summary.json` (all steps exit 0, 72.263s, `failed_step` null)
