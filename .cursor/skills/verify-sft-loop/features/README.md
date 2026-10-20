@@ -5,10 +5,10 @@ This directory is the maintained source for verifying the user-facing behavior o
 ## Baseline preconditions
 
 - Work from the repo root of `sft-loop`.
-- Create a disposable run with `VERIFY_RUN_ID` (default `cpu-linux-seed0`).
-- Set `VERIFY_SCRATCH_DIR=/tmp/sft-loop-verify-$VERIFY_RUN_ID` so concurrent runs do not share adapters.
-- Put evidence in `.cursor/skills/verify-sft-loop/evidence/$VERIFY_RUN_ID/`.
-- Run `.cursor/skills/verify-sft-loop/scripts/verify install` then `scripts/verify doctor`.
+- Pass `--run-id` on every `scripts/verify` command (default `cpu-linux-tiny`).
+- Do not export `VERIFY_EVIDENCE_DIR` or `VERIFY_SCRATCH_DIR` unless the path ends with that run id. Stale exports leak across runs. The helper derives evidence and scratch from `--run-id`.
+- Put evidence in `.cursor/skills/verify-sft-loop/evidence/<run-id>/`.
+- Run `.cursor/skills/verify-sft-loop/scripts/verify install` then `scripts/verify doctor`. Do not run `python3 -m venv` by hand.
 - Require doctor `cuda=false` and `mps=false` on this CPU VM.
 - Never write verify output into `runs/phase3/`.
 - Never install the `unsloth` extra for this skill.
@@ -27,6 +27,7 @@ This directory is the maintained source for verifying the user-facing behavior o
 - Record the feature ID with every artifact.
 - A blocked GPU path is `unsupported` with `gpu_or_train_deps_unavailable` or `train_not_run`. It is not a skip and not a pass.
 - Do not report a skipped MPS entry point as verified through the CPU smoke.
+- CPU smoke is a plumbing artifact (`status: plumbing`). It is not a scored report.
 
 ## Feature entry contract
 

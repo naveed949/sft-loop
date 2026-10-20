@@ -132,23 +132,50 @@ def test_checked_in_phase3_report_matches_live_probe_and_has_no_uplift():
     assert "adaptiveSandboxQualified" not in json.dumps(checked)
 
 
+SCORE_LIKE_KEYS = ("task_score", "before", "after", "exact_match")
+
+
+def _score_like_keys(document) -> list[str]:
+    return [key for key in SCORE_LIKE_KEYS if _has_key(document, key)]
+
+
+def _check_runs_json(path: Path, document: dict) -> None:
+    if path.resolve() == PHASE3_SCORED.resolve():
+        return
+    if "status" not in document:
+        found = _score_like_keys(document)
+        if found:
+            raise AssertionError(f"{path} has no status but has score-like keys: {found}")
+        return
+    assert document["weight_change_claimed"] is False
+    assert document["status"] in {"unsupported", "unscored"}
+    assert "device" not in document
+    assert "backend" not in document
+    assert document.get("stack", {}).get("unsloth") != "unused"
+    assert "before" not in document
+    assert "after" not in document
+    assert "train_proof" not in document
+    assert not _has_key(document, "task_score")
+    assert "adaptiveSandboxQualified" not in json.dumps(document)
+
+
 def test_runs_json_unscored_reports_never_claim_weight_change_or_scores():
     reports = sorted((ROOT / "runs").rglob("*.json"))
     assert reports
     for path in reports:
-        document = json.loads(path.read_text(encoding="utf-8"))
-        if path == PHASE3_SCORED or "status" not in document:
-            continue
-        assert document["weight_change_claimed"] is False
-        assert document["status"] in {"unsupported", "unscored"}
-        assert "device" not in document
-        assert "backend" not in document
-        assert document.get("stack", {}).get("unsloth") != "unused"
-        assert "before" not in document
-        assert "after" not in document
-        assert "train_proof" not in document
-        assert not _has_key(document, "task_score")
-        assert "adaptiveSandboxQualified" not in json.dumps(document)
+        _check_runs_json(path, json.loads(path.read_text(encoding="utf-8")))
+
+
+def test_runs_json_without_status_skips_only_when_no_score_like_keys():
+    adapter = json.loads((PHASE3_PROOF / "adapter_config.json").read_text(encoding="utf-8"))
+    assert "status" not in adapter
+    _check_runs_json(PHASE3_PROOF / "adapter_config.json", adapter)
+    with pytest.raises(AssertionError, match="score-like"):
+        _check_runs_json(ROOT / "runs" / "sneaky-score.json", {"r": 8, "task_score": 1.0})
+    with pytest.raises(AssertionError, match="score-like"):
+        _check_runs_json(ROOT / "runs" / "sneaky-before.json", {"before": {"n": 8}})
+    with pytest.raises(AssertionError, match="score-like"):
+        _check_runs_json(ROOT / "runs" / "sneaky-exact.json", {"exact_match": 0.5})
 
 
 def test_checked_in_scored_report_validates_against_proof():
@@ -217,6 +244,38 @@ def test_cli_rejects_other_model_and_bad_seed():
     assert train_main(["--model-id", "other/model", "--seed", "0"]) == 2
     assert eval_main(["--model-id", MODEL_ID, "--seed", "-1", "--split", "before"]) == 2
     assert loop_main(["--model-id", MODEL_ID, "--seed", "-1"]) == 2
+
+
+def test_cli_device_cpu_argparse_exits_2():
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(SRC)
+    jobs = [
+        ["-m", "sft_loop.loop", "--model-id", MODEL_ID, "--seed", "0", "--device", "cpu"],
+        ["-m", "sft_loop.train", "--model-id", MODEL_ID, "--seed", "0", "--device", "cpu"],
+        [
+            "-m",
+            "sft_loop.eval",
+            "--model-id",
+            MODEL_ID,
+            "--seed",
+            "0",
+            "--split",
+            "before",
+            "--device",
+            "cpu",
+        ],
+    ]
+    for extra in jobs:
+        completed = subprocess.run(
+            [sys.executable, *extra],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
+        assert completed.returncode == 2, extra
+        assert "invalid choice: 'cpu'" in completed.stderr
 
 
 def test_subprocess_loop_matches_checked_in_report():

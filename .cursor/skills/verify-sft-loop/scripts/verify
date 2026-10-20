@@ -14,7 +14,7 @@ if [[ -z $root ]]; then
   echo "could not find repo root" >&2
   exit 1
 fi
-if [[ -x $root/.venv/bin/python ]]; then
+if [[ -x $root/.venv/bin/python ]] && "$root/.venv/bin/python" -m pip --version >/dev/null 2>&1; then
   py=$root/.venv/bin/python
 else
   py=python3

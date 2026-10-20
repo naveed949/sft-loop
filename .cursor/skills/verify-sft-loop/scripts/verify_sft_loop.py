@@ -17,12 +17,20 @@ from pathlib import Path
 from typing import Any, TextIO
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
-MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
+PINNED_MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
+SMOKE_MODEL_ID = "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5"
+SMOKE_MODEL_REVISION = "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda"
 SEED = 0
-SMOKE_RUN_ID = "verify-cpu-smoke-seed0"
 REFUSAL_SENTENCE = "Soft-PASS is unused and is refused."
 REASON_DEPS = "gpu_or_train_deps_unavailable"
 REASON_TRAIN = "train_not_run"
+LORA_R = 8
+LORA_ALPHA = 16
+MAX_STEPS = 2
+MAX_SEQ_LENGTH = 128
+MAX_NEW_TOKENS = 8
+TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+DEFAULT_RUN_ID = "cpu-linux-tiny"
 
 TRAIN_EXTRAS = [
     "jsonschema>=4.18",
@@ -44,6 +52,18 @@ class Surface:
     detail: str
 
 
+@dataclass
+class RunConfig:
+    run_id: str = DEFAULT_RUN_ID
+    evidence: Path | None = None
+    scratch: Path | None = None
+    pinned_model: bool = False
+    evidence_warning: str = ""
+
+
+RUN = RunConfig()
+
+
 def repo_root() -> Path:
     for parent in Path(__file__).resolve().parents:
         if (parent / "pyproject.toml").is_file() and (
@@ -58,21 +78,74 @@ def venv_python(root: Path) -> Path:
 
 
 def run_id_from_env() -> str:
-    return os.environ.get("VERIFY_RUN_ID", "cpu-linux-seed0")
+    return RUN.run_id
+
+
+def smoke_model() -> tuple[str, str | None]:
+    if RUN.pinned_model:
+        return PINNED_MODEL_ID, None
+    return SMOKE_MODEL_ID, SMOKE_MODEL_REVISION
 
 
 def evidence_dir(root: Path, run_id: str) -> Path:
+    if RUN.evidence is not None and RUN.run_id == run_id:
+        return RUN.evidence
     override = os.environ.get("VERIFY_EVIDENCE_DIR")
     if override:
-        return Path(override)
+        path = Path(override)
+        if path.name == run_id:
+            return path
     return SKILL_DIR / "evidence" / run_id
 
 
 def scratch_dir(run_id: str) -> Path:
+    if RUN.scratch is not None and RUN.run_id == run_id:
+        return RUN.scratch
     override = os.environ.get("VERIFY_SCRATCH_DIR")
     if override:
-        return Path(override)
+        path = Path(override)
+        if path.name == run_id or path.name == f"sft-loop-verify-{run_id}":
+            return path
     return Path("/tmp") / f"sft-loop-verify-{run_id}"
+
+
+def configure_run(args: argparse.Namespace) -> None:
+    run_id = args.run_id or DEFAULT_RUN_ID
+    warning = ""
+    evidence = None
+    if getattr(args, "evidence_dir", None):
+        evidence = Path(args.evidence_dir)
+    elif os.environ.get("VERIFY_EVIDENCE_DIR"):
+        env_path = Path(os.environ["VERIFY_EVIDENCE_DIR"])
+        if env_path.name == run_id:
+            evidence = env_path
+        else:
+            warning = (
+                f"ignoring VERIFY_EVIDENCE_DIR={env_path} because it does not end with run-id {run_id}"
+            )
+            evidence = SKILL_DIR / "evidence" / run_id
+    else:
+        evidence = SKILL_DIR / "evidence" / run_id
+    scratch = None
+    if getattr(args, "scratch_dir", None):
+        scratch = Path(args.scratch_dir)
+    elif os.environ.get("VERIFY_SCRATCH_DIR"):
+        env_path = Path(os.environ["VERIFY_SCRATCH_DIR"])
+        if env_path.name == run_id or env_path.name == f"sft-loop-verify-{run_id}":
+            scratch = env_path
+        else:
+            extra = (
+                f"ignoring VERIFY_SCRATCH_DIR={env_path} because it does not match run-id {run_id}"
+            )
+            warning = f"{warning}; {extra}" if warning else extra
+            scratch = Path("/tmp") / f"sft-loop-verify-{run_id}"
+    else:
+        scratch = Path("/tmp") / f"sft-loop-verify-{run_id}"
+    RUN.run_id = run_id
+    RUN.evidence = evidence
+    RUN.scratch = scratch
+    RUN.pinned_model = bool(getattr(args, "pinned_model", False))
+    RUN.evidence_warning = warning
 
 
 def ensure_dir(path: Path) -> Path:
@@ -118,10 +191,23 @@ def run_command(
 
 
 def python_for(root: Path) -> str:
-    candidate = venv_python(root)
-    if candidate.is_file():
-        return str(candidate)
+    if venv_usable(root):
+        return str(venv_python(root))
     return sys.executable
+
+
+def venv_usable(root: Path) -> bool:
+    py = venv_python(root)
+    if not py.is_file():
+        return False
+    completed = subprocess.run(
+        [str(py), "-m", "pip", "--version"],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return completed.returncode == 0
 
 
 def base_env(root: Path) -> dict[str, str]:
@@ -141,15 +227,15 @@ def base_env(root: Path) -> dict[str, str]:
 def hardware_probe(py: str, cwd: Path, env: dict[str, str]) -> dict[str, Any]:
     code = (
         "import json, os, platform, sys\n"
-        "cuda=False; mps=False; torch_v=None\n"
+        "cuda=False; mps=False; torch_v=None; err=None\n"
         "try:\n"
         " import torch\n"
         " torch_v=torch.__version__\n"
         " cuda=bool(torch.cuda.is_available())\n"
         " b=getattr(torch.backends,'mps',None)\n"
         " mps=bool(b.is_available()) if b is not None and hasattr(b,'is_available') else False\n"
-        "except Exception:\n"
-        " pass\n"
+        "except Exception as exc:\n"
+        " err=f'{type(exc).__name__}: {exc}'\n"
         "mem=None\n"
         "try:\n"
         " mem=os.sysconf('SC_PAGE_SIZE')*os.sysconf('SC_PHYS_PAGES')\n"
@@ -157,7 +243,7 @@ def hardware_probe(py: str, cwd: Path, env: dict[str, str]) -> dict[str, Any]:
         " pass\n"
         "print(json.dumps({'python':sys.version.split()[0],'platform':platform.platform(),"
         "'machine':platform.machine(),'torch':torch_v,'cuda':cuda,'mps':mps,"
-        "'cpu_count':os.cpu_count(),'ram_bytes':mem}))\n"
+        "'cpu_count':os.cpu_count(),'ram_bytes':mem,'probe_error':err}))\n"
     )
     completed = subprocess.run(
         [py, "-c", code],
@@ -182,8 +268,34 @@ def hardware_probe(py: str, cwd: Path, env: dict[str, str]) -> dict[str, Any]:
     return json.loads(completed.stdout)
 
 
+def probe_imports(py: str, cwd: Path, env: dict[str, str]) -> dict[str, dict[str, Any]]:
+    out: dict[str, dict[str, Any]] = {}
+    for name in ("bitsandbytes", "flash_attn", "unsloth"):
+        try:
+            completed = subprocess.run(
+                [py, "-c", f"import {name}"],
+                cwd=cwd,
+                env=env,
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=60,
+            )
+            if completed.returncode == 0:
+                out[name] = {"ok": True, "error": None}
+            else:
+                err = (completed.stderr or completed.stdout or f"exit {completed.returncode}").strip()
+                out[name] = {"ok": False, "error": err[:400]}
+        except Exception as exc:
+            out[name] = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+    return out
+
+
 def _create_venv(root: Path, log: TextIO | None) -> int:
     target = root / ".venv"
+    if target.exists() and not venv_usable(root):
+        append_log(log, "removing .venv with no working pip before recreate\n")
+        shutil.rmtree(target, ignore_errors=True)
     created = subprocess.run(
         [sys.executable, "-m", "venv", str(target)],
         cwd=root,
@@ -193,9 +305,9 @@ def _create_venv(root: Path, log: TextIO | None) -> int:
     )
     append_log(log, created.stdout or "")
     append_log(log, created.stderr or "")
-    if created.returncode == 0 and venv_python(root).is_file():
+    if created.returncode == 0 and venv_usable(root):
         return 0
-    append_log(log, "stdlib venv failed. falling back to pip virtualenv.\n")
+    append_log(log, "stdlib venv missing pip or failed. recreating with virtualenv.\n")
     shutil.rmtree(target, ignore_errors=True)
     bootstrap = subprocess.run(
         [sys.executable, "-m", "pip", "install", "--user", "virtualenv"],
@@ -217,14 +329,14 @@ def _create_venv(root: Path, log: TextIO | None) -> int:
     )
     append_log(log, created.stdout or "")
     append_log(log, created.stderr or "")
-    if created.returncode != 0 or not venv_python(root).is_file():
-        append_log(log, "virtualenv create failed\n")
+    if not venv_usable(root):
+        append_log(log, "virtualenv create failed or pip is still missing\n")
         return created.returncode or 1
     return 0
 
 
 def cmd_install(root: Path, log: TextIO | None) -> int:
-    if not venv_python(root).is_file():
+    if not venv_usable(root):
         code = _create_venv(root, log)
         if code != 0:
             return code
@@ -271,7 +383,7 @@ def cmd_doctor(root: Path, log: TextIO | None) -> int:
     record("schema", schema.is_file(), str(schema))
     record("tests/", (root / "tests").is_dir(), str(root / "tests"))
     record("pyproject", (root / "pyproject.toml").is_file(), str(root / "pyproject.toml"))
-    record("venv_python", Path(py).is_file(), py)
+    record("venv_pip", venv_usable(root), str(venv_python(root)))
     imports = run_command(
         [
             py,
@@ -349,7 +461,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
                 "-m",
                 "sft_loop.loop",
                 "--model-id",
-                MODEL_ID,
+                PINNED_MODEL_ID,
                 "--seed",
                 str(SEED),
                 "--run-id",
@@ -364,7 +476,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
                 "-m",
                 "sft_loop.loop",
                 "--model-id",
-                MODEL_ID,
+                PINNED_MODEL_ID,
                 "--seed",
                 str(SEED),
                 "--device",
@@ -381,7 +493,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
                 "-m",
                 "sft_loop.loop",
                 "--model-id",
-                MODEL_ID,
+                PINNED_MODEL_ID,
                 "--seed",
                 str(SEED),
                 "--device",
@@ -398,7 +510,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
                 "-m",
                 "sft_loop.train",
                 "--model-id",
-                MODEL_ID,
+                PINNED_MODEL_ID,
                 "--seed",
                 str(SEED),
                 "--run-id",
@@ -413,7 +525,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
                 "-m",
                 "sft_loop.eval",
                 "--model-id",
-                MODEL_ID,
+                PINNED_MODEL_ID,
                 "--seed",
                 str(SEED),
                 "--split",
@@ -430,7 +542,7 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
                 "-m",
                 "sft_loop.eval",
                 "--model-id",
-                MODEL_ID,
+                PINNED_MODEL_ID,
                 "--seed",
                 str(SEED),
                 "--split",
@@ -467,17 +579,28 @@ def cmd_unsupported(root: Path, log: TextIO | None) -> int:
     return 1 if failed else 0
 
 
-def _unsupported_payload(reason: str, detail: str) -> dict[str, Any]:
-    from sft_loop.report import unsupported_report, validate_report
+def assert_smoke_not_scored(smoke_dir: Path) -> None:
+    from sft_loop.report import validate_report
 
-    report = unsupported_report(
-        run_id=SMOKE_RUN_ID,
-        reason=reason,
-        detail=detail,
-        seed=SEED,
-    )
-    validate_report(report)
-    return report
+    if not smoke_dir.is_dir():
+        raise AssertionError(f"missing smoke dir {smoke_dir}")
+    json_files = list(smoke_dir.rglob("*.json"))
+    if not json_files:
+        raise AssertionError(f"no json under {smoke_dir}")
+    for path in json_files:
+        document = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(document, dict):
+            continue
+        if document.get("status") == "scored":
+            raise AssertionError(f"{path} has status scored")
+        if document.get("weight_change_claimed") is True:
+            raise AssertionError(f"{path} claims weight change")
+        try:
+            validate_report(document)
+        except (ValueError, Exception):
+            continue
+        if document.get("status") == "scored":
+            raise AssertionError(f"{path} validated as a scored report")
 
 
 def cmd_smoke(root: Path, log: TextIO | None) -> int:
@@ -487,66 +610,235 @@ def cmd_smoke(root: Path, log: TextIO | None) -> int:
     evidence = ensure_dir(evidence_dir(root, run_id) / "smoke")
     scratch = ensure_dir(scratch_dir(run_id))
     adapter_dir = scratch / "adapters"
-    proof_dir = evidence
     hardware = hardware_probe(py, root, env)
-    plumbing = {
+    model_id, revision = smoke_model()
+    plumbing: dict[str, Any] = {
         "kind": "plumbing_smoke_not_quality",
-        "model_id": MODEL_ID,
+        "status": "plumbing",
+        "weight_change_claimed": False,
+        "device": "cpu",
+        "backend": "trl-peft",
+        "stack": {"unsloth": "unused", "trl": "0.24.0", "method": "sft-lora"},
+        "model_id": model_id,
+        "model_revision": revision,
         "seed": SEED,
         "split": "held-out uppercase-word-v1 eval words, n=8, exact_match, greedy do_sample=False",
-        "max_steps": 2,
-        "lora_r": 8,
+        "max_steps": MAX_STEPS,
+        "lora_r": LORA_R,
         "dtype": "float32",
         "attn_implementation": "eager",
-        "device_requested": "cpu",
         "hardware": hardware,
         "note": (
-            "before/after exact_match values from this run are plumbing checks that "
-            "the TRL+PEFT train and eval functions ran on CPU. They are not quality "
-            "results and are not an MPS or CUDA scored path. Schema device labels "
-            "mps and cuda are omitted on purpose."
+            "CPU plumbing check only. Not a scored run report. "
+            "device=cpu and backend=trl-peft are recorded here, not in schema/run_report.schema.json. "
+            "stack.unsloth is unused because this path is TRL+PEFT."
         ),
     }
     write_json(evidence / "plumbing.json", plumbing)
     if hardware.get("cuda") or hardware.get("mps"):
         append_log(
             log,
-            "doctor expected a CPU-only VM. cuda or mps is visible. Refuse to label this smoke as those devices.\n",
+            "cuda or mps is visible. Refuse to label this smoke as those devices.\n",
         )
     code = r"""
-import json, os, sys, traceback
+import json, math, shutil, sys, traceback
 from pathlib import Path
 
 adapter_dir = Path(sys.argv[1])
 proof_dir = Path(sys.argv[2])
 out_path = Path(sys.argv[3])
 fail_path = Path(sys.argv[4])
+model_id = sys.argv[5]
+revision = sys.argv[6] or None
 
-from sft_loop.eval import _execute_eval_trl_peft
-from sft_loop.report import build_scored_report, dump_report, validate_report
-from sft_loop.train import _execute_train_trl_peft
+from datasets import Dataset
+from peft import LoraConfig, PeftModel, get_peft_model
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from trl import SFTConfig, SFTTrainer
+import torch
+
+from sft_loop.task import METRIC_NAME, eval_examples, grade, prediction_token, train_examples
 
 SEED = 0
+LORA_R = 8
+LORA_ALPHA = 16
+MAX_STEPS = 2
+MAX_SEQ_LENGTH = 128
+MAX_NEW_TOKENS = 8
+TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+
+
+def text_rows(tokenizer):
+    rows = []
+    for example in train_examples():
+        messages = [
+            {"role": "user", "content": example["prompt"]},
+            {"role": "assistant", "content": example["completion"]},
+        ]
+        if getattr(tokenizer, "chat_template", None):
+            text = tokenizer.apply_chat_template(messages, tokenize=False)
+        else:
+            text = example["prompt"] + " " + example["completion"]
+        rows.append({"text": text})
+    return rows
+
+
+def load_model():
+    kwargs = {"torch_dtype": torch.float32, "attn_implementation": "eager", "low_cpu_mem_usage": True}
+    tok_kwargs = {}
+    if revision:
+        kwargs["revision"] = revision
+        tok_kwargs["revision"] = revision
+    tokenizer = AutoTokenizer.from_pretrained(model_id, **tok_kwargs)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
+    model.config.use_cache = False
+    return model, tokenizer
+
+
+def generate_scores(model, tokenizer):
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    examples = eval_examples()
+    predictions = []
+    completions = []
+    for example in examples:
+        messages = [{"role": "user", "content": example["prompt"]}]
+        if getattr(tokenizer, "chat_template", None):
+            tokenized = tokenizer.apply_chat_template(
+                messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
+            )
+        else:
+            tokenized = tokenizer(example["prompt"], return_tensors="pt").input_ids
+        if hasattr(tokenized, "input_ids"):
+            input_ids = tokenized.input_ids.to("cpu")
+        else:
+            input_ids = tokenized.to("cpu")
+        with torch.inference_mode():
+            output = model.generate(
+                input_ids,
+                max_new_tokens=MAX_NEW_TOKENS,
+                do_sample=False,
+                pad_token_id=tokenizer.pad_token_id,
+            )
+        new_tokens = output[0][input_ids.shape[-1]:]
+        text = tokenizer.decode(new_tokens, skip_special_tokens=True)
+        predictions.append(prediction_token(text))
+        completions.append(example["completion"])
+    return {
+        "seed": SEED,
+        "metric_name": METRIC_NAME,
+        "task_score": grade(predictions, completions),
+        "n": len(completions),
+        "role": "plumbing_not_quality",
+    }
+
 try:
-    before = _execute_eval_trl_peft(seed=SEED, adapter_dir=None, device="cpu")
-    proof = _execute_train_trl_peft(
-        seed=SEED,
-        proof_dir=proof_dir,
-        adapter_dir=adapter_dir,
-        device="cpu",
+    torch.manual_seed(SEED)
+    model, tokenizer = load_model()
+    model.to("cpu")
+    model.eval()
+    before = generate_scores(model, tokenizer)
+    del model
+    if adapter_dir.exists():
+        shutil.rmtree(adapter_dir)
+    adapter_dir.mkdir(parents=True, exist_ok=True)
+    proof_dir.mkdir(parents=True, exist_ok=True)
+    model, tokenizer = load_model()
+    if hasattr(model, "enable_input_require_grads"):
+        model.enable_input_require_grads()
+    lora = LoraConfig(
+        r=LORA_R,
+        lora_alpha=LORA_ALPHA,
+        lora_dropout=0.0,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules=list(TARGET_MODULES),
+        base_model_name_or_path=model_id,
     )
-    after = _execute_eval_trl_peft(seed=SEED, adapter_dir=adapter_dir, device="cpu")
-    report = build_scored_report(
-        run_id="verify-cpu-smoke-seed0",
+    model = get_peft_model(model, lora)
+    model.to("cpu")
+    args = SFTConfig(
+        output_dir=str(adapter_dir),
+        max_steps=MAX_STEPS,
+        per_device_train_batch_size=1,
+        gradient_accumulation_steps=1,
+        learning_rate=2e-4,
+        logging_steps=1,
+        save_strategy="no",
+        report_to="none",
         seed=SEED,
-        before=before,
-        after=after,
-        train_proof=proof,
-        proof_dir=proof_dir,
+        data_seed=SEED,
+        dataset_text_field="text",
+        max_length=MAX_SEQ_LENGTH,
+        packing=False,
+        bf16=False,
+        fp16=False,
+        dataloader_pin_memory=False,
+        gradient_checkpointing=False,
+        optim="adamw_torch",
+        remove_unused_columns=False,
     )
-    validate_report(report, proof_dir=proof_dir)
-    out_path.write_text(dump_report(report), encoding="utf-8")
-    print("smoke-scored")
+    trainer = SFTTrainer(
+        model=model,
+        args=args,
+        train_dataset=Dataset.from_list(text_rows(tokenizer)),
+        processing_class=tokenizer,
+    )
+    result = trainer.train()
+    global_step = int(getattr(result, "global_step", 0) or 0)
+    train_loss = float(getattr(result, "training_loss"))
+    if global_step < 1 or not math.isfinite(train_loss):
+        raise RuntimeError("train_not_run")
+    model.save_pretrained(str(adapter_dir))
+    tokenizer.save_pretrained(str(adapter_dir))
+    config_src = adapter_dir / "adapter_config.json"
+    shutil.copyfile(config_src, proof_dir / "adapter_config.json")
+    log_history = list(getattr(trainer.state, "log_history", []) or [])
+    log_lines = [
+        "trainer=trl.SFTTrainer",
+        f"model_id={model_id}",
+        f"seed={SEED}",
+        f"global_step={global_step}",
+        f"train_loss={format(train_loss, '.8g')}",
+        f"max_steps={MAX_STEPS}",
+        f"lora_r={LORA_R}",
+        "device=cpu",
+        "backend=trl-peft",
+        f"log_history={json.dumps(log_history, separators=(',', ':'), sort_keys=True)}",
+    ]
+    (proof_dir / "train_log.txt").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+    del model
+    model, tokenizer = load_model()
+    model = PeftModel.from_pretrained(model, str(adapter_dir))
+    model.to("cpu")
+    model.eval()
+    after = generate_scores(model, tokenizer)
+    payload = {
+        "kind": "plumbing_smoke_not_quality",
+        "status": "plumbing",
+        "weight_change_claimed": False,
+        "device": "cpu",
+        "backend": "trl-peft",
+        "stack": {"unsloth": "unused", "trl": "0.24.0", "method": "sft-lora"},
+        "model_id": model_id,
+        "model_revision": revision,
+        "seed": SEED,
+        "before": before,
+        "after": after,
+        "train": {
+            "trainer": "trl.SFTTrainer",
+            "global_step": global_step,
+            "train_loss": float(format(train_loss, ".8g")),
+            "lora_r": LORA_R,
+            "max_steps": MAX_STEPS,
+            "device": "cpu",
+            "backend": "trl-peft",
+        },
+    }
+    out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print("smoke-plumbing")
 except Exception as exc:
     fail_path.write_text(
         json.dumps({"type": type(exc).__name__, "error": str(exc), "trace": traceback.format_exc()}, indent=2)
@@ -556,42 +848,108 @@ except Exception as exc:
     raise
 """
     fail_path = evidence / "smoke-exception.json"
-    out_path = evidence / "run_report.json"
+    out_path = evidence / "plumbing.json"
     started = time.time()
     completed = run_command(
-        [py, "-c", code, str(adapter_dir), str(proof_dir), str(out_path), str(fail_path)],
+        [
+            py,
+            "-c",
+            code,
+            str(adapter_dir),
+            str(evidence),
+            str(out_path),
+            str(fail_path),
+            model_id,
+            revision or "",
+        ],
         cwd=root,
         env=env,
         log=log,
     )
     plumbing["elapsed_s"] = round(time.time() - started, 3)
     plumbing["exit"] = completed.returncode
-    write_json(evidence / "plumbing.json", plumbing)
     if completed.returncode != 0:
-        detail = (
-            "Requested CPU plumbing smoke at seed 0 on the pinned model. "
-            "The train step did not run. No before/after metrics were produced. "
-            "Status is unsupported. " + REFUSAL_SENTENCE
-        )
-        if len(detail) > 500:
-            detail = detail[:500]
-        report = _unsupported_payload(REASON_TRAIN, detail)
-        write_json(out_path, report)
-        append_log(log, f"smoke failed closed. wrote unsupported report to {out_path}\n")
+        plumbing["status"] = "plumbing_failed"
+        plumbing["weight_change_claimed"] = False
+        plumbing["device"] = "cpu"
+        plumbing["backend"] = "trl-peft"
+        plumbing["stack"] = {"unsloth": "unused", "trl": "0.24.0", "method": "sft-lora"}
+        if fail_path.is_file():
+            plumbing["error"] = json.loads(fail_path.read_text(encoding="utf-8"))
+        write_json(out_path, plumbing)
+        try:
+            assert_smoke_not_scored(evidence)
+        except AssertionError as exc:
+            append_log(log, f"smoke produced a scored-shaped artifact: {exc}\n")
+            return 1
+        append_log(log, f"smoke failed closed. wrote plumbing artifact to {out_path}\n")
         return completed.returncode
-    result = validate_path(py, root, env, out_path, proof_dir)
-    write_json(evidence / "report-validation.json", result)
-    if not result["ok"]:
-        append_log(log, "smoke report failed schema validation\n")
+    merged = json.loads(out_path.read_text(encoding="utf-8"))
+    merged["elapsed_s"] = plumbing["elapsed_s"]
+    merged["exit"] = 0
+    merged["hardware"] = hardware
+    merged["note"] = plumbing["note"]
+    write_json(out_path, merged)
+    try:
+        assert_smoke_not_scored(evidence)
+    except AssertionError as exc:
+        append_log(log, f"smoke produced a scored-shaped artifact: {exc}\n")
         return 1
-    append_log(log, f"smoke report valid at {out_path}\n")
+    append_log(log, f"smoke plumbing artifact at {out_path}\n")
     return 0
 
 
-def static_surfaces(hardware: dict[str, Any], smoke_ok: bool, tests_ok: bool, unsupported_ok: bool) -> list[Surface]:
-    cuda = bool(hardware.get("cuda"))
-    mps = bool(hardware.get("mps"))
-    torch_v = hardware.get("torch")
+def build_surfaces(
+    hardware: dict[str, Any],
+    probes: dict[str, dict[str, Any]],
+    *,
+    tests_ok: bool,
+    unsupported_ok: bool,
+    smoke_ok: bool,
+) -> list[Surface]:
+    cuda = hardware.get("cuda")
+    mps = hardware.get("mps")
+    mps_detail_extra = ""
+    if hardware.get("probe_error"):
+        mps_detail_extra = f" probe_error={hardware['probe_error']}"
+    bnb = probes.get("bitsandbytes") or {"ok": False, "error": "probe missing"}
+    flash = probes.get("flash_attn") or {"ok": False, "error": "probe missing"}
+    unsloth = probes.get("unsloth") or {"ok": False, "error": "probe missing"}
+
+    def blocked(detail: str) -> tuple[str, str, str]:
+        return "unsupported", REASON_DEPS, detail
+
+    cuda_status, cuda_reason, cuda_detail = (
+        ("supported", None, f"torch.cuda.is_available()={cuda}")
+        if cuda is True
+        else blocked(f"torch.cuda.is_available()={cuda}.{mps_detail_extra} " + REFUSAL_SENTENCE)
+    )
+    mps_status, mps_reason, mps_detail = (
+        ("supported", None, f"torch.backends.mps.is_available()={mps}")
+        if mps is True
+        else blocked(f"torch.backends.mps.is_available()={mps}.{mps_detail_extra} " + REFUSAL_SENTENCE)
+    )
+    bnb_status, bnb_reason, bnb_detail = (
+        ("supported", None, "import bitsandbytes succeeded")
+        if bnb.get("ok")
+        else blocked(f"import bitsandbytes failed: {bnb.get('error')} " + REFUSAL_SENTENCE)
+    )
+    flash_status, flash_reason, flash_detail = (
+        ("supported", None, "import flash_attn succeeded")
+        if flash.get("ok")
+        else blocked(f"import flash_attn failed: {flash.get('error')} " + REFUSAL_SENTENCE)
+    )
+    unsloth_status, unsloth_reason, unsloth_detail = (
+        ("supported", None, "import unsloth succeeded")
+        if unsloth.get("ok")
+        else blocked(f"import unsloth failed: {unsloth.get('error')} " + REFUSAL_SENTENCE)
+    )
+    fp16_ok = bool(cuda) or bool(mps)
+    fp16_status, fp16_reason, fp16_detail = (
+        ("supported", None, "cuda or mps present so fp16/bf16 kernels may exist")
+        if fp16_ok
+        else blocked("no cuda or mps. SFTConfig sets bf16=False fp16=False. " + REFUSAL_SENTENCE)
+    )
     return [
         Surface(
             id="pytest",
@@ -602,72 +960,68 @@ def static_surfaces(hardware: dict[str, Any], smoke_ok: bool, tests_ok: bool, un
         ),
         Surface(
             id="cli-unsupported-report",
-            command=f"python -m sft_loop --model-id {MODEL_ID}",
+            command=f"python -m sft_loop --model-id {PINNED_MODEL_ID}",
             status="supported" if unsupported_ok else "unsupported",
             reason=None if unsupported_ok else REASON_TRAIN,
             detail="Fail-closed unsupported JSON from python -m sft_loop.",
         ),
         Surface(
             id="loop-default",
-            command=f"python -m sft_loop.loop --model-id {MODEL_ID} --seed {SEED}",
+            command=f"python -m sft_loop.loop --model-id {PINNED_MODEL_ID} --seed {SEED}",
             status="supported" if unsupported_ok else "unsupported",
             reason=None if unsupported_ok else REASON_DEPS,
             detail="Default loop on a machine with no MPS and no CUDA Unsloth stack emits unsupported.",
         ),
         Surface(
             id="train-mps",
-            command=f"python -m sft_loop.train --model-id {MODEL_ID} --seed {SEED} --device mps",
-            status="unsupported",
-            reason=REASON_DEPS,
-            detail="MPS is unavailable on this Linux CPU VM. " + REFUSAL_SENTENCE,
+            command=f"python -m sft_loop.train --model-id {PINNED_MODEL_ID} --seed {SEED} --device mps",
+            status=mps_status,
+            reason=mps_reason,
+            detail=mps_detail,
         ),
         Surface(
             id="train-cuda-unsloth",
-            command=f"python -m sft_loop.loop --model-id {MODEL_ID} --seed {SEED} --device cuda",
-            status="unsupported",
-            reason=REASON_DEPS,
+            command=f"python -m sft_loop.loop --model-id {PINNED_MODEL_ID} --seed {SEED} --device cuda",
+            status="unsupported" if not (cuda is True and unsloth.get("ok")) else "supported",
+            reason=REASON_DEPS if not (cuda is True and unsloth.get("ok")) else None,
             detail=(
-                f"CUDA and the unsloth extra are not used here. cuda={cuda} torch={torch_v}. "
-                + REFUSAL_SENTENCE
+                f"cuda={cuda}; {unsloth_detail}"
             ),
         ),
         Surface(
             id="eval-mps",
-            command=f"python -m sft_loop.eval --model-id {MODEL_ID} --seed {SEED} --split before --device mps",
-            status="unsupported",
-            reason=REASON_DEPS,
-            detail=f"Eval on MPS is blocked with the train stack. mps={mps}. " + REFUSAL_SENTENCE,
+            command=f"python -m sft_loop.eval --model-id {PINNED_MODEL_ID} --seed {SEED} --split before --device mps",
+            status=mps_status,
+            reason=mps_reason,
+            detail=mps_detail,
         ),
         Surface(
             id="bitsandbytes",
-            command="not a scored-path dependency",
-            status="unsupported",
-            reason=REASON_DEPS,
-            detail="bitsandbytes is not installed. The MPS TRL+PEFT path loads float32. " + REFUSAL_SENTENCE,
+            command="import bitsandbytes",
+            status=bnb_status,
+            reason=bnb_reason,
+            detail=bnb_detail,
         ),
         Surface(
             id="flash-attn",
-            command="not a scored-path dependency",
-            status="unsupported",
-            reason=REASON_DEPS,
-            detail="flash-attn is not installed. Train uses attn_implementation=eager. " + REFUSAL_SENTENCE,
+            command="import flash_attn",
+            status=flash_status,
+            reason=flash_reason,
+            detail=flash_detail,
+        ),
+        Surface(
+            id="unsloth",
+            command="import unsloth",
+            status=unsloth_status,
+            reason=unsloth_reason,
+            detail=unsloth_detail,
         ),
         Surface(
             id="fp16-bf16-gpu-kernels",
             command="SFTConfig bf16=False fp16=False",
-            status="unsupported",
-            reason=REASON_DEPS,
-            detail="fp16/bf16 GPU kernels are not used. Train config sets bf16 and fp16 false. "
-            + REFUSAL_SENTENCE,
-        ),
-        Surface(
-            id="gated-huggingface-models",
-            command=f"AutoModelForCausalLM.from_pretrained({MODEL_ID})",
-            status="unsupported" if not smoke_ok else "supported",
-            reason=REASON_DEPS if not smoke_ok else None,
-            detail=(
-                f"{MODEL_ID} is the pinned public Apache-2.0 model. Other gated models are not loaded."
-            ),
+            status=fp16_status,
+            reason=fp16_reason,
+            detail=fp16_detail,
         ),
         Surface(
             id="network-only-datasets",
@@ -678,11 +1032,12 @@ def static_surfaces(hardware: dict[str, Any], smoke_ok: bool, tests_ok: bool, un
         ),
         Surface(
             id="cpu-trl-peft-smoke",
-            command="scripts/verify smoke (calls _execute_train_trl_peft and _execute_eval_trl_peft device=cpu)",
+            command="scripts/verify smoke",
             status="supported" if smoke_ok else "unsupported",
             reason=None if smoke_ok else REASON_TRAIN,
             detail=(
-                "CPU plumbing LoRA SFT, 2 steps, seed 0, pinned model. Metrics are plumbing checks, not quality."
+                f"CPU plumbing LoRA SFT on {SMOKE_MODEL_ID}@{SMOKE_MODEL_REVISION}. "
+                "Not a scored report."
             ),
         ),
     ]
@@ -691,14 +1046,22 @@ def static_surfaces(hardware: dict[str, Any], smoke_ok: bool, tests_ok: bool, un
 def write_surfaces(
     root: Path,
     hardware: dict[str, Any],
+    probes: dict[str, dict[str, Any]],
     *,
     smoke_ok: bool,
     tests_ok: bool,
     unsupported_ok: bool,
 ) -> Path:
-    surfaces = static_surfaces(hardware, smoke_ok, tests_ok, unsupported_ok)
+    surfaces = build_surfaces(
+        hardware,
+        probes,
+        tests_ok=tests_ok,
+        unsupported_ok=unsupported_ok,
+        smoke_ok=smoke_ok,
+    )
     payload = {
         "hardware": hardware,
+        "probes": probes,
         "supported": [asdict(item) for item in surfaces if item.status == "supported"],
         "unsupported": [asdict(item) for item in surfaces if item.status == "unsupported"],
         "all": [asdict(item) for item in surfaces],
@@ -717,7 +1080,11 @@ def cmd_cleanup(root: Path, log: TextIO | None) -> int:
         append_log(log, f"removed scratch {scratch}\n")
     else:
         append_log(log, f"no scratch at {scratch}\n")
-    surviving = sorted(str(path.relative_to(evidence)) for path in evidence.rglob("*") if path.is_file()) if evidence.exists() else []
+    surviving = (
+        sorted(str(path.relative_to(evidence)) for path in evidence.rglob("*") if path.is_file())
+        if evidence.exists()
+        else []
+    )
     marker = {
         "scratch_removed": str(scratch),
         "evidence_dir": str(evidence),
@@ -744,27 +1111,37 @@ def cmd_all(root: Path, log: TextIO | None) -> int:
         ("test", cmd_test),
         ("unsupported", cmd_unsupported),
         ("smoke", cmd_smoke),
-        ("cleanup", cmd_cleanup),
     ]
     results = []
+    failed_step = None
     overall = 0
     for name, fn in steps:
+        if failed_step is not None:
+            results.append({"step": name, "exit": None, "skipped": True})
+            continue
         append_log(log, f"\n== {name} ==\n")
         code = fn(root, log)
         results.append({"step": name, "exit": code})
-        if code != 0 and name != "smoke":
+        if code != 0:
+            failed_step = name
             overall = code
-            if name in {"install", "doctor", "test"}:
-                break
-        if name == "smoke" and code != 0:
-            results[-1]["note"] = "smoke failed closed. official CLI unsupported path may still be valid."
+            append_log(log, f"verify all failed at step {name} exit {code}\n")
+    append_log(log, "\n== cleanup ==\n")
+    cleanup_code = cmd_cleanup(root, log)
+    results.append({"step": "cleanup", "exit": cleanup_code})
+    if cleanup_code != 0 and failed_step is None:
+        failed_step = "cleanup"
+        overall = cleanup_code
+        append_log(log, f"verify all failed at step cleanup exit {cleanup_code}\n")
     hardware = hardware_probe(python_for(root), root, base_env(root))
-    tests_ok = all(item["exit"] == 0 for item in results if item["step"] == "test")
-    unsupported_ok = all(item["exit"] == 0 for item in results if item["step"] == "unsupported")
-    smoke_ok = all(item["exit"] == 0 for item in results if item["step"] == "smoke")
+    probes = probe_imports(python_for(root), root, base_env(root))
+    tests_ok = all(item.get("exit") == 0 for item in results if item["step"] == "test")
+    unsupported_ok = all(item.get("exit") == 0 for item in results if item["step"] == "unsupported")
+    smoke_ok = all(item.get("exit") == 0 for item in results if item["step"] == "smoke")
     surfaces_path = write_surfaces(
         root,
         hardware,
+        probes,
         smoke_ok=smoke_ok,
         tests_ok=tests_ok,
         unsupported_ok=unsupported_ok,
@@ -773,13 +1150,17 @@ def cmd_all(root: Path, log: TextIO | None) -> int:
         "run_id": run_id,
         "elapsed_s": round(time.time() - started, 3),
         "steps": results,
+        "failed_step": failed_step,
         "surfaces": str(surfaces_path),
         "evidence": str(evidence),
-        "exit": overall if overall != 0 else (0 if unsupported_ok and tests_ok else 1),
+        "exit": overall,
+        "pinned_model": RUN.pinned_model,
+        "smoke_model_id": smoke_model()[0],
+        "smoke_model_revision": smoke_model()[1],
     }
     write_json(evidence / "summary.json", summary)
     append_log(log, json.dumps(summary, indent=2) + "\n")
-    return summary["exit"] if smoke_ok or unsupported_ok else 1
+    return overall
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -788,14 +1169,29 @@ def build_parser() -> argparse.ArgumentParser:
         "command",
         choices=("install", "doctor", "test", "unsupported", "smoke", "cleanup", "all"),
     )
-    parser.add_argument("--run-id", help="Evidence directory name. Default VERIFY_RUN_ID or cpu-linux-seed0.")
+    parser.add_argument(
+        "--run-id",
+        help="Evidence directory name. Default cpu-linux-tiny. Derives evidence and scratch paths.",
+    )
+    parser.add_argument(
+        "--evidence-dir",
+        help="Override evidence path for this invocation only. Do not reuse a path from another run-id.",
+    )
+    parser.add_argument(
+        "--scratch-dir",
+        help="Override scratch path for this invocation only.",
+    )
+    parser.add_argument(
+        "--pinned-model",
+        action="store_true",
+        help="Smoke Qwen/Qwen2.5-1.5B-Instruct instead of the tiny plumbing model.",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    if args.run_id:
-        os.environ["VERIFY_RUN_ID"] = args.run_id
+    configure_run(args)
     root = repo_root()
     evidence = ensure_dir(evidence_dir(root, run_id_from_env()))
     log_path = evidence / "transcript.txt"
@@ -809,7 +1205,14 @@ def main(argv: list[str] | None = None) -> int:
         "all": cmd_all,
     }
     with log_path.open("a", encoding="utf-8") as log:
-        append_log(log, f"\n# verify {args.command} run_id={run_id_from_env()} cwd={root}\n")
+        if RUN.evidence_warning:
+            append_log(log, RUN.evidence_warning + "\n")
+        append_log(
+            log,
+            f"\n# verify {args.command} run_id={run_id_from_env()} cwd={root} "
+            f"evidence={evidence_dir(root, run_id_from_env())} "
+            f"scratch={scratch_dir(run_id_from_env())}\n",
+        )
         try:
             return commands[args.command](root, log)
         except Exception:
