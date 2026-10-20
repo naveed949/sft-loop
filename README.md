@@ -47,14 +47,16 @@ Fixture `quant-heldout-v1` sha256 `f0f813c96d56dc346c7cb6705e6927275fdef03f44c4c
 
 | precision | status | on-disk bytes | peak rss bytes | p50 ms | p95 ms | tokens/s | exact match | n | limiter |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| fp32 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | probed_failure |
-| int8 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | probed_failure |
-| onnx-int8 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | dependency_missing |
-| nf4 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | dependency_missing |
+| fp32 | measured | 3098955668 | 9728626688 | 1976.2665 | 2554.9014 | 1.5740027 | 0.36434109 | 129 | rss |
+| int8 | measured | 2477926394 | 15390990336 | 1180.1589 | 1252.1614 | 6.7302119 | 0.0 | 129 | rss |
+| onnx-int8 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | oom |
+| nf4 | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | unsupported | missing_cuda |
 
 | comparison | status | mean item delta | standard error | bootstrap low | bootstrap high | n |
 | --- | --- | --- | --- | --- | --- | --- |
-| int8 minus fp32 | unsupported | unsupported | unsupported | unsupported | unsupported | fp32_unmeasured |
+| int8 minus fp32 | measured | -0.36434109 | 0.042536442 | -0.4496124 | -0.27906977 | 129 |
+
+Paired method `paired-item-mean` on the same 129 items. A score delta whose interval covers 0 is no measurable difference.
 <!-- quant-table:end -->
 
 ## `runs/` path

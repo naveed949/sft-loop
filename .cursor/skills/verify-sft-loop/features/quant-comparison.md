@@ -36,5 +36,6 @@ Preconditions:
 - `python -m sft_loop.loop --device cpu` still exits 2. Quant has no `--device` flag.
 - A quant file is not a run report. `validate_report` must reject it.
 - NF4 numbers are never estimated. Missing CUDA is `unsupported`.
+- Torch 2.14 ONNX export needs `onnxscript`. A missing module is `dependency_missing`. Export that dies after `model.onnx.data` is written is `oom`.
 - Do not write quant output into `runs/phase3/`.
 - `verify quant` does not reload the 1.5B weights. That is `python -m sft_loop.quant run`.

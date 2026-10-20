@@ -27,6 +27,7 @@ unsloth = [
 quant = [
   "onnx>=1.16",
   "onnxruntime>=1.18",
+  "onnxscript>=0.2",
 ]
 
 [build-system]

@@ -19,3 +19,5 @@ The task score is first-token exact match on `evals/quant-heldout-v1.txt`, 129 l
 When an arm exposes logits, each item stores mean token NLL of the target word. `evals/quant-perplexity-v1.txt` is the reserved Alice extract for a later fixed-text perplexity number. An arm without logits omits `nll`. The paired difference is int8 minus fp32 on the same item ids. Parse recomputes it and rejects a stored block that disagrees.
 
 `schema/quant_comparison.schema.json` is a sibling of the SFT run report. Quant JSON has no `weight_change_claimed` field. NF4 cannot be a measured arm in this comparison. A 1.5B arm that cannot load on this VM is `unsupported` with the probed failure. A smaller-model rerun, if added, cannot occupy `runs/quant/comparison.json`.
+
+On this CPU VM the pinned 1.5B model loaded. fp32 and torch dynamic int8 finished the 129-item protocol. ONNX export wrote a 5.8 GB `model.onnx.data` then `quantize_dynamic` was SIGKILL 137, so that arm is `oom`. NF4 is `missing_cuda`. The README table is generated from those files. Do not type the scores by hand.
