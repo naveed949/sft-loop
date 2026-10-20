@@ -213,10 +213,9 @@ def test_committed_smoke_recorded_lora_b_and_full_steps():
             continue
         train = document.get("train") or {}
         max_abs = train.get("lora_b_max_abs", document.get("lora_b_max_abs"))
-        if max_abs is None:
-            pytest.skip("committed plumbing predates the lora_B lock")
         assert train.get("global_step") == verify.MAX_STEPS
         assert train.get("max_steps") == verify.MAX_STEPS
+        assert max_abs is not None
         assert float(max_abs) > 0.0
         assert int(train.get("lora_b_nonzero") or 0) >= 1
 

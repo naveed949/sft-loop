@@ -1,5 +1,5 @@
 
-# verify all run_id=cpu-linux-tiny-20261020 cwd=/tmp/sft-loop-clean evidence=/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020 scratch=/tmp/sft-loop-verify-cpu-linux-tiny-20261020
+# verify all run_id=cpu-linux-tiny-lorab-20261020 cwd=/tmp/sft-loop-clean evidence=/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020 scratch=/tmp/sft-loop-verify-cpu-linux-tiny-lorab-20261020
 
 == install ==
 The virtual environment was not created successfully because ensurepip is not
@@ -20,7 +20,7 @@ Requirement already satisfied: filelock<5,>=3.24.2 in /home/ubuntu/.local/lib/py
 Requirement already satisfied: packaging>=26.3 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (26.3)
 Requirement already satisfied: platformdirs<5,>=4.4 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (4.13.5)
 Requirement already satisfied: python-discovery>=1.6.1 in /home/ubuntu/.local/lib/python3.12/site-packages (from virtualenv) (1.6.4)
-created virtual environment CPython3.12.3.final.0-64-x86_64 in 189ms
+created virtual environment CPython3.12.3.final.0-64-x86_64 in 84ms
   creator CPython3Posix(dest=/tmp/sft-loop-clean/.venv, clear=False, no_vcs_ignore=False, venv_redirect=None, global=False)
   seeder FromAppData(download=False, pip=bundle, via=copy, app_data_dir=/home/ubuntu/.cache/virtualenv)
     added seed packages: pip==26.2.1
@@ -253,8 +253,8 @@ Requirement already satisfied: typing-extensions>=4.4.0 in ./.venv/lib/python3.1
 Building wheels for collected packages: sft-loop
   Building editable for sft-loop (pyproject.toml): started
   Building editable for sft-loop (pyproject.toml): finished with status 'done'
-  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=5385 sha256=cdf6df269d302b40bff025ac8c08fc86bc7efe6c552dc57cfb5a7cc6cbd86f24
-  Stored in directory: /tmp/pip-ephem-wheel-cache-fl5k_hd9/wheels/2d/0f/b9/7d29a2dd90b03919c012e7808ee91d8d7494f39e2310ff6602
+  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=5385 sha256=40792d8f2c59e5326a4b7e6cdcf0de8e9ecfa219f6d7b8fd549580dc190b299a
+  Stored in directory: /tmp/pip-ephem-wheel-cache-1hunrqln/wheels/2d/0f/b9/7d29a2dd90b03919c012e7808ee91d8d7494f39e2310ff6602
 Successfully built sft-loop
 Installing collected packages: sft-loop
 Successfully installed sft-loop-0.0.1
@@ -335,28 +335,28 @@ exit 0
 doctor imports: ok (jsonschema pytest sft_loop)
 doctor cuda_absent_or_unused: ok (cuda=False)
 doctor mps_absent_on_linux_cpu: ok (mps=False)
-wrote /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/doctor.json
+wrote /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/doctor.json
 
 == test ==
 $ /tmp/sft-loop-clean/.venv/bin/python -m pytest -q --color=no
-..........................................s.........                     [100%]
-51 passed, 1 skipped in 6.60s
+...............................................s.........                [100%]
+56 passed, 1 skipped in 6.69s
 exit 0
 
 == unsupported ==
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop --run-id verify-cli-default --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/cli-default.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop --run-id verify-cli-default --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/cli-default.json
 exit 0
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-loop-default --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/loop-default.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-loop-default --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/loop-default.json
 exit 0
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps --run-id verify-loop-mps --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/loop-mps.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps --run-id verify-loop-mps --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/loop-mps.json
 exit 0
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda --run-id verify-loop-cuda --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/loop-cuda.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda --run-id verify-loop-cuda --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/loop-cuda.json
 exit 0
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-train-default --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/train-default.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-train-default --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/train-default.json
 exit 0
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --run-id verify-eval-before --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/eval-before.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --run-id verify-eval-before --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/eval-before.json
 exit 0
-$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split after --run-id verify-eval-after --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/reports/eval-after.json
+$ /tmp/sft-loop-clean/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split after --run-id verify-eval-after --out /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/reports/eval-after.json
 exit 0
 
 == smoke ==
@@ -370,6 +370,8 @@ out_path = Path(sys.argv[3])
 fail_path = Path(sys.argv[4])
 model_id = sys.argv[5]
 revision = sys.argv[6] or None
+sys.path.insert(0, sys.argv[7])
+from verify_sft_loop import measure_lora_b, require_smoke_train
 
 from datasets import Dataset
 from peft import LoraConfig, PeftModel, get_peft_model
@@ -386,6 +388,9 @@ MAX_STEPS = 2
 MAX_SEQ_LENGTH = 128
 MAX_NEW_TOKENS = 8
 TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+global_step = 0
+train_loss = None
+lora_b = None
 
 
 def text_rows(tokenizer):
@@ -509,10 +514,15 @@ try:
     result = trainer.train()
     global_step = int(getattr(result, "global_step", 0) or 0)
     train_loss = float(getattr(result, "training_loss"))
-    if global_step < 1 or not math.isfinite(train_loss):
-        raise RuntimeError("train_not_run")
     model.save_pretrained(str(adapter_dir))
     tokenizer.save_pretrained(str(adapter_dir))
+    lora_b = measure_lora_b(adapter_dir)
+    require_smoke_train(
+        global_step=global_step,
+        train_loss=train_loss,
+        max_steps=MAX_STEPS,
+        lora_b=lora_b,
+    )
     config_src = adapter_dir / "adapter_config.json"
     shutil.copyfile(config_src, proof_dir / "adapter_config.json")
     log_history = list(getattr(trainer.state, "log_history", []) or [])
@@ -524,6 +534,8 @@ try:
         f"train_loss={format(train_loss, '.8g')}",
         f"max_steps={MAX_STEPS}",
         f"lora_r={LORA_R}",
+        f"lora_b_max_abs={format(lora_b['max_abs'], '.8g')}",
+        f"lora_b_nonzero={lora_b['n_nonzero']}",
         "device=cpu",
         "backend=trl-peft",
         f"log_history={json.dumps(log_history, separators=(',', ':'), sort_keys=True)}",
@@ -547,6 +559,7 @@ try:
         "seed": SEED,
         "before": before,
         "after": after,
+        "lora_b_max_abs": lora_b["max_abs"],
         "train": {
             "trainer": "trl.SFTTrainer",
             "global_step": global_step,
@@ -555,56 +568,63 @@ try:
             "max_steps": MAX_STEPS,
             "device": "cpu",
             "backend": "trl-peft",
+            "lora_b_max_abs": lora_b["max_abs"],
+            "lora_b_tensors": lora_b["n_tensors"],
+            "lora_b_nonzero": lora_b["n_nonzero"],
         },
     }
     out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     print("smoke-plumbing")
 except Exception as exc:
-    fail_path.write_text(
-        json.dumps({"type": type(exc).__name__, "error": str(exc), "trace": traceback.format_exc()}, indent=2)
-        + "\n",
-        encoding="utf-8",
-    )
+    fail_payload = {
+        "type": type(exc).__name__,
+        "error": str(exc),
+        "trace": traceback.format_exc(),
+        "global_step": global_step,
+        "train_loss": train_loss,
+        "lora_b": lora_b,
+    }
+    fail_path.write_text(json.dumps(fail_payload, indent=2) + "\n", encoding="utf-8")
     raise
- /tmp/sft-loop-verify-cpu-linux-tiny-20261020/adapters /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/smoke /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/smoke/plumbing.json /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/smoke/smoke-exception.json trl-internal-testing/tiny-Qwen2ForCausalLM-2.5 ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda
+ /tmp/sft-loop-verify-cpu-linux-tiny-lorab-20261020/adapters /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/smoke /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/smoke/plumbing.json /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/smoke/smoke-exception.json trl-internal-testing/tiny-Qwen2ForCausalLM-2.5 ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/scripts
 {'loss': '11.93', 'grad_norm': '0.03125', 'learning_rate': '0.0002', 'entropy': '11.93', 'num_tokens': '42', 'mean_token_accuracy': '0', 'epoch': '0.0625'}
 {'loss': '11.93', 'grad_norm': '0.02711', 'learning_rate': '0.0001', 'entropy': '11.93', 'num_tokens': '84', 'mean_token_accuracy': '0', 'epoch': '0.125'}
-{'train_runtime': '0.1081', 'train_samples_per_second': '18.51', 'train_steps_per_second': '18.51', 'train_loss': '11.93', 'epoch': '0.125'}
+{'train_runtime': '0.1139', 'train_samples_per_second': '17.56', 'train_steps_per_second': '17.56', 'train_loss': '11.93', 'epoch': '0.125'}
 smoke-plumbing
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
 
 Adding EOS to train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
-Adding EOS to train dataset: 100%|██████████| 16/16 [00:00<00:00, 6889.32 examples/s]
+Adding EOS to train dataset: 100%|██████████| 16/16 [00:00<00:00, 6089.18 examples/s]
 
 Tokenizing train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
-Tokenizing train dataset: 100%|██████████| 16/16 [00:00<00:00, 2792.71 examples/s]
+Tokenizing train dataset: 100%|██████████| 16/16 [00:00<00:00, 3492.16 examples/s]
 
 Truncating train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
-Truncating train dataset: 100%|██████████| 16/16 [00:00<00:00, 7589.78 examples/s]
+Truncating train dataset: 100%|██████████| 16/16 [00:00<00:00, 11808.70 examples/s]
 [transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 151643}.
 
   0%|          | 0/2 [00:00<?, ?it/s]
                                      
 
- 50%|█████     | 1/2 [00:00<00:00, 15.46it/s]
-100%|██████████| 2/2 [00:00<00:00, 18.72it/s]
+ 50%|█████     | 1/2 [00:00<00:00, 16.04it/s]
+100%|██████████| 2/2 [00:00<00:00, 17.73it/s]
                                              
 
-100%|██████████| 2/2 [00:00<00:00, 18.72it/s]
+100%|██████████| 2/2 [00:00<00:00, 17.73it/s]
                                              
 
-100%|██████████| 2/2 [00:00<00:00, 18.72it/s]
-100%|██████████| 2/2 [00:00<00:00, 18.55it/s]
+100%|██████████| 2/2 [00:00<00:00, 17.73it/s]
+100%|██████████| 2/2 [00:00<00:00, 17.22it/s]
 exit 0
-smoke plumbing artifact at /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/smoke/plumbing.json
+smoke plumbing artifact at /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/smoke/plumbing.json
 
 == cleanup ==
-removed scratch /tmp/sft-loop-verify-cpu-linux-tiny-20261020
-evidence remains at /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020 (15 files)
+removed scratch /tmp/sft-loop-verify-cpu-linux-tiny-lorab-20261020
+evidence remains at /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020 (15 files)
 {
-  "run_id": "cpu-linux-tiny-20261020",
-  "elapsed_s": 73.498,
+  "run_id": "cpu-linux-tiny-lorab-20261020",
+  "elapsed_s": 72.263,
   "steps": [
     {
       "step": "install",
@@ -632,8 +652,8 @@ evidence remains at /tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/
     }
   ],
   "failed_step": null,
-  "surfaces": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020/surfaces.json",
-  "evidence": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020",
+  "surfaces": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/surfaces.json",
+  "evidence": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020",
   "exit": 0,
   "pinned_model": false,
   "smoke_model_id": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",

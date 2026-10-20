@@ -26,6 +26,7 @@
     "n": 8,
     "role": "plumbing_not_quality"
   },
+  "lora_b_max_abs": 0.00030013470677658916,
   "train": {
     "trainer": "trl.SFTTrainer",
     "global_step": 2,
@@ -33,9 +34,12 @@
     "lora_r": 8,
     "max_steps": 2,
     "device": "cpu",
-    "backend": "trl-peft"
+    "backend": "trl-peft",
+    "lora_b_max_abs": 0.00030013470677658916,
+    "lora_b_tensors": 8,
+    "lora_b_nonzero": 8
   },
-  "elapsed_s": 8.949,
+  "elapsed_s": 8.815,
   "exit": 0,
   "hardware": {
     "python": "3.12.3",
@@ -48,5 +52,5 @@
     "ram_bytes": 16780574720,
     "probe_error": null
   },
-  "note": "CPU plumbing check only. Not a scored run report. device=cpu and backend=trl-peft are recorded here, not in schema/run_report.schema.json. stack.unsloth is unused because this path is TRL+PEFT."
+  "note": "CPU plumbing check only. Not a scored run report. device=cpu and backend=trl-peft are recorded here, not in schema/run_report.schema.json. stack.unsloth is unused because this path is TRL+PEFT. Smoke fails unless train_loss is finite, global_step == max_steps, and a saved lora_B tensor is nonzero."
 }

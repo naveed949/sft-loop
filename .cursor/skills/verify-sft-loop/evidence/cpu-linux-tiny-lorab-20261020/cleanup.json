@@ -1,6 +1,6 @@
 {
-  "scratch_removed": "/tmp/sft-loop-verify-cpu-linux-tiny-20261020",
-  "evidence_dir": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020",
+  "scratch_removed": "/tmp/sft-loop-verify-cpu-linux-tiny-lorab-20261020",
+  "evidence_dir": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020",
   "evidence_survived": true,
   "files": [
     "doctor.json",
@@ -19,6 +19,6 @@
     "transcript.txt",
     "unsupported-validation.json"
   ],
-  "cleaned_at": "2026-10-20T10:40:41.391861+00:00",
+  "cleaned_at": "2026-10-20T10:56:07.429098+00:00",
   "note": "cleanup never deletes evidence"
 }

@@ -54,6 +54,6 @@
       "detail": "mps=False"
     }
   ],
-  "evidence": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020",
-  "scratch": "/tmp/sft-loop-verify-cpu-linux-tiny-20261020"
+  "evidence": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020",
+  "scratch": "/tmp/sft-loop-verify-cpu-linux-tiny-lorab-20261020"
 }
