@@ -1,0 +1,37 @@
+{
+  "run_id": "cpu-linux-tiny-lorab-20261020",
+  "elapsed_s": 72.263,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 0
+    },
+    {
+      "step": "unsupported",
+      "exit": 0
+    },
+    {
+      "step": "smoke",
+      "exit": 0
+    },
+    {
+      "step": "cleanup",
+      "exit": 0
+    }
+  ],
+  "failed_step": null,
+  "surfaces": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020/surfaces.json",
+  "evidence": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-lorab-20261020",
+  "exit": 0,
+  "pinned_model": false,
+  "smoke_model_id": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+  "smoke_model_revision": "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda"
+}

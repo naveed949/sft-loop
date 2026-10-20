@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+here=$SCRIPT_DIR
+root=""
+while [[ $here != / ]]; do
+  if [[ -f $here/pyproject.toml && -f $here/schema/run_report.schema.json ]]; then
+    root=$here
+    break
+  fi
+  here=$(dirname "$here")
+done
+if [[ -z $root ]]; then
+  echo "could not find repo root" >&2
+  exit 1
+fi
+if [[ -x $root/.venv/bin/python ]] && "$root/.venv/bin/python" -m pip --version >/dev/null 2>&1; then
+  py=$root/.venv/bin/python
+else
+  py=python3
+fi
+export PYTHONPATH="$root/src${PYTHONPATH:+:$PYTHONPATH}"
+exec "$py" "$SCRIPT_DIR/verify_sft_loop.py" "$@"

@@ -31,7 +31,7 @@ The checked-in Phase 3 result in this checkout is fail-closed `unsupported`. Thi
 - score ≠ safety. A task score is a task metric. The report field `metric_role` is fixed to `task_score_not_safety`.
 - This is not frontier RL.
 - This is not full pretraining.
-- No invented uplift: the checked-in Phase 3 report has no `before`, no `after`, and no `task_score`. `weight_change_claimed` is false. No scored before/after JSON is checked in by this change.
+- No invented uplift: the checked-in fail-closed Phase 3 report has no `before`, no `after`, and no `task_score`. `weight_change_claimed` is false. The only scored JSON in this repo is Cap's MPS run at `runs/phase3/scored.json`. CPU verification does not check in a scored report.
 - `weight_change_claimed` can be true only on a `scored` report whose `train_proof` matches a checked-in LoRA `runs/phase3/proof/adapter_config.json` and a TRL `SFTTrainer` log `runs/phase3/proof/train_log.txt` with `global_step >= 1`. Unsloth is not required for that claim. On MPS the report labels `device` `mps`, `backend` `trl-peft`, and `stack.unsloth` is `unused`.
 
 ## Task
