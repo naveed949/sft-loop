@@ -24,6 +24,10 @@ train = [
 unsloth = [
   "unsloth==2026.9.12",
 ]
+quant = [
+  "onnx>=1.16",
+  "onnxruntime>=1.18",
+]
 
 [build-system]
 requires = ["setuptools>=68"]

@@ -47,3 +47,4 @@ Keep implementation details out of the map. Name only user paths, stable flags, 
 - [Same-seed eval](./eval-same-seed.md) covers before/after splits that must share seed, task, and grader.
 - [Same-seed loop](./loop.md) covers `python -m sft_loop.loop` before, train, after.
 - [Run report schema](./report-schema.md) covers `schema/run_report.schema.json` validation and honesty locks.
+- [Quant comparison](./quant-comparison.md) covers `python -m sft_loop.quant` and the fail-closed NF4 report.

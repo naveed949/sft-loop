@@ -1,0 +1,8 @@
+{
+  "probe": {
+    "cuda_available": null,
+    "exception_type": "ModuleNotFoundError",
+    "message": "No module named 'torch'"
+  },
+  "reason": "dependency_missing"
+}

@@ -33,6 +33,7 @@ from sft_loop.task import (
     prediction_token,
     train_examples,
 )
+from sft_loop.quant import assert_tracked_quant_file, tracked_relpaths
 from sft_loop.train import execute_train, main as train_main
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -140,8 +141,14 @@ def _score_like_keys(document) -> list[str]:
 
 
 def _check_runs_json(path: Path, document: dict) -> None:
-    if path.resolve() == PHASE3_SCORED.resolve():
+    rel = path.resolve().relative_to(ROOT.resolve()).as_posix()
+    if rel == "runs/phase3/scored.json":
         return
+    if rel.startswith("runs/quant/"):
+        if rel in tracked_relpaths():
+            assert_tracked_quant_file(ROOT, rel, document)
+            return
+        raise AssertionError(f"{path} is under runs/quant and is not a tracked quant file")
     if "status" not in document:
         found = _score_like_keys(document)
         if found:
@@ -157,6 +164,13 @@ def _check_runs_json(path: Path, document: dict) -> None:
     assert "train_proof" not in document
     assert not _has_key(document, "task_score")
     assert "adaptiveSandboxQualified" not in json.dumps(document)
+
+
+def test_untracked_quant_json_is_forbidden():
+    with pytest.raises(AssertionError, match="not a tracked quant file"):
+        _check_runs_json(ROOT / "runs" / "quant" / "sneaky.json", {"task_score": 1.0})
+    with pytest.raises(AssertionError, match="not a tracked quant file"):
+        _check_runs_json(ROOT / "runs" / "quant" / "notes.json", {"hello": "world"})
 
 
 def test_runs_json_unscored_reports_never_claim_weight_change_or_scores():

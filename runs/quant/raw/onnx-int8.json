@@ -1,0 +1,8 @@
+{
+  "probe": {
+    "cuda_available": false,
+    "exception_type": "ModuleNotFoundError",
+    "message": "No module named 'onnx'"
+  },
+  "reason": "dependency_missing"
+}

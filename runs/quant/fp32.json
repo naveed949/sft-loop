@@ -1,0 +1,18 @@
+{
+  "body": {
+    "detail": "fp32 failed: ModuleNotFoundError. No metrics were produced. Soft-PASS is unused and is refused.",
+    "precision": "fp32",
+    "probe": {
+      "cuda_available": false,
+      "exception_type": "ModuleNotFoundError",
+      "message": "No module named 'torch'"
+    },
+    "reason": "probed_failure",
+    "status": "unsupported"
+  },
+  "comparison_sha256": "d7f7bca0f9b2e26763694b4a285ef81d221639b5f0c9397a98376fdc0d27899b",
+  "document_kind": "quant-arm-projection",
+  "precision": "fp32",
+  "protocol_sha256": "d4c84d7165101534468ae30590a5577aeec0cee32232ab315a9116fc3c196fd3",
+  "schema_version": "1"
+}
