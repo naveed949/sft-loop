@@ -34,7 +34,7 @@ THREADS = 1
 DOCUMENT_KIND = "quant-comparison"
 PROJECTION_KIND = "quant-arm-projection"
 METRIC_ROLE = "task_score_not_safety"
-ARM_BUDGET_S = 1800
+ARM_BUDGET_S = 3600
 NF4_CUDA_DETAIL = (
     "NF4 needs CUDA. torch.cuda.is_available is false on this host. "
     "No NF4 numbers were produced. " + REFUSAL_SENTENCE
@@ -684,6 +684,8 @@ def _run_child(precision: Precision, protocol: dict[str, Any]) -> dict[str, Any]
         env["OPENBLAS_NUM_THREADS"] = str(THREADS)
         env["NUMEXPR_NUM_THREADS"] = str(THREADS)
         env["CUDA_VISIBLE_DEVICES"] = ""
+        env.setdefault("HF_HOME", str(repo_root() / "hf_cache"))
+        env.setdefault("TOKENIZERS_PARALLELISM", "false")
         cmd = [
             sys.executable,
             "-m",
@@ -874,7 +876,7 @@ def _load_causal_lm(protocol: dict[str, Any]):
     model = AutoModelForCausalLM.from_pretrained(
         protocol["model_id"],
         revision=protocol["revision"],
-        torch_dtype=torch.float32,
+        dtype=torch.float32,
         attn_implementation="eager",
         low_cpu_mem_usage=True,
     )
