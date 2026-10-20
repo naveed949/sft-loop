@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Drive sft-loop the way a later agent must: install, doctor, test, CLI, CPU smoke, cleanup."""
 
 from __future__ import annotations
 
