@@ -1,0 +1,201 @@
+{
+  "hardware": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "torch": "2.14.1+cpu",
+    "cuda": false,
+    "mps": false,
+    "cpu_count": 4,
+    "ram_bytes": 16780574720,
+    "probe_error": null
+  },
+  "probes": {
+    "bitsandbytes": {
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'bitsandbytes'"
+    },
+    "flash_attn": {
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'flash_attn'"
+    },
+    "unsloth": {
+      "ok": false,
+      "error": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'unsloth'"
+    }
+  },
+  "supported": [
+    {
+      "id": "pytest",
+      "command": "python -m pytest -q",
+      "status": "supported",
+      "reason": null,
+      "detail": "Full tests/ suite on this checkout."
+    },
+    {
+      "id": "cli-unsupported-report",
+      "command": "python -m sft_loop --model-id Qwen/Qwen2.5-1.5B-Instruct",
+      "status": "supported",
+      "reason": null,
+      "detail": "Fail-closed unsupported JSON from python -m sft_loop."
+    },
+    {
+      "id": "loop-default",
+      "command": "python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0",
+      "status": "supported",
+      "reason": null,
+      "detail": "Default loop on a machine with no MPS and no CUDA Unsloth stack emits unsupported."
+    },
+    {
+      "id": "network-only-datasets",
+      "command": "sft_loop.task train_examples / eval_examples",
+      "status": "supported",
+      "reason": null,
+      "detail": "Train and eval rows are in-code synthetic words. No Hub dataset is downloaded."
+    },
+    {
+      "id": "cpu-trl-peft-smoke",
+      "command": "scripts/verify smoke",
+      "status": "supported",
+      "reason": null,
+      "detail": "CPU plumbing LoRA SFT on trl-internal-testing/tiny-Qwen2ForCausalLM-2.5@ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda. Not a scored report."
+    }
+  ],
+  "unsupported": [
+    {
+      "id": "train-mps",
+      "command": "python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "torch.backends.mps.is_available()=False. Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "train-cuda-unsloth",
+      "command": "python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "cuda=False; import unsloth failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'unsloth' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "eval-mps",
+      "command": "python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --device mps",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "torch.backends.mps.is_available()=False. Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "bitsandbytes",
+      "command": "import bitsandbytes",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "import bitsandbytes failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'bitsandbytes' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "flash-attn",
+      "command": "import flash_attn",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "import flash_attn failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'flash_attn' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "unsloth",
+      "command": "import unsloth",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "import unsloth failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'unsloth' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "fp16-bf16-gpu-kernels",
+      "command": "SFTConfig bf16=False fp16=False",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "no cuda or mps. SFTConfig sets bf16=False fp16=False. Soft-PASS is unused and is refused."
+    }
+  ],
+  "all": [
+    {
+      "id": "pytest",
+      "command": "python -m pytest -q",
+      "status": "supported",
+      "reason": null,
+      "detail": "Full tests/ suite on this checkout."
+    },
+    {
+      "id": "cli-unsupported-report",
+      "command": "python -m sft_loop --model-id Qwen/Qwen2.5-1.5B-Instruct",
+      "status": "supported",
+      "reason": null,
+      "detail": "Fail-closed unsupported JSON from python -m sft_loop."
+    },
+    {
+      "id": "loop-default",
+      "command": "python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0",
+      "status": "supported",
+      "reason": null,
+      "detail": "Default loop on a machine with no MPS and no CUDA Unsloth stack emits unsupported."
+    },
+    {
+      "id": "train-mps",
+      "command": "python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "torch.backends.mps.is_available()=False. Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "train-cuda-unsloth",
+      "command": "python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "cuda=False; import unsloth failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'unsloth' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "eval-mps",
+      "command": "python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --device mps",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "torch.backends.mps.is_available()=False. Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "bitsandbytes",
+      "command": "import bitsandbytes",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "import bitsandbytes failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'bitsandbytes' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "flash-attn",
+      "command": "import flash_attn",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "import flash_attn failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'flash_attn' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "unsloth",
+      "command": "import unsloth",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "import unsloth failed: Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'unsloth' Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "fp16-bf16-gpu-kernels",
+      "command": "SFTConfig bf16=False fp16=False",
+      "status": "unsupported",
+      "reason": "gpu_or_train_deps_unavailable",
+      "detail": "no cuda or mps. SFTConfig sets bf16=False fp16=False. Soft-PASS is unused and is refused."
+    },
+    {
+      "id": "network-only-datasets",
+      "command": "sft_loop.task train_examples / eval_examples",
+      "status": "supported",
+      "reason": null,
+      "detail": "Train and eval rows are in-code synthetic words. No Hub dataset is downloaded."
+    },
+    {
+      "id": "cpu-trl-peft-smoke",
+      "command": "scripts/verify smoke",
+      "status": "supported",
+      "reason": null,
+      "detail": "CPU plumbing LoRA SFT on trl-internal-testing/tiny-Qwen2ForCausalLM-2.5@ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda. Not a scored report."
+    }
+  ]
+}

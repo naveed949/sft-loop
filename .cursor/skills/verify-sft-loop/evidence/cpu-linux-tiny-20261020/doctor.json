@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "python": "/tmp/sft-loop-clean/.venv/bin/python",
+  "hardware": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "torch": "2.14.1+cpu",
+    "cuda": false,
+    "mps": false,
+    "cpu_count": 4,
+    "ram_bytes": 16780574720,
+    "probe_error": null
+  },
+  "checks": [
+    {
+      "name": "python>=3.10",
+      "ok": true,
+      "detail": "3.12.3"
+    },
+    {
+      "name": "schema",
+      "ok": true,
+      "detail": "/tmp/sft-loop-clean/schema/run_report.schema.json"
+    },
+    {
+      "name": "tests/",
+      "ok": true,
+      "detail": "/tmp/sft-loop-clean/tests"
+    },
+    {
+      "name": "pyproject",
+      "ok": true,
+      "detail": "/tmp/sft-loop-clean/pyproject.toml"
+    },
+    {
+      "name": "venv_pip",
+      "ok": true,
+      "detail": "/tmp/sft-loop-clean/.venv/bin/python"
+    },
+    {
+      "name": "imports",
+      "ok": true,
+      "detail": "jsonschema pytest sft_loop"
+    },
+    {
+      "name": "cuda_absent_or_unused",
+      "ok": true,
+      "detail": "cuda=False"
+    },
+    {
+      "name": "mps_absent_on_linux_cpu",
+      "ok": true,
+      "detail": "mps=False"
+    }
+  ],
+  "evidence": "/tmp/sft-loop-clean/.cursor/skills/verify-sft-loop/evidence/cpu-linux-tiny-20261020",
+  "scratch": "/tmp/sft-loop-verify-cpu-linux-tiny-20261020"
+}
