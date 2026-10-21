@@ -704,3 +704,79 @@ def test_additive_causal_mask_is_4d_keep_or_min():
     assert out[0, 0, 1, 0] == 0
     assert out[0, 0, 1, 1] == 0
     assert out[0, 0, 2, 2] == fill
+
+
+def _scored_parity(*, sha: str = "aaa", min_new_tokens=None) -> dict:
+    return {
+        "prompt_hashes": {
+            "revision": PINNED_REVISION,
+            "items": [{"item_id": "anchor", "n_chars": 174, "sha256": sha}],
+        },
+        "generation_config": {
+            "add_generation_prompt": True,
+            "attn_implementation": "eager",
+            "chat_template": "tokenizer.apply_chat_template",
+            "do_sample": False,
+            "eos_token_id": 151645,
+            "max_new_tokens": 8,
+            "min_new_tokens": min_new_tokens,
+            "pad_token_id": 151645,
+            "stop_criteria": "eos_or_max_new_tokens",
+            "temperature": None,
+        },
+    }
+
+
+def test_prompt_hash_drift_is_refused():
+    from sft_loop.quant import assert_prompt_and_generation_parity
+
+    with pytest.raises(ValueError, match="prompt hashes"):
+        assert_prompt_and_generation_parity(_scored_parity(sha="aaa"), _scored_parity(sha="bbb"))
+
+
+def test_generation_config_drift_is_refused():
+    from sft_loop.quant import assert_prompt_and_generation_parity
+
+    left = _scored_parity()
+    right = _scored_parity(min_new_tokens=8)
+    with pytest.raises(ValueError, match="generation config"):
+        assert_prompt_and_generation_parity(left, right)
+
+
+def test_matching_prompt_and_generation_config_pass():
+    from sft_loop.quant import assert_prompt_and_generation_parity
+
+    payload = _scored_parity()
+    assert_prompt_and_generation_parity(payload, dict(payload))
+
+
+def test_ingest_refuses_generation_config_drift_between_arms(tmp_path: Path):
+    from sft_loop.quant import check_kernel_scored_parity
+
+    left_items = _items(47)
+    right_items = _items(79)
+    _write_gpu_kernel(tmp_path, Precision.T4_FP32, left_items)
+    _write_gpu_kernel(tmp_path, Precision.NF4, right_items)
+    (tmp_path / "t4-fp32" / "generation_config.json").write_text(
+        json.dumps(_scored_parity()["generation_config"]), encoding="utf-8"
+    )
+    (tmp_path / "t4-fp32" / "prompt_hashes.json").write_text(
+        json.dumps(_scored_parity(sha="aaa")["prompt_hashes"]), encoding="utf-8"
+    )
+    drifted = _scored_parity(min_new_tokens=8)
+    (tmp_path / "nf4" / "generation_config.json").write_text(
+        json.dumps(drifted["generation_config"]), encoding="utf-8"
+    )
+    (tmp_path / "nf4" / "prompt_hashes.json").write_text(
+        json.dumps(drifted["prompt_hashes"]), encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="generation config"):
+        check_kernel_scored_parity(tmp_path)
+    with pytest.raises(ValueError, match="generation config"):
+        ingest_kernel_arm(tmp_path, Precision.NF4)
+
+
+def test_committed_nf4_and_t4_fp32_share_prompt_and_generation_config():
+    from sft_loop.quant import assert_kernel_arm_parity
+
+    assert_kernel_arm_parity(ROOT / "runs/quant/kernel/quant_nf4", "nf4", "t4-fp32")
