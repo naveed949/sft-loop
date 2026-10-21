@@ -1,0 +1,26 @@
+{
+  "scratch_removed": "/tmp/sft-loop-verify-issue9-quant-nf4-parity",
+  "evidence_dir": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity",
+  "evidence_survived": true,
+  "files": [
+    "doctor.json",
+    "pip-freeze.json",
+    "pytest.txt",
+    "quant/kernel-missing.json",
+    "quant/nf4.json",
+    "reports/cli-default.json",
+    "reports/eval-after.json",
+    "reports/eval-before.json",
+    "reports/loop-cuda.json",
+    "reports/loop-default.json",
+    "reports/loop-mps.json",
+    "reports/train-default.json",
+    "smoke/adapter_config.json",
+    "smoke/plumbing.json",
+    "smoke/train_log.txt",
+    "transcript.txt",
+    "unsupported-validation.json"
+  ],
+  "cleaned_at": "2026-10-21T22:38:18.211848+00:00",
+  "note": "cleanup never deletes evidence"
+}
