@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/cli-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/loop-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/loop-mps.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/loop-cuda.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/train-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/eval-before.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p2/reports/eval-after.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  }
+]

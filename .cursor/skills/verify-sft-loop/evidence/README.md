@@ -18,6 +18,8 @@ Kaggle GPU kernels are not a local verify surface. The scripts live at `kaggle/q
 
 `issue9-quant-gpu-p1/` is the Phase 1 proof. `scripts/verify all --run-id issue9-quant-gpu-p1` exited 0. `surfaces.json` lists `kaggle-quant-kernels` as unsupported and points at those dirs. `quant/kernel-missing.json` is the fail-closed ingest.
 
+`issue9-quant-gpu-p2/` is the Phase 2 ingest proof. `scripts/verify all --run-id issue9-quant-gpu-p2` exited 0 in 34.508s. Pytest was 81 passed. `quant` validated the ingested T4 comparison, checked the README table, and still fail-closed a missing kernel dir. Downloaded outputs live at `runs/quant/kernel/`. Local verify still does not run the kernels.
+
 Read these first:
 
 - `summary.json` (all steps exit 0, 72.263s, `failed_step` null)
