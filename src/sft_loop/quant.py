@@ -58,6 +58,9 @@ __all__ = [
     "assert_tracked_quant_file",
     "paired_difference",
     "apply_prompt_mask",
+    "ingest_kernel_arm",
+    "cross_hardware_view",
+    "PAIRING_SPECS",
 ]
 
 
@@ -66,6 +69,7 @@ class Precision(str, enum.Enum):
     INT8 = "int8"
     ONNX_INT8 = "onnx-int8"
     NF4 = "nf4"
+    FP16 = "fp16"
 
 
 class UnsupportedReason(str, enum.Enum):
@@ -74,6 +78,41 @@ class UnsupportedReason(str, enum.Enum):
     EXPORT_TIMEOUT = "export_timeout"
     DEPENDENCY_MISSING = "dependency_missing"
     PROBED_FAILURE = "probed_failure"
+    KERNEL_OUTPUT_MISSING = "kernel_output_missing"
+
+
+@dataclass(frozen=True)
+class PairingSpec:
+    key: str
+    minus: str
+    baseline: str
+    require: Literal["same_cpu_host", "same_accelerator"]
+
+
+PAIRING_SPECS: tuple[PairingSpec, ...] = (
+    PairingSpec("int8-minus-fp32", "int8", "fp32", "same_cpu_host"),
+    PairingSpec("nf4-minus-fp16", "nf4", "fp16", "same_accelerator"),
+)
+
+GPU_PRECISIONS = frozenset({Precision.NF4, Precision.FP16})
+KERNEL_DIR_NF4 = "kaggle/quant_nf4"
+KERNEL_DIR_ONNX = "kaggle/quant_onnx_int8"
+KERNEL_STUB_FILES = ("env.json", "progress.json", "log.txt")
+KERNEL_ARM_FILES = {
+    Precision.NF4: ("nf4/items.json", "nf4/metrics.json"),
+    Precision.FP16: ("fp16/items.json", "fp16/metrics.json"),
+    Precision.ONNX_INT8: ("onnx-int8/items.json", "onnx-int8/metrics.json"),
+}
+NF4_QUANT_CONFIG = {
+    "load_in_4bit": True,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_use_double_quant": True,
+    "bnb_4bit_compute_dtype": "float16",
+}
+KERNEL_MISSING_DETAIL = (
+    "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. "
+    + REFUSAL_SENTENCE
+)
 
 
 def repo_root() -> Path:
@@ -235,13 +274,16 @@ def measured_arm(
     libraries: dict[str, str],
     limiter: dict[str, Any],
     protocol: dict[str, Any],
+    hardware: dict[str, Any] | None = None,
+    peak_gpu_bytes: int | None = None,
+    kernel: dict[str, Any] | None = None,
+    compute_dtype: str | None = None,
+    quant_config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    if precision is Precision.NF4:
-        raise ValueError("nf4 cannot be a measured arm")
     _check_item_alignment(protocol, items)
     summary = _summarize_items(items)
     raw = canonical_dumps({"items": items})
-    body = {
+    body: dict[str, Any] = {
         "status": "measured",
         "precision": precision.value,
         "on_disk_bytes": int(on_disk_bytes),
@@ -252,6 +294,25 @@ def measured_arm(
         "raw_sha256": sha256_text(raw),
         **summary,
     }
+    if precision in GPU_PRECISIONS:
+        if hardware is None or not hardware.get("accelerator"):
+            raise ValueError("gpu arm needs hardware.accelerator")
+        if peak_gpu_bytes is None:
+            raise ValueError("gpu arm needs peak_gpu_bytes")
+        if kernel is None:
+            raise ValueError("gpu arm needs kernel placeholder")
+        if compute_dtype != "float16":
+            raise ValueError("gpu arm compute_dtype must be float16")
+        body["hardware"] = hardware
+        body["peak_gpu_bytes"] = int(peak_gpu_bytes)
+        body["kernel"] = kernel
+        body["compute_dtype"] = compute_dtype
+        if precision is Precision.NF4:
+            if quant_config != NF4_QUANT_CONFIG:
+                raise ValueError("nf4 quant_config must be the recorded BitsAndBytes NF4 settings")
+            body["quant_config"] = quant_config
+    elif hardware is not None or peak_gpu_bytes is not None or kernel is not None:
+        raise ValueError("cpu arm must not carry gpu fields")
     return body
 
 
@@ -261,37 +322,55 @@ def unsupported_arm(
     reason: UnsupportedReason,
     detail: str,
     probe: dict[str, Any],
+    kernel: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    if precision is Precision.NF4 and reason not in {
-        UnsupportedReason.MISSING_CUDA,
-        UnsupportedReason.DEPENDENCY_MISSING,
-    }:
-        raise ValueError("nf4 reason must be missing_cuda or dependency_missing")
-    return {
+    body = {
         "status": "unsupported",
         "precision": precision.value,
         "reason": reason.value,
         "detail": _require_detail(detail),
         "probe": probe,
     }
+    if kernel is not None:
+        body["kernel"] = kernel
+    return body
+
+
+def _accelerator(arm: dict[str, Any]) -> str | None:
+    hardware = arm.get("hardware")
+    if not isinstance(hardware, dict):
+        return None
+    value = hardware.get("accelerator")
+    return value if isinstance(value, str) and value else None
 
 
 def paired_difference(
     protocol: dict[str, Any],
-    fp32: dict[str, Any],
-    int8: dict[str, Any],
+    minus_arm: dict[str, Any],
+    baseline_arm: dict[str, Any],
+    *,
+    minus: str,
+    baseline: str,
 ) -> dict[str, Any]:
-    if fp32.get("status") != "measured" or int8.get("status") != "measured":
+    if minus_arm.get("status") != "measured" or baseline_arm.get("status") != "measured":
         raise ValueError("paired_difference needs two measured arms")
-    _check_item_alignment(protocol, fp32["items"])
-    _check_item_alignment(protocol, int8["items"])
+    spec = next((item for item in PAIRING_SPECS if item.minus == minus and item.baseline == baseline), None)
+    if spec is None:
+        raise ValueError(f"{minus} versus {baseline} is not a pairing")
+    if spec.require == "same_accelerator":
+        left = _accelerator(minus_arm)
+        right = _accelerator(baseline_arm)
+        if not left or left != right:
+            raise ValueError("gpu pairing needs the same hardware.accelerator")
+    _check_item_alignment(protocol, minus_arm["items"])
+    _check_item_alignment(protocol, baseline_arm["items"])
     score_vals = []
     latency_vals = []
     nll_vals = []
     sequence_nll_vals = []
     have_nll = True
     have_sequence = True
-    for left, right in zip(fp32["items"], int8["items"]):
+    for left, right in zip(baseline_arm["items"], minus_arm["items"]):
         if left["item_id"] != right["item_id"]:
             raise ValueError("paired item ids drifted")
         score_vals.append(float(right["correct"]) - float(left["correct"]))
@@ -305,8 +384,10 @@ def paired_difference(
         else:
             sequence_nll_vals.append(float(right["sequence_nll"]) - float(left["sequence_nll"]))
     low, high = _bootstrap_ci(score_vals, int(protocol["seed"]))
-    outcome = {
+    return {
         "kind": "paired",
+        "minus": minus,
+        "baseline": baseline,
         "n": len(score_vals),
         "score_delta": _round(_mean(score_vals)),
         "score_delta_se": _round(_se(score_vals)),
@@ -322,7 +403,95 @@ def paired_difference(
         "bootstrap_seed": int(protocol["seed"]),
         "method": "paired-item-mean",
     }
-    return outcome
+
+
+def cross_hardware_view(*, minus: str, baseline: str) -> dict[str, Any]:
+    return {
+        "kind": "not_paired",
+        "minus": minus,
+        "baseline": baseline,
+        "reason": "cross_hardware",
+    }
+
+
+def _outcome_for_spec(
+    protocol: dict[str, Any],
+    arms: dict[str, dict[str, Any]],
+    spec: PairingSpec,
+) -> dict[str, Any]:
+    minus_arm = arms[spec.minus]
+    baseline_arm = arms[spec.baseline]
+    if baseline_arm.get("status") != "measured":
+        return {
+            "kind": "unavailable",
+            "minus": spec.minus,
+            "baseline": spec.baseline,
+            "reason": f"{spec.baseline}_unmeasured",
+        }
+    if minus_arm.get("status") != "measured":
+        return {
+            "kind": "unavailable",
+            "minus": spec.minus,
+            "baseline": spec.baseline,
+            "reason": f"{spec.minus}_unmeasured",
+        }
+    if spec.require == "same_accelerator":
+        left = _accelerator(minus_arm)
+        right = _accelerator(baseline_arm)
+        if not left or left != right:
+            return {
+                "kind": "not_paired",
+                "minus": spec.minus,
+                "baseline": spec.baseline,
+                "reason": "accelerator_mismatch",
+            }
+    return paired_difference(
+        protocol,
+        minus_arm,
+        baseline_arm,
+        minus=spec.minus,
+        baseline=spec.baseline,
+    )
+
+
+def _check_arm_body(protocol: dict[str, Any], key: str, arm: dict[str, Any]) -> None:
+    if arm.get("precision") != key:
+        raise ValueError(f"{key} slot precision mismatch")
+    if arm.get("status") == "measured":
+        _check_item_alignment(protocol, arm["items"])
+        summary = _summarize_items(arm["items"])
+        raw = canonical_dumps({"items": arm["items"]})
+        if arm.get("raw_sha256") != sha256_text(raw):
+            raise ValueError(f"{key} raw_sha256 does not match items")
+        for field, value in summary.items():
+            if _round(float(arm[field])) != value:
+                raise ValueError(f"{key} {field} does not match items")
+        if key in {Precision.NF4.value, Precision.FP16.value}:
+            if not _accelerator(arm):
+                raise ValueError(f"{key} measured arm needs hardware.accelerator")
+            if "peak_gpu_bytes" not in arm:
+                raise ValueError(f"{key} measured arm needs peak_gpu_bytes")
+        elif "hardware" in arm or "peak_gpu_bytes" in arm:
+            raise ValueError(f"{key} cpu arm must not carry gpu fields")
+        return
+    if arm.get("status") == "unsupported":
+        for banned in (
+            "items",
+            "on_disk_bytes",
+            "peak_rss_bytes",
+            "peak_gpu_bytes",
+            "task_score",
+            "latency_p50_ms",
+            "latency_p95_ms",
+            "tokens_per_s",
+            "mean_generated_tokens",
+            "decode_tokens_per_s",
+        ):
+            if banned in arm:
+                raise ValueError(f"unsupported {key} has {banned}")
+        _require_detail(str(arm.get("detail", "")))
+        return
+    raise ValueError(f"{key} has unknown status")
 
 
 def assemble_comparison(
@@ -332,56 +501,10 @@ def assemble_comparison(
 ) -> dict[str, Any]:
     expected = {p.value for p in Precision}
     if set(arms) != expected:
-        raise ValueError("arms must contain fp32, int8, onnx-int8, and nf4")
-    nf4 = arms[Precision.NF4.value]
-    if nf4.get("status") != "unsupported":
-        raise ValueError("nf4 must be unsupported")
-    if nf4.get("precision") != Precision.NF4.value:
-        raise ValueError("nf4 slot precision mismatch")
-    if nf4.get("reason") not in {
-        UnsupportedReason.MISSING_CUDA.value,
-        UnsupportedReason.DEPENDENCY_MISSING.value,
-    }:
-        raise ValueError("nf4 reason must be missing_cuda or dependency_missing")
-    _require_detail(str(nf4.get("detail", "")))
-    for key in ("fp32", "int8", "onnx-int8"):
-        arm = arms[key]
-        if arm.get("precision") != key:
-            raise ValueError(f"{key} slot precision mismatch")
-        if arm.get("status") == "measured":
-            _check_item_alignment(protocol, arm["items"])
-            summary = _summarize_items(arm["items"])
-            raw = canonical_dumps({"items": arm["items"]})
-            if arm.get("raw_sha256") != sha256_text(raw):
-                raise ValueError(f"{key} raw_sha256 does not match items")
-            for field, value in summary.items():
-                if _round(float(arm[field])) != value:
-                    raise ValueError(f"{key} {field} does not match items")
-        elif arm.get("status") == "unsupported":
-            for banned in (
-                "items",
-                "on_disk_bytes",
-                "peak_rss_bytes",
-                "task_score",
-                "latency_p50_ms",
-                "latency_p95_ms",
-                "tokens_per_s",
-                "mean_generated_tokens",
-                "decode_tokens_per_s",
-            ):
-                if banned in arm:
-                    raise ValueError(f"unsupported {key} has {banned}")
-            _require_detail(str(arm.get("detail", "")))
-        else:
-            raise ValueError(f"{key} has unknown status")
-    fp32 = arms["fp32"]
-    int8 = arms["int8"]
-    if fp32.get("status") == "measured" and int8.get("status") == "measured":
-        outcome = paired_difference(protocol, fp32, int8)
-    elif fp32.get("status") != "measured":
-        outcome = {"kind": "unavailable", "reason": "fp32_unmeasured"}
-    else:
-        outcome = {"kind": "unavailable", "reason": "int8_unmeasured"}
+        raise ValueError("arms must contain fp32, int8, onnx-int8, nf4, and fp16")
+    for key in expected:
+        _check_arm_body(protocol, key, arms[key])
+    outcomes = {spec.key: _outcome_for_spec(protocol, arms, spec) for spec in PAIRING_SPECS}
     document = {
         "schema_version": "1",
         "document_kind": DOCUMENT_KIND,
@@ -390,7 +513,7 @@ def assemble_comparison(
         "protocol": protocol,
         "hardware": hardware,
         "arms": arms,
-        "outcome": outcome,
+        "outcomes": outcomes,
     }
     _validate_schema(document)
     return document
@@ -411,10 +534,10 @@ def _validate_schema(document: dict[str, Any]) -> None:
 
 def parse_comparison(payload: dict[str, Any]) -> dict[str, Any]:
     _validate_schema(payload)
-    stored = payload.get("outcome")
+    stored = payload.get("outcomes")
     rebuilt = assemble_comparison(payload["protocol"], payload["arms"], payload["hardware"])
-    if rebuilt["outcome"] != stored:
-        raise ValueError("stored outcome does not match recomputed paired difference")
+    if rebuilt["outcomes"] != stored:
+        raise ValueError("stored outcomes do not match recomputed pairings")
     return rebuilt
 
 
@@ -510,6 +633,40 @@ def assert_tracked_quant_file(root: Path, rel: str, document: dict[str, Any]) ->
         raise AssertionError(f"{rel} does not match project_tree")
 
 
+def _arm_table_row(precision: Precision, arm: dict[str, Any]) -> str:
+    if arm["status"] == "unsupported":
+        return (
+            f"| {precision.value} | unsupported | unsupported | unsupported | unsupported | "
+            f"unsupported | unsupported | unsupported | unsupported | unsupported | "
+            f"unsupported | unsupported | {arm['reason']} |"
+        )
+    gpu = arm.get("peak_gpu_bytes", "n/a")
+    accelerator = "n/a"
+    hardware = arm.get("hardware")
+    if isinstance(hardware, dict) and hardware.get("accelerator"):
+        accelerator = hardware["accelerator"]
+    return (
+        f"| {precision.value} | measured | {arm['on_disk_bytes']} | {arm['peak_rss_bytes']} | "
+        f"{gpu} | {arm['latency_p50_ms']} | {arm['latency_p95_ms']} | "
+        f"{arm['mean_generated_tokens']} | {arm['decode_tokens_per_s']} | {arm['task_score']} | "
+        f"{len(arm['items'])} | {accelerator} | {arm['limiter']['kind']} |"
+    )
+
+
+def _outcome_table_row(spec: PairingSpec, outcome: dict[str, Any]) -> str:
+    label = f"{spec.minus} minus {spec.baseline}"
+    if outcome["kind"] == "paired":
+        return (
+            f"| {label} | paired | {outcome['score_delta']} | {outcome['score_delta_se']} | "
+            f"{outcome['score_delta_ci95_low']} | {outcome['score_delta_ci95_high']} | "
+            f"{outcome['n']} |"
+        )
+    return (
+        f"| {label} | {outcome['kind']} | {outcome['kind']} | {outcome['kind']} | "
+        f"{outcome['kind']} | {outcome['kind']} | {outcome['reason']} |"
+    )
+
+
 def render_table(comparison: dict[str, Any]) -> str:
     parse_comparison(comparison)
     protocol = comparison["protocol"]
@@ -522,24 +679,11 @@ def render_table(comparison: dict[str, Any]) -> str:
         f"throughput decode `min_new_tokens={protocol['throughput_decode']['min_new_tokens']}` "
         f"`max_new_tokens={protocol['throughput_decode']['max_new_tokens']}`.",
         "",
-        "| precision | status | on-disk bytes | peak rss bytes | scored p50 ms | scored p95 ms | mean generated tokens | decode tokens/s (min=max=8) | exact match | n | limiter |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| precision | status | on-disk bytes | peak rss bytes | peak gpu bytes | scored p50 ms | scored p95 ms | mean generated tokens | decode tokens/s (min=max=8) | exact match | n | accelerator | limiter |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for precision in Precision:
-        arm = comparison["arms"][precision.value]
-        if arm["status"] == "unsupported":
-            lines.append(
-                f"| {precision.value} | unsupported | unsupported | unsupported | "
-                f"unsupported | unsupported | unsupported | unsupported | unsupported | "
-                f"unsupported | {arm['reason']} |"
-            )
-            continue
-        lines.append(
-            f"| {precision.value} | measured | {arm['on_disk_bytes']} | {arm['peak_rss_bytes']} | "
-            f"{arm['latency_p50_ms']} | {arm['latency_p95_ms']} | {arm['mean_generated_tokens']} | "
-            f"{arm['decode_tokens_per_s']} | {arm['task_score']} | {len(arm['items'])} | "
-            f"{arm['limiter']['kind']} |"
-        )
+        lines.append(_arm_table_row(precision, comparison["arms"][precision.value]))
     lines.extend(
         [
             "",
@@ -547,24 +691,17 @@ def render_table(comparison: dict[str, Any]) -> str:
             "| --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
-    outcome = comparison["outcome"]
-    if outcome["kind"] == "unavailable":
-        lines.append(
-            f"| int8 minus fp32 | unsupported | unsupported | unsupported | "
-            f"unsupported | unsupported | {outcome['reason']} |"
-        )
-    else:
-        lines.append(
-            f"| int8 minus fp32 | measured | {outcome['score_delta']} | "
-            f"{outcome['score_delta_se']} | {outcome['score_delta_ci95_low']} | "
-            f"{outcome['score_delta_ci95_high']} | {outcome['n']} |"
-        )
-        lines.append("")
-        lines.append(
-            f"Paired method `{outcome['method']}` on the same {outcome['n']} items. "
-            "A score delta whose interval covers 0 is no measurable difference. "
-            "scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass."
-        )
+    outcomes = comparison["outcomes"]
+    for spec in PAIRING_SPECS:
+        lines.append(_outcome_table_row(spec, outcomes[spec.key]))
+    lines.extend(
+        [
+            "",
+            "Paired rows share one hardware class. NF4 is paired only with fp16 on the same T4. "
+            "int8 is paired only with CPU fp32. GPU versus CPU is not paired. "
+            "scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass.",
+        ]
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -600,6 +737,112 @@ def _cpu_model() -> str:
     except OSError:
         pass
     return (platform.processor() or platform.machine() or "unknown")[:200]
+
+
+def kernel_placeholder(rel_dir: str) -> dict[str, Any]:
+    return {"dir": rel_dir, "url": None, "version": None}
+
+
+def kernel_dir_for(precision: Precision) -> Path:
+    if precision in {Precision.NF4, Precision.FP16}:
+        return repo_root() / KERNEL_DIR_NF4
+    if precision is Precision.ONNX_INT8:
+        return repo_root() / KERNEL_DIR_ONNX
+    raise ValueError(f"{precision.value} is not a kernel arm")
+
+
+def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
+    kernel = kernel_placeholder(
+        KERNEL_DIR_NF4 if precision in {Precision.NF4, Precision.FP16} else KERNEL_DIR_ONNX
+    )
+    if not source.is_dir():
+        return unsupported_arm(
+            precision=precision,
+            reason=UnsupportedReason.KERNEL_OUTPUT_MISSING,
+            detail=KERNEL_MISSING_DETAIL,
+            probe={
+                "exception_type": "KernelOutputMissing",
+                "message": f"{source} is not a directory",
+                "cuda_available": None,
+            },
+            kernel=kernel,
+        )
+    stub_missing = [name for name in KERNEL_STUB_FILES if not (source / name).is_file()]
+    if stub_missing:
+        return unsupported_arm(
+            precision=precision,
+            reason=UnsupportedReason.KERNEL_OUTPUT_MISSING,
+            detail=KERNEL_MISSING_DETAIL,
+            probe={
+                "exception_type": "KernelOutputMissing",
+                "message": "missing " + ", ".join(stub_missing),
+                "cuda_available": None,
+            },
+            kernel=kernel,
+        )
+    progress = json.loads((source / "progress.json").read_text(encoding="utf-8"))
+    arm_state = progress.get("arms", {}).get(precision.value, {})
+    status = arm_state.get("status") or progress.get("status")
+    if status != "measured":
+        reason_text = str(arm_state.get("reason") or progress.get("reason") or "probed_failure")
+        stage = str(progress.get("stage") or "")
+        if reason_text == "probed_failure" and stage in {"export", "quantize"}:
+            reason_text = "oom"
+        try:
+            reason = UnsupportedReason(reason_text)
+        except ValueError:
+            reason = UnsupportedReason.PROBED_FAILURE
+        probe = arm_state.get("probe") or progress.get("probe")
+        if not isinstance(probe, dict):
+            probe = {
+                "exception_type": "KernelProgress",
+                "message": str(arm_state.get("detail") or progress.get("detail") or reason_text)[:200],
+                "cuda_available": None,
+            }
+        return unsupported_arm(
+            precision=precision,
+            reason=reason,
+            detail=str(arm_state.get("detail") or progress.get("detail") or KERNEL_MISSING_DETAIL),
+            probe=probe,
+            kernel=kernel,
+        )
+    arm_missing = [name for name in KERNEL_ARM_FILES[precision] if not (source / name).is_file()]
+    if arm_missing:
+        return unsupported_arm(
+            precision=precision,
+            reason=UnsupportedReason.KERNEL_OUTPUT_MISSING,
+            detail=KERNEL_MISSING_DETAIL,
+            probe={
+                "exception_type": "KernelOutputMissing",
+                "message": "missing " + ", ".join(arm_missing),
+                "cuda_available": None,
+            },
+            kernel=kernel,
+        )
+    items = json.loads((source / precision.value / "items.json").read_text(encoding="utf-8"))
+    metrics = json.loads((source / precision.value / "metrics.json").read_text(encoding="utf-8"))
+    env = json.loads((source / "env.json").read_text(encoding="utf-8"))
+    protocol = load_protocol()
+    kernel_ref = {
+        "dir": kernel["dir"],
+        "url": env.get("kernel_url"),
+        "version": env.get("kernel_version"),
+    }
+    gpu = precision in GPU_PRECISIONS
+    return measured_arm(
+        precision=precision,
+        items=items,
+        on_disk_bytes=int(metrics["on_disk_bytes"]),
+        peak_rss_bytes=int(metrics["peak_rss_bytes"]),
+        libraries=metrics["libraries"],
+        limiter=metrics["limiter"],
+        protocol=protocol,
+        hardware=env.get("hardware") if gpu else None,
+        peak_gpu_bytes=metrics.get("peak_gpu_bytes") if gpu else None,
+        kernel=kernel_ref if gpu else None,
+        compute_dtype=metrics.get("compute_dtype") if gpu else None,
+        quant_config=metrics.get("quant_config") if precision is Precision.NF4 else None,
+    )
 
 
 def probe_hardware() -> dict[str, Any]:
@@ -667,13 +910,14 @@ def probe_nf4() -> dict[str, Any]:
         )
     return unsupported_arm(
         precision=Precision.NF4,
-        reason=UnsupportedReason.MISSING_CUDA,
-        detail=NF4_CUDA_DETAIL,
+        reason=UnsupportedReason.KERNEL_OUTPUT_MISSING,
+        detail=KERNEL_MISSING_DETAIL,
         probe={
-            "exception_type": "CUDAUnavailable",
-            "message": "this comparison does not publish NF4 numbers",
+            "exception_type": "KernelOutputMissing",
+            "message": "local CUDA is present but Kaggle kernel output is missing",
             "cuda_available": True,
         },
+        kernel=kernel_placeholder(KERNEL_DIR_NF4),
     )
 
 
@@ -726,6 +970,10 @@ def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = Tru
         Precision.INT8.value: _run_child(Precision.INT8, protocol),
         Precision.ONNX_INT8.value: onnx if onnx is not None else _run_child(Precision.ONNX_INT8, protocol),
         Precision.NF4.value: probe_nf4(),
+        Precision.FP16.value: ingest_kernel_arm(
+            repo_root() / KERNEL_DIR_NF4 / "output",
+            Precision.FP16,
+        ),
     }
     comparison = assemble_comparison(protocol, arms, hardware)
     _commit(dest, comparison)
@@ -1265,6 +1513,9 @@ def main(argv: list[str] | None = None) -> int:
     table.add_argument("--write", type=Path, default=None)
     probe = sub.add_parser("probe-nf4")
     probe.add_argument("--dest", type=Path, default=None)
+    ingest = sub.add_parser("ingest")
+    ingest.add_argument("--precision", required=True, choices=[p.value for p in Precision])
+    ingest.add_argument("--from-dir", type=Path, required=True)
     child = sub.add_parser("_child")
     child.add_argument("--precision", required=True)
     child.add_argument("--protocol", type=Path, required=True)
@@ -1305,6 +1556,12 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 sys.stdout.write(text)
             return 0
+        if args.command == "ingest":
+            body = ingest_kernel_arm(args.from_dir, Precision(args.precision))
+            sys.stdout.write(canonical_dumps(body))
+            if body.get("status") == "measured":
+                return 0
+            return 2
         if args.command == "_child":
             return _child_main(args.precision, args.protocol, args.out)
     except ValueError as exc:
