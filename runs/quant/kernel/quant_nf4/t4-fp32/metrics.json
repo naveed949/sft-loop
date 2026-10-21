@@ -1,0 +1,21 @@
+{
+  "attn_implementation": "eager",
+  "compute_dtype": "float32",
+  "exact_match": 0.36434109,
+  "libraries": {
+    "kind": "torch",
+    "tokenizers": "0.23.3",
+    "torch": "2.11.0+cu128",
+    "transformers": "5.20.2"
+  },
+  "limiter": {
+    "available_ram_bytes_at_start": 30044479488,
+    "cpu_time_s": 433.46756,
+    "kind": "gpu",
+    "peak_rss_bytes": 5244866560,
+    "wall_s": 433.60268
+  },
+  "on_disk_bytes": 3098955668,
+  "peak_gpu_bytes": 6238088192,
+  "peak_rss_bytes": 5244866560
+}

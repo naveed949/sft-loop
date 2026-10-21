@@ -297,6 +297,15 @@ def load_cpu_model():
     return torch, tokenizer, model
 
 
+def additive_causal_mask(torch, attention_mask, dtype):
+    batch, seqlen = attention_mask.shape
+    causal = torch.tril(torch.ones((seqlen, seqlen), dtype=torch.bool, device=attention_mask.device))
+    keep = attention_mask.to(torch.bool)[:, None, None, :] & causal
+    fill = torch.finfo(dtype).min
+    mask = torch.zeros((batch, 1, seqlen, seqlen), dtype=dtype, device=attention_mask.device)
+    return mask.masked_fill(~keep, fill)
+
+
 def export_and_quantize(torch, tokenizer, model):
     import numpy as np
     import onnx
@@ -309,9 +318,15 @@ def export_and_quantize(torch, tokenizer, model):
             self.inner = inner
 
         def forward(self, input_ids, attention_mask):
+            # transformers 4.56 create_causal_mask uses vmap on a 2D pad
+            # mask. TorchScript cannot trace that. A 4D additive mask is
+            # returned as-is and never enters that path.
+            mask4 = additive_causal_mask(
+                torch, attention_mask, next(self.inner.parameters()).dtype
+            )
             return self.inner(
                 input_ids=input_ids,
-                attention_mask=attention_mask,
+                attention_mask=mask4,
                 use_cache=False,
             ).logits
 

@@ -71,4 +71,55 @@ python -c "import torch.onnx._internal.exporter._core"
 
 Export peak RAM vs 33.6 GB: v2 died at import, so there is no Kaggle export peak to report. The earlier local 1.5B export on this 16.781 GB host wrote a 5.8 GB `model.onnx.data` and then took SIGKILL 137 in `quantize_dynamic`. Export of the same model already fit in 16.781 GB, so 33.658 GB (2.0×) has headroom for export. The remaining RAM risk is quantize, not `torch.onnx.export`. The kernel writes `export_mem.json` at `export_start`, `export_done` (file sizes included), and `quantize_done` with `peak_rss_bytes`, `host_ram_bytes`, and `fraction_of_host`. Compare the next run's `export_done` peak against 33658318848.
 
-The ONNX arm stays `unsupported` / `probed_failure` until that rerun lands. v2 logs are under `runs/quant/kernel/quant_onnx_int8/`.
+The ONNX arm stays `unsupported` / `probed_failure` until a later rerun lands. v2 and v3 logs are under `runs/quant/kernel/quant_onnx_int8/`.
+
+## Quant T4 v2 ingest and ONNX 4D mask (2026-10-21)
+
+Kaggle `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 2 ran the fail-closed kernel at `38bd88b5720b2f2e0ca9502b30180764ad90228a`. Wall 1972 s on NvidiaTeslaT4. Tarball sha256 `ecb97484656bc7c7e0b4a758653f5a59528dee3919523641650dcb2f291358e8`.
+
+`t4-fp32` scored 47/129. That matches CPU fp32 from PR #13 on the same items, grader, seed, and revision. Mean generated tokens also match (3.248062). Target NLL means match to 1e-5 (CPU 0.79975264, T4 0.79975481). The same-hardware baseline is real.
+
+`metrics.json` from the kernel had no `exact_match` field. Ingest already derives `task_score` from `items[].correct`. The kernel now writes `exact_match` as that same ratio. The committed v2 metrics files were backfilled from their items.
+
+Headline pairing is NF4 minus `t4-fp32` on one T4, n=129, bootstrap 1000, seed 0:
+
+- exact match 79/129 versus 47/129. Score delta +0.24806202, se 0.041224898, CI 0.17054264 to 0.3255814.
+- target NLL mean 0.51175187 versus 0.79975481. NLL delta -0.28800294.
+- sequence NLL mean 4.7892442 versus 4.6356639. Sequence NLL delta +0.15358034.
+- fixed-length decode 15.304685 tok/s versus 25.135479 tok/s (`min_new_tokens=max_new_tokens=8`).
+- peak GPU 1224451584 versus 6238088192 bytes. On-disk 1143625737 versus 3098955668 bytes.
+
+This is one Kaggle run. The protocol warms up 2 times and repeats each item 5 times. `limiter.kind` is `gpu`. All 129 NF4 and t4-fp32 rows have finite NLL and emit 8 decode tokens. The work is in `items.json`. Do not pair T4 tok/s with CPU tok/s.
+
+CPU int8 from PR #13 (same host as CPU fp32) scored 0/129. Target NLL mean rose to 10.032154. Sequence NLL rose to 8.068833. On-disk fell to 2477926394. Peak RSS rose to 15464464384. Decode rose to 6.4966602 tok/s. Per-tensor int8 on every `nn.Linear`, including `lm_head`, destroyed first-token exact match and made NLL much worse.
+
+NF4 stores each 64-wide block as a 4-bit codebook index plus a scale. Double quant (`bnb_4bit_use_double_quant=true`) quantizes those scales too, about 4.125 bits per parameter. That is more compression than int8 (8 bits plus qconfig metadata) and much less than fp32 (32 bits). The extra scale quantization is more error than single-level NF4, not less.
+
+Quantization error and this task do not move together. NF4 raised exact match and lowered target-token NLL, and it raised full-sequence NLL. Int8 lowered exact match and raised both NLL numbers. Sequence NLL is the closer stand-in for perplexity. A first-token exact-match gain is not a perplexity win. Do not read the NF4 score delta as a general quality claim.
+
+### Why fp16 failed
+
+`probe/numerics.json` on `anchor` and `beacon`:
+
+- `fp32_eager`: `logits_finite=true`, hidden max abs about 6636, logits max abs about 30.55.
+- `fp16_eager`: `logits_finite=false`, `hidden_finite=false`. Layer 0 max abs 0.1787, then NaN from layer 1. This is overflow in eager fp16, not a template mismatch.
+- `fp16_sdpa`: `logits_finite=true`, hidden max abs about 6644 (under fp16 max 65504), logits max abs about 30.59.
+
+The scored fp16 arm used `attn_implementation=eager`, so it overflowed. 0/129, every item emitted 8 tokens, NLL stripped as non-finite, `finding: overflow`. `nf4-fp16` was skipped. PR #15 Phase 4 hit a non-finite train loss at step 1 in fp16 on the same T4. That is the same class of bug.
+
+### ONNX v3 and the 4D mask
+
+Kaggle `https://www.kaggle.com/code/inaveed101/sft-loop-quant-onnx-int8` version 3, sha256 `02d6e74e87fae1be20aa6f30310347ec3979ce2019099552ee70e10800681855`, wall 266 s. `export_mem.json` peaked at 10222952448 bytes at `export_start` (0.3037 of 33658318848).
+
+`dynamo=False` worked. TorchScript then died in transformers 4.56.2 `create_causal_mask` → `eager_mask` → `sdpa_mask_recent_torch` → vmap `and_mask` / `inner_mask` with `RuntimeError: unordered_map::at`.
+
+The failed premise after v1 and v2 was "export works once the exporter is callable." v3 falsified that. The first wrong step is asking the model to build a 2D pad mask under JIT.
+
+Chose a wrapper that builds a 4D additive causal mask from the 2D pad mask and passes that in. `masking_utils._preprocess_mask_arguments` returns a 4D mask as-is (line 709). Rejected a transformers bump or legacy-mask flag because the ONNX kernel stays on 4.56.2 and the 4D early return is already there.
+
+Local proof, torch 2.11.0+cpu, transformers 4.56.2, tiny `Qwen2Config` (hidden 64, 2 layers), `dynamo=False`:
+
+- 2D wrapper: `RuntimeError: unordered_map::at` at `masking_utils.py:142` `inner_mask`.
+- 4D wrapper: wrote `/tmp/qwen2-4d.onnx` (524851 bytes).
+
+The ONNX arm stays `unsupported` / `probed_failure` until the 4D kernel reruns.

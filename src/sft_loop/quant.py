@@ -64,6 +64,7 @@ __all__ = [
     "is_kernel_evidence",
     "PAIRING_SPECS",
     "KERNEL_EVIDENCE_PREFIX",
+    "additive_causal_mask",
 ]
 
 
@@ -302,6 +303,17 @@ def _bootstrap_ci(values: list[float], seed: int) -> tuple[float, float]:
     low_i = int(0.025 * (BOOTSTRAP_DRAWS - 1))
     high_i = int(0.975 * (BOOTSTRAP_DRAWS - 1))
     return _round(means[low_i]), _round(means[high_i])
+
+
+def additive_causal_mask(attention_mask, dtype):
+    import torch
+
+    batch, seqlen = attention_mask.shape
+    causal = torch.tril(torch.ones((seqlen, seqlen), dtype=torch.bool, device=attention_mask.device))
+    keep = attention_mask.to(torch.bool)[:, None, None, :] & causal
+    fill = torch.finfo(dtype).min
+    mask = torch.zeros((batch, 1, seqlen, seqlen), dtype=dtype, device=attention_mask.device)
+    return mask.masked_fill(~keep, fill)
 
 
 def apply_prompt_mask(labels: list[int], prefix_len: int) -> list[int]:
@@ -1566,9 +1578,10 @@ def _measure_onnx(protocol: dict[str, Any]) -> dict[str, Any]:
             self.inner = inner
 
         def forward(self, input_ids, attention_mask):
+            mask4 = additive_causal_mask(attention_mask, next(self.inner.parameters()).dtype)
             return self.inner(
                 input_ids=input_ids,
-                attention_mask=attention_mask,
+                attention_mask=mask4,
                 use_cache=False,
             ).logits
 

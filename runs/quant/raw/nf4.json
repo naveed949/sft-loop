@@ -1,8 +1,1294 @@
 {
-  "probe": {
-    "cuda_available": true,
-    "exception_type": "WithdrawnKernelV1",
-    "message": "t4 v1 scored 0/129 with non-finite NLL"
-  },
-  "reason": "probed_failure"
+  "items": [
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.53596,
+      "generated_tokens": 4,
+      "item_id": "anchor",
+      "latency_ms": 281.14025,
+      "nll": 0.68359375,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 515.89524,
+      "generated_tokens": 3,
+      "item_id": "barrel",
+      "latency_ms": 228.76381,
+      "nll": 0.703125,
+      "sequence_nll": 4.96875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 519.93791,
+      "generated_tokens": 4,
+      "item_id": "beacon",
+      "latency_ms": 283.73902,
+      "nll": 0.10693359,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 512.905,
+      "generated_tokens": 4,
+      "item_id": "biscuit",
+      "latency_ms": 279.08675,
+      "nll": 0.61328125,
+      "sequence_nll": 4.46875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.75172,
+      "generated_tokens": 4,
+      "item_id": "blanket",
+      "latency_ms": 281.78012,
+      "nll": 0.032470703,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 513.79797,
+      "generated_tokens": 4,
+      "item_id": "blossom",
+      "latency_ms": 280.65064,
+      "nll": 0.36523438,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 525.58108,
+      "generated_tokens": 3,
+      "item_id": "border",
+      "latency_ms": 221.29535,
+      "nll": 0.029174805,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.6229,
+      "generated_tokens": 4,
+      "item_id": "bottle",
+      "latency_ms": 282.14134,
+      "nll": 0.16210938,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.46099,
+      "generated_tokens": 3,
+      "item_id": "breeze",
+      "latency_ms": 224.17303,
+      "nll": 0.9609375,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 518.14518,
+      "generated_tokens": 4,
+      "item_id": "bronze",
+      "latency_ms": 281.83001,
+      "nll": 0.0390625,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.45032,
+      "generated_tokens": 3,
+      "item_id": "bucket",
+      "latency_ms": 226.48235,
+      "nll": 0.024047852,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 528.76884,
+      "generated_tokens": 2,
+      "item_id": "button",
+      "latency_ms": 161.16507,
+      "nll": 0.52734375,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.22606,
+      "generated_tokens": 3,
+      "item_id": "cactus",
+      "latency_ms": 220.04702,
+      "nll": 1.5546875,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 529.05004,
+      "generated_tokens": 3,
+      "item_id": "camera",
+      "latency_ms": 220.82293,
+      "nll": 0.021850586,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 528.97401,
+      "generated_tokens": 3,
+      "item_id": "candle",
+      "latency_ms": 223.33657,
+      "nll": 0.035644531,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 532.07649,
+      "generated_tokens": 4,
+      "item_id": "canyon",
+      "latency_ms": 282.18327,
+      "nll": 0.828125,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.72161,
+      "generated_tokens": 3,
+      "item_id": "carpet",
+      "latency_ms": 224.13119,
+      "nll": 0.1875,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 530.32133,
+      "generated_tokens": 2,
+      "item_id": "castle",
+      "latency_ms": 161.60745,
+      "nll": 1.0859375,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.84105,
+      "generated_tokens": 3,
+      "item_id": "celery",
+      "latency_ms": 219.35913,
+      "nll": 0.12988281,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 515.65369,
+      "generated_tokens": 4,
+      "item_id": "chapel",
+      "latency_ms": 281.65957,
+      "nll": 2.15625,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.5981,
+      "generated_tokens": 3,
+      "item_id": "cherry",
+      "latency_ms": 227.5733,
+      "nll": 0.083984375,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 516.6127,
+      "generated_tokens": 3,
+      "item_id": "circle",
+      "latency_ms": 221.81824,
+      "nll": 0.065429688,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.7312,
+      "generated_tokens": 3,
+      "item_id": "citrus",
+      "latency_ms": 221.74185,
+      "nll": 0.6875,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.34566,
+      "generated_tokens": 4,
+      "item_id": "cloak",
+      "latency_ms": 290.21043,
+      "nll": 0.12695312,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.37662,
+      "generated_tokens": 4,
+      "item_id": "cobalt",
+      "latency_ms": 287.27583,
+      "nll": 0.029296875,
+      "sequence_nll": 4.65625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 529.14794,
+      "generated_tokens": 4,
+      "item_id": "copper",
+      "latency_ms": 283.74648,
+      "nll": 0.30273438,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 535.85194,
+      "generated_tokens": 4,
+      "item_id": "cradle",
+      "latency_ms": 289.51707,
+      "nll": 0.90625,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.39173,
+      "generated_tokens": 4,
+      "item_id": "cricket",
+      "latency_ms": 281.74029,
+      "nll": 0.10839844,
+      "sequence_nll": 4.65625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.12087,
+      "generated_tokens": 3,
+      "item_id": "crystal",
+      "latency_ms": 220.90428,
+      "nll": 0.47070312,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 516.80617,
+      "generated_tokens": 4,
+      "item_id": "curtain",
+      "latency_ms": 281.82065,
+      "nll": 1.015625,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.99241,
+      "generated_tokens": 2,
+      "item_id": "custom",
+      "latency_ms": 164.20666,
+      "nll": 0.41992188,
+      "sequence_nll": 5.125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.87911,
+      "generated_tokens": 4,
+      "item_id": "daisy",
+      "latency_ms": 282.14234,
+      "nll": 0.065429688,
+      "sequence_nll": 4.5625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.75758,
+      "generated_tokens": 4,
+      "item_id": "desert",
+      "latency_ms": 290.38238,
+      "nll": 1.1640625,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.57944,
+      "generated_tokens": 3,
+      "item_id": "donkey",
+      "latency_ms": 220.861,
+      "nll": 0.20800781,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.92652,
+      "generated_tokens": 3,
+      "item_id": "dragon",
+      "latency_ms": 220.14501,
+      "nll": 0.046386719,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.33828,
+      "generated_tokens": 2,
+      "item_id": "drawer",
+      "latency_ms": 162.12757,
+      "nll": 0.51171875,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.26788,
+      "generated_tokens": 3,
+      "item_id": "eagle",
+      "latency_ms": 221.27932,
+      "nll": 0.53515625,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.92204,
+      "generated_tokens": 3,
+      "item_id": "ember",
+      "latency_ms": 222.94211,
+      "nll": 1.203125,
+      "sequence_nll": 5.0
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.98183,
+      "generated_tokens": 2,
+      "item_id": "engine",
+      "latency_ms": 161.98947,
+      "nll": 0.12011719,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 531.1197,
+      "generated_tokens": 3,
+      "item_id": "fable",
+      "latency_ms": 224.14092,
+      "nll": 1.578125,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.60671,
+      "generated_tokens": 3,
+      "item_id": "feather",
+      "latency_ms": 221.69255,
+      "nll": 0.048095703,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 513.23658,
+      "generated_tokens": 3,
+      "item_id": "fence",
+      "latency_ms": 218.47018,
+      "nll": 0.044677734,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 516.65466,
+      "generated_tokens": 2,
+      "item_id": "field",
+      "latency_ms": 162.31356,
+      "nll": 0.059814453,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.82499,
+      "generated_tokens": 3,
+      "item_id": "forest",
+      "latency_ms": 219.92783,
+      "nll": 0.125,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 528.84055,
+      "generated_tokens": 3,
+      "item_id": "fountain",
+      "latency_ms": 220.52202,
+      "nll": 2.75,
+      "sequence_nll": 5.0
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.65603,
+      "generated_tokens": 4,
+      "item_id": "frost",
+      "latency_ms": 287.0819,
+      "nll": 0.12011719,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 519.42398,
+      "generated_tokens": 3,
+      "item_id": "galaxy",
+      "latency_ms": 222.08873,
+      "nll": 0.31445312,
+      "sequence_nll": 4.53125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 528.54335,
+      "generated_tokens": 3,
+      "item_id": "garlic",
+      "latency_ms": 221.72568,
+      "nll": 1.1171875,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.96387,
+      "generated_tokens": 4,
+      "item_id": "glacier",
+      "latency_ms": 280.16798,
+      "nll": 0.2421875,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.10078,
+      "generated_tokens": 4,
+      "item_id": "goblet",
+      "latency_ms": 281.38587,
+      "nll": 1.421875,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 534.46916,
+      "generated_tokens": 3,
+      "item_id": "grape",
+      "latency_ms": 220.08235,
+      "nll": 0.390625,
+      "sequence_nll": 4.96875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 525.86611,
+      "generated_tokens": 3,
+      "item_id": "gravel",
+      "latency_ms": 223.1679,
+      "nll": 0.609375,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.16895,
+      "generated_tokens": 4,
+      "item_id": "guitar",
+      "latency_ms": 282.3731,
+      "nll": 0.07421875,
+      "sequence_nll": 4.65625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.40295,
+      "generated_tokens": 3,
+      "item_id": "hammer",
+      "latency_ms": 222.16312,
+      "nll": 0.40429688,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.17187,
+      "generated_tokens": 3,
+      "item_id": "hazel",
+      "latency_ms": 221.65549,
+      "nll": 1.5546875,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 514.93909,
+      "generated_tokens": 4,
+      "item_id": "helmet",
+      "latency_ms": 281.40133,
+      "nll": 0.55859375,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.68549,
+      "generated_tokens": 3,
+      "item_id": "honey",
+      "latency_ms": 223.43116,
+      "nll": 0.1953125,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 525.39339,
+      "generated_tokens": 4,
+      "item_id": "horse",
+      "latency_ms": 279.35638,
+      "nll": 0.010925293,
+      "sequence_nll": 4.625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 514.08936,
+      "generated_tokens": 4,
+      "item_id": "ivory",
+      "latency_ms": 286.64325,
+      "nll": 1.265625,
+      "sequence_nll": 5.0625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 532.47236,
+      "generated_tokens": 3,
+      "item_id": "jacket",
+      "latency_ms": 220.59061,
+      "nll": 0.11376953,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 518.59085,
+      "generated_tokens": 4,
+      "item_id": "jungle",
+      "latency_ms": 283.5223,
+      "nll": 0.0546875,
+      "sequence_nll": 4.625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.25712,
+      "generated_tokens": 3,
+      "item_id": "kettle",
+      "latency_ms": 220.1251,
+      "nll": 1.4375,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 528.35932,
+      "generated_tokens": 3,
+      "item_id": "knight",
+      "latency_ms": 223.35186,
+      "nll": 0.27734375,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.5894,
+      "generated_tokens": 4,
+      "item_id": "ladder",
+      "latency_ms": 284.06516,
+      "nll": 0.099121094,
+      "sequence_nll": 4.65625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 519.3747,
+      "generated_tokens": 4,
+      "item_id": "lantern",
+      "latency_ms": 281.20684,
+      "nll": 0.090820312,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.78495,
+      "generated_tokens": 4,
+      "item_id": "lavender",
+      "latency_ms": 281.64745,
+      "nll": 0.13867188,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 515.96219,
+      "generated_tokens": 3,
+      "item_id": "legend",
+      "latency_ms": 220.74053,
+      "nll": 0.060302734,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 518.08721,
+      "generated_tokens": 3,
+      "item_id": "lizard",
+      "latency_ms": 220.33563,
+      "nll": 1.015625,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 514.64724,
+      "generated_tokens": 8,
+      "item_id": "lumber",
+      "latency_ms": 520.82137,
+      "nll": 0.65234375,
+      "sequence_nll": 5.125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 516.1313,
+      "generated_tokens": 3,
+      "item_id": "marble",
+      "latency_ms": 221.28057,
+      "nll": 0.032226562,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.97017,
+      "generated_tokens": 3,
+      "item_id": "meadow",
+      "latency_ms": 225.10431,
+      "nll": 0.25976562,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.70295,
+      "generated_tokens": 4,
+      "item_id": "melon",
+      "latency_ms": 284.46434,
+      "nll": 0.11669922,
+      "sequence_nll": 4.53125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 519.41551,
+      "generated_tokens": 3,
+      "item_id": "mirror",
+      "latency_ms": 221.0307,
+      "nll": 0.095703125,
+      "sequence_nll": 4.8125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 529.54453,
+      "generated_tokens": 4,
+      "item_id": "mossy",
+      "latency_ms": 280.38718,
+      "nll": 1.3046875,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 525.52249,
+      "generated_tokens": 3,
+      "item_id": "needle",
+      "latency_ms": 225.19193,
+      "nll": 0.54296875,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.53322,
+      "generated_tokens": 3,
+      "item_id": "nickel",
+      "latency_ms": 221.89588,
+      "nll": 0.57421875,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.14525,
+      "generated_tokens": 3,
+      "item_id": "olive",
+      "latency_ms": 219.66631,
+      "nll": 0.390625,
+      "sequence_nll": 5.0
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.0433,
+      "generated_tokens": 3,
+      "item_id": "orange",
+      "latency_ms": 220.23643,
+      "nll": 0.07421875,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.34705,
+      "generated_tokens": 4,
+      "item_id": "orchid",
+      "latency_ms": 280.35092,
+      "nll": 0.19628906,
+      "sequence_nll": 4.5625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 527.44763,
+      "generated_tokens": 3,
+      "item_id": "otter",
+      "latency_ms": 225.34989,
+      "nll": 0.093261719,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 535.68824,
+      "generated_tokens": 2,
+      "item_id": "packet",
+      "latency_ms": 161.77284,
+      "nll": 0.37109375,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.27411,
+      "generated_tokens": 3,
+      "item_id": "palace",
+      "latency_ms": 223.17851,
+      "nll": 0.35351562,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.94219,
+      "generated_tokens": 4,
+      "item_id": "pebble",
+      "latency_ms": 282.76089,
+      "nll": 0.072265625,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 512.26243,
+      "generated_tokens": 3,
+      "item_id": "pepper",
+      "latency_ms": 225.15625,
+      "nll": 0.040283203,
+      "sequence_nll": 5.03125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 535.3337,
+      "generated_tokens": 3,
+      "item_id": "pickle",
+      "latency_ms": 220.0756,
+      "nll": 1.4140625,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.81476,
+      "generated_tokens": 3,
+      "item_id": "pillow",
+      "latency_ms": 224.45944,
+      "nll": 1.96875,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 536.10851,
+      "generated_tokens": 3,
+      "item_id": "planet",
+      "latency_ms": 221.7123,
+      "nll": 0.025024414,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 515.50579,
+      "generated_tokens": 3,
+      "item_id": "plum",
+      "latency_ms": 221.6045,
+      "nll": 0.33398438,
+      "sequence_nll": 5.0
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.18338,
+      "generated_tokens": 3,
+      "item_id": "pocket",
+      "latency_ms": 219.48733,
+      "nll": 1.8984375,
+      "sequence_nll": 5.0
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 516.34025,
+      "generated_tokens": 8,
+      "item_id": "pollen",
+      "latency_ms": 514.84534,
+      "nll": 3.90625,
+      "sequence_nll": 5.0
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.70865,
+      "generated_tokens": 4,
+      "item_id": "prairie",
+      "latency_ms": 288.51296,
+      "nll": 0.44726562,
+      "sequence_nll": 4.59375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.43894,
+      "generated_tokens": 4,
+      "item_id": "pumpkin",
+      "latency_ms": 278.50688,
+      "nll": 0.359375,
+      "sequence_nll": 4.59375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 519.50635,
+      "generated_tokens": 3,
+      "item_id": "quail",
+      "latency_ms": 224.84043,
+      "nll": 0.1171875,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 531.78431,
+      "generated_tokens": 4,
+      "item_id": "quartz",
+      "latency_ms": 281.50636,
+      "nll": 0.052978516,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.53196,
+      "generated_tokens": 4,
+      "item_id": "rabbit",
+      "latency_ms": 280.922,
+      "nll": 0.014221191,
+      "sequence_nll": 4.625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.85222,
+      "generated_tokens": 3,
+      "item_id": "raven",
+      "latency_ms": 223.76922,
+      "nll": 0.53125,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 519.14588,
+      "generated_tokens": 5,
+      "item_id": "ribbon",
+      "latency_ms": 342.1591,
+      "nll": 0.024536133,
+      "sequence_nll": 4.59375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.90879,
+      "generated_tokens": 3,
+      "item_id": "rocket",
+      "latency_ms": 225.39419,
+      "nll": 0.059326172,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.56657,
+      "generated_tokens": 3,
+      "item_id": "saddle",
+      "latency_ms": 220.81325,
+      "nll": 1.546875,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 514.86197,
+      "generated_tokens": 4,
+      "item_id": "saffron",
+      "latency_ms": 282.91808,
+      "nll": 0.30664062,
+      "sequence_nll": 4.5625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 525.58248,
+      "generated_tokens": 4,
+      "item_id": "sailor",
+      "latency_ms": 277.55122,
+      "nll": 0.66796875,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 542.26347,
+      "generated_tokens": 3,
+      "item_id": "salmon",
+      "latency_ms": 219.2511,
+      "nll": 0.86328125,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 543.65985,
+      "generated_tokens": 4,
+      "item_id": "scarlet",
+      "latency_ms": 288.19972,
+      "nll": 0.029296875,
+      "sequence_nll": 4.65625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.30365,
+      "generated_tokens": 2,
+      "item_id": "shadow",
+      "latency_ms": 164.10479,
+      "nll": 0.62890625,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 518.72474,
+      "generated_tokens": 4,
+      "item_id": "silver",
+      "latency_ms": 278.0555,
+      "nll": 0.12402344,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.57358,
+      "generated_tokens": 4,
+      "item_id": "sparrow",
+      "latency_ms": 281.74205,
+      "nll": 0.047851562,
+      "sequence_nll": 4.59375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.31323,
+      "generated_tokens": 3,
+      "item_id": "spice",
+      "latency_ms": 224.82875,
+      "nll": 0.033691406,
+      "sequence_nll": 4.875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 521.38195,
+      "generated_tokens": 3,
+      "item_id": "spider",
+      "latency_ms": 227.23416,
+      "nll": 0.031982422,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.1777,
+      "generated_tokens": 3,
+      "item_id": "spruce",
+      "latency_ms": 223.06033,
+      "nll": 0.703125,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.64152,
+      "generated_tokens": 3,
+      "item_id": "squirrel",
+      "latency_ms": 221.6861,
+      "nll": 0.9609375,
+      "sequence_nll": 4.59375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.3429,
+      "generated_tokens": 3,
+      "item_id": "stable",
+      "latency_ms": 222.33898,
+      "nll": 0.11230469,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 536.4916,
+      "generated_tokens": 3,
+      "item_id": "storm",
+      "latency_ms": 225.41078,
+      "nll": 0.045410156,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 517.36074,
+      "generated_tokens": 4,
+      "item_id": "saddlebag",
+      "latency_ms": 284.71909,
+      "nll": 0.640625,
+      "sequence_nll": 4.5
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 524.05261,
+      "generated_tokens": 3,
+      "item_id": "tablet",
+      "latency_ms": 221.22997,
+      "nll": 0.51953125,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.17477,
+      "generated_tokens": 3,
+      "item_id": "temple",
+      "latency_ms": 223.9461,
+      "nll": 0.032958984,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.38193,
+      "generated_tokens": 8,
+      "item_id": "thistle",
+      "latency_ms": 533.78216,
+      "nll": 0.41992188,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 527.16555,
+      "generated_tokens": 3,
+      "item_id": "thunder",
+      "latency_ms": 220.99564,
+      "nll": 0.20800781,
+      "sequence_nll": 4.90625
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 523.36215,
+      "generated_tokens": 3,
+      "item_id": "timber",
+      "latency_ms": 222.08971,
+      "nll": 0.016479492,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 526.8219,
+      "generated_tokens": 4,
+      "item_id": "turtle",
+      "latency_ms": 279.5896,
+      "nll": 0.0091552734,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 520.11835,
+      "generated_tokens": 3,
+      "item_id": "valley",
+      "latency_ms": 221.09991,
+      "nll": 0.028930664,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 530.32037,
+      "generated_tokens": 4,
+      "item_id": "velvet",
+      "latency_ms": 281.9731,
+      "nll": 0.13183594,
+      "sequence_nll": 4.71875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 529.61151,
+      "generated_tokens": 4,
+      "item_id": "violet",
+      "latency_ms": 283.28619,
+      "nll": 0.024047852,
+      "sequence_nll": 4.6875
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 514.18841,
+      "generated_tokens": 3,
+      "item_id": "walnut",
+      "latency_ms": 222.92298,
+      "nll": 0.640625,
+      "sequence_nll": 4.65625
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 511.11068,
+      "generated_tokens": 3,
+      "item_id": "willow",
+      "latency_ms": 218.51413,
+      "nll": 2.078125,
+      "sequence_nll": 4.96875
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 508.75756,
+      "generated_tokens": 2,
+      "item_id": "window",
+      "latency_ms": 166.50404,
+      "nll": 0.099609375,
+      "sequence_nll": 4.84375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 510.44659,
+      "generated_tokens": 3,
+      "item_id": "winter",
+      "latency_ms": 218.89199,
+      "nll": 1.59375,
+      "sequence_nll": 4.78125
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 512.57073,
+      "generated_tokens": 3,
+      "item_id": "wizard",
+      "latency_ms": 227.06574,
+      "nll": 0.48632812,
+      "sequence_nll": 4.75
+    },
+    {
+      "correct": true,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 516.69863,
+      "generated_tokens": 2,
+      "item_id": "yellow",
+      "latency_ms": 161.58217,
+      "nll": 0.13867188,
+      "sequence_nll": 4.9375
+    },
+    {
+      "correct": false,
+      "decode_generated_tokens": 8,
+      "decode_latency_ms": 522.54415,
+      "generated_tokens": 4,
+      "item_id": "zebra",
+      "latency_ms": 289.69602,
+      "nll": 2.03125,
+      "sequence_nll": 4.65625
+    }
+  ]
 }

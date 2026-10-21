@@ -5,11 +5,11 @@
       "status": "unsupported"
     }
   },
-  "detail": "ModuleNotFoundError: No module named 'onnx_ir'",
+  "detail": "RuntimeError: unordered_map::at",
   "probe": {
     "cuda_available": false,
-    "exception_type": "ModuleNotFoundError",
-    "message": "No module named 'onnx_ir'"
+    "exception_type": "RuntimeError",
+    "message": "unordered_map::at"
   },
   "reason": "probed_failure",
   "status": "failed"

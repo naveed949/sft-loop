@@ -1316,7 +1316,7 @@
     "task_score": 0.36434109,
     "task_score_se": 0.042536442
   },
-  "comparison_sha256": "66994eb54225e07f1151beb2ee5739950f3ce9a89fa4ad9578ed6bf4340eecec",
+  "comparison_sha256": "60dd9d48af5664395c8bbe5ab730338edc4a6b4def87e3fbd0e70e3d06b3ba21",
   "document_kind": "quant-arm-projection",
   "precision": "fp32",
   "protocol_sha256": "b5fe0ba1136866ad026fdf874d16ead047e506f65f2e6acab2c574e99a2dd32b",

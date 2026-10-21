@@ -1,23 +1,26 @@
 {
-  "compute_dtype": "float16",
+  "attn_implementation": "eager",
+  "compute_dtype": "float32",
+  "exact_match": 0.6124031,
   "libraries": {
     "bitsandbytes": "0.50.2",
     "kind": "bitsandbytes",
+    "tokenizers": "0.23.3",
     "torch": "2.11.0+cu128",
-    "transformers": "4.56.2"
+    "transformers": "5.20.2"
   },
   "limiter": {
-    "available_ram_bytes_at_start": 30088364032,
-    "cpu_time_s": 816.6595,
+    "available_ram_bytes_at_start": 30126436352,
+    "cpu_time_s": 711.90774,
     "kind": "gpu",
-    "peak_rss_bytes": 5838807040,
-    "wall_s": 816.42858
+    "peak_rss_bytes": 5377839104,
+    "wall_s": 711.90615
   },
   "on_disk_bytes": 1143625737,
-  "peak_gpu_bytes": 1189611520,
-  "peak_rss_bytes": 5838807040,
+  "peak_gpu_bytes": 1224451584,
+  "peak_rss_bytes": 5377839104,
   "quant_config": {
-    "bnb_4bit_compute_dtype": "float16",
+    "bnb_4bit_compute_dtype": "float32",
     "bnb_4bit_quant_type": "nf4",
     "bnb_4bit_use_double_quant": true,
     "load_in_4bit": true

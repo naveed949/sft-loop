@@ -453,10 +453,12 @@ def measure(precision: str, torch, tokenizer, model, *, on_disk_bytes: int, libr
     cpu = time.process_time() - cpu0
     rss = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) * 1024
     peak_gpu = int(torch.cuda.max_memory_allocated())
+    exact_match = sum(1 for row in items if row["correct"]) / max(len(items), 1)
     metrics = {
         "on_disk_bytes": int(on_disk_bytes),
         "peak_rss_bytes": max(rss, 1),
         "peak_gpu_bytes": max(peak_gpu, 1),
+        "exact_match": _round(exact_match),
         "libraries": libraries,
         "limiter": {
             "kind": "gpu",

@@ -1,260 +1,399 @@
-pip --no-cache-dir bitsandbytes==0.50.2 transformers==4.56.2 accelerate==1.4.0
-fp16 anchor correct=False p50=333.7131
-fp16 barrel correct=False p50=329.33704
-fp16 beacon correct=False p50=332.56835
-fp16 biscuit correct=False p50=325.86285
-fp16 blanket correct=False p50=323.22387
-fp16 blossom correct=False p50=331.50623
-fp16 border correct=False p50=329.43843
-fp16 bottle correct=False p50=343.01631
-fp16 breeze correct=False p50=330.8315
-fp16 bronze correct=False p50=330.21684
-fp16 bucket correct=False p50=327.53205
-fp16 button correct=False p50=327.24411
-fp16 cactus correct=False p50=328.31715
-fp16 camera correct=False p50=327.92253
-fp16 candle correct=False p50=324.63183
-fp16 canyon correct=False p50=328.63748
-fp16 carpet correct=False p50=321.76636
-fp16 castle correct=False p50=325.41045
-fp16 celery correct=False p50=328.8429
-fp16 chapel correct=False p50=332.12938
-fp16 cherry correct=False p50=349.7189
-fp16 circle correct=False p50=333.58015
-fp16 citrus correct=False p50=339.09979
-fp16 cloak correct=False p50=323.86334
-fp16 cobalt correct=False p50=337.70351
-fp16 copper correct=False p50=324.84139
-fp16 cradle correct=False p50=323.05516
-fp16 cricket correct=False p50=322.74873
-fp16 crystal correct=False p50=324.49427
-fp16 curtain correct=False p50=325.09902
-fp16 custom correct=False p50=322.3175
-fp16 daisy correct=False p50=324.50132
-fp16 desert correct=False p50=325.94315
-fp16 donkey correct=False p50=324.5792
-fp16 dragon correct=False p50=323.26157
-fp16 drawer correct=False p50=329.71417
-fp16 eagle correct=False p50=324.5581
-fp16 ember correct=False p50=329.5788
-fp16 engine correct=False p50=323.06558
-fp16 fable correct=False p50=321.55028
-fp16 feather correct=False p50=323.23528
-fp16 fence correct=False p50=326.97667
-fp16 field correct=False p50=323.60099
-fp16 forest correct=False p50=323.47962
-fp16 fountain correct=False p50=322.57308
-fp16 frost correct=False p50=323.68582
-fp16 galaxy correct=False p50=327.97191
-fp16 garlic correct=False p50=324.40299
-fp16 glacier correct=False p50=332.74339
-fp16 goblet correct=False p50=332.7083
-fp16 grape correct=False p50=331.56546
-fp16 gravel correct=False p50=326.48349
-fp16 guitar correct=False p50=323.82586
-fp16 hammer correct=False p50=323.97252
-fp16 hazel correct=False p50=325.9985
-fp16 helmet correct=False p50=321.57936
-fp16 honey correct=False p50=319.99581
-fp16 horse correct=False p50=326.08556
-fp16 ivory correct=False p50=319.76165
-fp16 jacket correct=False p50=329.21983
-fp16 jungle correct=False p50=321.17363
-fp16 kettle correct=False p50=328.85766
-fp16 knight correct=False p50=321.0502
-fp16 ladder correct=False p50=318.91419
-fp16 lantern correct=False p50=325.92726
-fp16 lavender correct=False p50=321.48502
-fp16 legend correct=False p50=320.94236
-fp16 lizard correct=False p50=322.62259
-fp16 lumber correct=False p50=319.9363
-fp16 marble correct=False p50=331.35679
-fp16 meadow correct=False p50=326.23548
-fp16 melon correct=False p50=321.96914
-fp16 mirror correct=False p50=330.65867
-fp16 mossy correct=False p50=322.13325
-fp16 needle correct=False p50=327.07348
-fp16 nickel correct=False p50=320.83704
-fp16 olive correct=False p50=322.78874
-fp16 orange correct=False p50=319.76538
-fp16 orchid correct=False p50=322.73083
-fp16 otter correct=False p50=318.70962
-fp16 packet correct=False p50=323.1209
-fp16 palace correct=False p50=322.10076
-fp16 pebble correct=False p50=323.08782
-fp16 pepper correct=False p50=329.94945
-fp16 pickle correct=False p50=324.9697
-fp16 pillow correct=False p50=333.96746
-fp16 planet correct=False p50=327.70422
-fp16 plum correct=False p50=321.32738
-fp16 pocket correct=False p50=329.63855
-fp16 pollen correct=False p50=321.36949
-fp16 prairie correct=False p50=320.95845
-fp16 pumpkin correct=False p50=320.39492
-fp16 quail correct=False p50=319.89186
-fp16 quartz correct=False p50=321.40334
-fp16 rabbit correct=False p50=321.27608
-fp16 raven correct=False p50=322.02333
-fp16 ribbon correct=False p50=327.88142
-fp16 rocket correct=False p50=319.86893
-fp16 saddle correct=False p50=323.86821
-fp16 saffron correct=False p50=323.1797
-fp16 sailor correct=False p50=320.12147
-fp16 salmon correct=False p50=319.10088
-fp16 scarlet correct=False p50=318.61587
-fp16 shadow correct=False p50=318.85726
-fp16 silver correct=False p50=322.35326
-fp16 sparrow correct=False p50=320.78685
-fp16 spice correct=False p50=318.4901
-fp16 spider correct=False p50=325.72834
-fp16 spruce correct=False p50=320.69442
-fp16 squirrel correct=False p50=327.01163
-fp16 stable correct=False p50=318.73245
-fp16 storm correct=False p50=319.93303
-fp16 saddlebag correct=False p50=319.95736
-fp16 tablet correct=False p50=317.86486
-fp16 temple correct=False p50=319.2451
-fp16 thistle correct=False p50=325.11117
-fp16 thunder correct=False p50=318.09289
-fp16 timber correct=False p50=318.7627
-fp16 turtle correct=False p50=326.25384
-fp16 valley correct=False p50=322.37632
-fp16 velvet correct=False p50=326.40132
-fp16 violet correct=False p50=320.08269
-fp16 walnut correct=False p50=328.54322
-fp16 willow correct=False p50=322.20708
-fp16 window correct=False p50=319.6611
-fp16 winter correct=False p50=320.46053
-fp16 wizard correct=False p50=319.53355
-fp16 yellow correct=False p50=318.7943
-fp16 zebra correct=False p50=319.07263
-nf4 anchor correct=False p50=442.32818
-nf4 barrel correct=False p50=444.21505
-nf4 beacon correct=False p50=447.89735
-nf4 biscuit correct=False p50=441.45926
-nf4 blanket correct=False p50=441.53879
-nf4 blossom correct=False p50=453.6875
-nf4 border correct=False p50=438.1411
-nf4 bottle correct=False p50=444.12836
-nf4 breeze correct=False p50=441.88529
-nf4 bronze correct=False p50=441.67305
-nf4 bucket correct=False p50=450.10384
-nf4 button correct=False p50=442.76862
-nf4 cactus correct=False p50=440.14019
-nf4 camera correct=False p50=451.25708
-nf4 candle correct=False p50=439.12591
-nf4 canyon correct=False p50=442.38982
-nf4 carpet correct=False p50=444.22648
-nf4 castle correct=False p50=440.68668
-nf4 celery correct=False p50=447.21503
-nf4 chapel correct=False p50=439.93741
-nf4 cherry correct=False p50=446.96691
-nf4 circle correct=False p50=448.45982
-nf4 citrus correct=False p50=442.25279
-nf4 cloak correct=False p50=439.77145
-nf4 cobalt correct=False p50=450.91356
-nf4 copper correct=False p50=441.39329
-nf4 cradle correct=False p50=444.14171
-nf4 cricket correct=False p50=441.31934
-nf4 crystal correct=False p50=440.90292
-nf4 curtain correct=False p50=448.54503
-nf4 custom correct=False p50=442.68896
-nf4 daisy correct=False p50=448.15138
-nf4 desert correct=False p50=445.42306
-nf4 donkey correct=False p50=438.27744
-nf4 dragon correct=False p50=439.04657
-nf4 drawer correct=False p50=440.40475
-nf4 eagle correct=False p50=434.93632
-nf4 ember correct=False p50=446.20998
-nf4 engine correct=False p50=440.29758
-nf4 fable correct=False p50=438.77737
-nf4 feather correct=False p50=445.28783
-nf4 fence correct=False p50=443.7305
-nf4 field correct=False p50=439.26395
-nf4 forest correct=False p50=441.31833
-nf4 fountain correct=False p50=442.79966
-nf4 frost correct=False p50=442.08955
-nf4 galaxy correct=False p50=444.5692
-nf4 garlic correct=False p50=443.89828
-nf4 glacier correct=False p50=450.64754
-nf4 goblet correct=False p50=441.15128
-nf4 grape correct=False p50=440.66609
-nf4 gravel correct=False p50=448.02109
-nf4 guitar correct=False p50=444.01032
-nf4 hammer correct=False p50=442.06975
-nf4 hazel correct=False p50=442.73274
-nf4 helmet correct=False p50=442.33255
-nf4 honey correct=False p50=450.9832
-nf4 horse correct=False p50=443.40564
-nf4 ivory correct=False p50=445.12553
-nf4 jacket correct=False p50=450.08399
-nf4 jungle correct=False p50=450.77902
-nf4 kettle correct=False p50=447.35485
-nf4 knight correct=False p50=448.27337
-nf4 ladder correct=False p50=445.69153
-nf4 lantern correct=False p50=448.37102
-nf4 lavender correct=False p50=442.18512
-nf4 legend correct=False p50=440.78588
-nf4 lizard correct=False p50=452.40213
-nf4 lumber correct=False p50=443.52388
-nf4 marble correct=False p50=441.30371
-nf4 meadow correct=False p50=443.45555
-nf4 melon correct=False p50=441.71128
-nf4 mirror correct=False p50=443.2007
-nf4 mossy correct=False p50=437.73066
-nf4 needle correct=False p50=442.3397
-nf4 nickel correct=False p50=448.58498
-nf4 olive correct=False p50=443.17138
-nf4 orange correct=False p50=443.70587
-nf4 orchid correct=False p50=449.08075
-nf4 otter correct=False p50=442.62326
-nf4 packet correct=False p50=441.28642
-nf4 palace correct=False p50=441.52409
-nf4 pebble correct=False p50=443.73713
-nf4 pepper correct=False p50=449.94658
-nf4 pickle correct=False p50=443.56707
-nf4 pillow correct=False p50=441.93397
-nf4 planet correct=False p50=450.94156
-nf4 plum correct=False p50=440.11136
-nf4 pocket correct=False p50=447.13699
-nf4 pollen correct=False p50=447.02308
-nf4 prairie correct=False p50=444.81136
-nf4 pumpkin correct=False p50=444.17683
-nf4 quail correct=False p50=441.65075
-nf4 quartz correct=False p50=450.61679
-nf4 rabbit correct=False p50=455.61473
-nf4 raven correct=False p50=453.33866
-nf4 ribbon correct=False p50=446.88778
-nf4 rocket correct=False p50=462.79276
-nf4 saddle correct=False p50=456.87025
-nf4 saffron correct=False p50=451.42645
-nf4 sailor correct=False p50=482.47532
-nf4 salmon correct=False p50=454.42051
-nf4 scarlet correct=False p50=449.8692
-nf4 shadow correct=False p50=450.72602
-nf4 silver correct=False p50=453.80911
-nf4 sparrow correct=False p50=453.68879
-nf4 spice correct=False p50=460.87583
-nf4 spider correct=False p50=451.76686
-nf4 spruce correct=False p50=457.76502
-nf4 squirrel correct=False p50=454.47769
-nf4 stable correct=False p50=449.01551
-nf4 storm correct=False p50=459.85436
-nf4 saddlebag correct=False p50=447.14217
-nf4 tablet correct=False p50=444.94797
-nf4 temple correct=False p50=456.69925
-nf4 thistle correct=False p50=446.24605
-nf4 thunder correct=False p50=453.6331
-nf4 timber correct=False p50=451.71627
-nf4 turtle correct=False p50=445.16103
-nf4 valley correct=False p50=449.54061
-nf4 velvet correct=False p50=442.64914
-nf4 violet correct=False p50=452.93902
-nf4 walnut correct=False p50=456.67705
-nf4 willow correct=False p50=443.10004
-nf4 window correct=False p50=446.26653
-nf4 winter correct=False p50=456.1899
-nf4 wizard correct=False p50=445.71559
-nf4 yellow correct=False p50=444.66879
-nf4 zebra correct=False p50=441.28818
+pip --no-cache-dir bitsandbytes==0.50.2 transformers==5.20.2 tokenizers==0.23.3 accelerate==1.4.0
+prompt hash anchor=e64bee69c7cf73ff96c54f5dc28dd408c8941a94599720720eb082000cc412dd beacon=5fe05fa25bff5949ae2e091c0f038f75880c9e957c12f6f78399ebca04a7f5de
+numerics probe fp32_eager
+numerics fp32_eager anchor logits_finite=True logits_max_abs=30.553852
+numerics fp32_eager beacon logits_finite=True logits_max_abs=30.451603
+numerics probe fp16_eager
+numerics fp16_eager anchor logits_finite=False logits_max_abs=None
+numerics fp16_eager beacon logits_finite=False logits_max_abs=None
+numerics probe fp16_sdpa
+numerics fp16_sdpa anchor logits_finite=True logits_max_abs=30.59375
+numerics fp16_sdpa beacon logits_finite=True logits_max_abs=30.46875
+t4-fp32 anchor correct=False p50=100.95358 nll=1.2496208
+t4-fp32 barrel correct=False p50=135.7829 nll=1.5039387
+t4-fp32 beacon correct=True p50=171.21481 nll=0.14540525
+t4-fp32 biscuit correct=False p50=171.2612 nll=1.1703367
+t4-fp32 blanket correct=False p50=136.93699 nll=0.3137691
+t4-fp32 blossom correct=False p50=175.55065 nll=0.33698812
+t4-fp32 border correct=True p50=135.68972 nll=0.064983055
+t4-fp32 bottle correct=True p50=171.78424 nll=0.14558576
+t4-fp32 breeze correct=False p50=141.87289 nll=1.3118707
+t4-fp32 bronze correct=True p50=169.66217 nll=0.28007945
+t4-fp32 bucket correct=True p50=136.49686 nll=0.24925496
+t4-fp32 button correct=True p50=101.63995 nll=0.68405432
+t4-fp32 cactus correct=False p50=136.2357 nll=1.5958561
+t4-fp32 camera correct=True p50=137.27208 nll=0.085189462
+t4-fp32 candle correct=True p50=136.38675 nll=0.24290702
+t4-fp32 canyon correct=True p50=173.6889 nll=1.0631548
+t4-fp32 carpet correct=False p50=136.88917 nll=0.53757054
+t4-fp32 castle correct=False p50=102.56739 nll=1.1153527
+t4-fp32 celery correct=False p50=136.86255 nll=1.5467664
+t4-fp32 chapel correct=True p50=172.03986 nll=2.071564
+t4-fp32 cherry correct=False p50=136.84259 nll=0.47766271
+t4-fp32 circle correct=True p50=136.72877 nll=0.27416071
+t4-fp32 citrus correct=False p50=138.22466 nll=0.92918694
+t4-fp32 cloak correct=True p50=172.34053 nll=0.15331759
+t4-fp32 cobalt correct=True p50=174.68752 nll=0.093632318
+t4-fp32 copper correct=True p50=173.62951 nll=0.27242482
+t4-fp32 cradle correct=False p50=180.10398 nll=1.1829449
+t4-fp32 cricket correct=False p50=137.88869 nll=0.52826637
+t4-fp32 crystal correct=False p50=103.47646 nll=0.78344923
+t4-fp32 curtain correct=False p50=181.30631 nll=0.68384999
+t4-fp32 custom correct=False p50=104.75495 nll=0.98308349
+t4-fp32 daisy correct=True p50=174.41254 nll=0.08452145
+t4-fp32 desert correct=False p50=142.03906 nll=2.131634
+t4-fp32 donkey correct=True p50=137.33119 nll=0.23544119
+t4-fp32 dragon correct=True p50=139.06848 nll=0.07715933
+t4-fp32 drawer correct=False p50=317.09416 nll=0.90472132
+t4-fp32 eagle correct=False p50=138.47574 nll=0.4860824
+t4-fp32 ember correct=False p50=137.7853 nll=1.6912478
+t4-fp32 engine correct=True p50=105.51476 nll=0.42106208
+t4-fp32 fable correct=True p50=140.58532 nll=1.3538265
+t4-fp32 feather correct=True p50=141.30871 nll=0.24804649
+t4-fp32 fence correct=True p50=143.31526 nll=0.075082555
+t4-fp32 field correct=True p50=105.78964 nll=0.3853007
+t4-fp32 forest correct=True p50=142.88966 nll=0.15198037
+t4-fp32 fountain correct=False p50=146.8402 nll=3.06388
+t4-fp32 frost correct=True p50=175.57493 nll=0.15078011
+t4-fp32 galaxy correct=False p50=138.68116 nll=0.92203069
+t4-fp32 garlic correct=False p50=144.61527 nll=1.6567826
+t4-fp32 glacier correct=False p50=139.23451 nll=0.54003781
+t4-fp32 goblet correct=False p50=174.87168 nll=1.5352764
+t4-fp32 grape correct=False p50=141.7302 nll=1.042881
+t4-fp32 gravel correct=False p50=139.08447 nll=2.0959144
+t4-fp32 guitar correct=True p50=172.41709 nll=0.064988248
+t4-fp32 hammer correct=False p50=139.32027 nll=0.55673665
+t4-fp32 hazel correct=False p50=139.4541 nll=1.977331
+t4-fp32 helmet correct=False p50=104.6834 nll=0.68306071
+t4-fp32 honey correct=True p50=143.96924 nll=0.32798642
+t4-fp32 horse correct=False p50=139.41763 nll=0.24816658
+t4-fp32 ivory correct=False p50=173.20972 nll=2.806648
+t4-fp32 jacket correct=True p50=138.25575 nll=0.1229809
+t4-fp32 jungle correct=True p50=173.99709 nll=0.045469329
+t4-fp32 kettle correct=False p50=138.8034 nll=1.3519286
+t4-fp32 knight correct=False p50=105.8311 nll=1.0513276
+t4-fp32 ladder correct=False p50=141.1408 nll=0.90131062
+t4-fp32 lantern correct=True p50=175.56011 nll=0.25784412
+t4-fp32 lavender correct=True p50=173.57289 nll=0.26912501
+t4-fp32 legend correct=True p50=138.11503 nll=0.28014055
+t4-fp32 lizard correct=False p50=138.95243 nll=1.215083
+t4-fp32 lumber correct=False p50=140.43123 nll=0.75029546
+t4-fp32 marble correct=True p50=140.39168 nll=0.14872123
+t4-fp32 meadow correct=False p50=176.64507 nll=0.52603263
+t4-fp32 melon correct=True p50=176.95691 nll=0.27727056
+t4-fp32 mirror correct=False p50=104.67735 nll=0.80044526
+t4-fp32 mossy correct=False p50=174.66529 nll=1.9954268
+t4-fp32 needle correct=False p50=139.03759 nll=0.8047235
+t4-fp32 nickel correct=False p50=138.3988 nll=1.1545721
+t4-fp32 olive correct=False p50=140.10025 nll=1.3519249
+t4-fp32 orange correct=False p50=104.85775 nll=0.71828896
+t4-fp32 orchid correct=False p50=176.57712 nll=1.0679518
+t4-fp32 otter correct=False p50=316.31526 nll=0.76989508
+t4-fp32 packet correct=False p50=105.62107 nll=1.7070755
+t4-fp32 palace correct=False p50=139.67751 nll=1.1819506
+t4-fp32 pebble correct=False p50=177.51513 nll=0.39017639
+t4-fp32 pepper correct=False p50=138.22308 nll=0.43649542
+t4-fp32 pickle correct=False p50=137.86613 nll=1.5847701
+t4-fp32 pillow correct=False p50=138.62361 nll=2.2980208
+t4-fp32 planet correct=True p50=142.83427 nll=0.11110317
+t4-fp32 plum correct=False p50=139.2027 nll=0.7535466
+t4-fp32 pocket correct=False p50=104.97409 nll=2.2799757
+t4-fp32 pollen correct=False p50=140.21569 nll=4.2187119
+t4-fp32 prairie correct=False p50=171.93357 nll=0.80330968
+t4-fp32 pumpkin correct=False p50=174.10815 nll=0.47401708
+t4-fp32 quail correct=True p50=141.31493 nll=0.15680496
+t4-fp32 quartz correct=False p50=138.49214 nll=0.33892289
+t4-fp32 rabbit correct=True p50=173.90987 nll=0.20272905
+t4-fp32 raven correct=False p50=140.02243 nll=1.2624454
+t4-fp32 ribbon correct=True p50=210.4572 nll=0.029817518
+t4-fp32 rocket correct=False p50=105.56076 nll=0.83004916
+t4-fp32 saddle correct=False p50=140.41552 nll=0.41577956
+t4-fp32 saffron correct=False p50=176.20873 nll=0.4057382
+t4-fp32 sailor correct=False p50=175.22167 nll=0.35662875
+t4-fp32 salmon correct=False p50=138.71048 nll=1.9693789
+t4-fp32 scarlet correct=False p50=140.37624 nll=0.27365535
+t4-fp32 shadow correct=False p50=105.87471 nll=0.7982412
+t4-fp32 silver correct=False p50=279.70432 nll=0.57555634
+t4-fp32 sparrow correct=True p50=175.18568 nll=0.060395986
+t4-fp32 spice correct=True p50=139.79833 nll=0.15929379
+t4-fp32 spider correct=True p50=138.60324 nll=0.071102783
+t4-fp32 spruce correct=False p50=140.18936 nll=1.6965889
+t4-fp32 squirrel correct=False p50=144.01468 nll=0.40975145
+t4-fp32 stable correct=False p50=139.50894 nll=0.44321287
+t4-fp32 storm correct=True p50=139.93509 nll=0.29934135
+t4-fp32 saddlebag correct=False p50=180.7823 nll=0.23823169
+t4-fp32 tablet correct=False p50=139.10977 nll=1.2140692
+t4-fp32 temple correct=True p50=137.97315 nll=0.18840283
+t4-fp32 thistle correct=False p50=139.47657 nll=1.3139727
+t4-fp32 thunder correct=False p50=105.25617 nll=0.695086
+t4-fp32 timber correct=True p50=139.21356 nll=0.068292744
+t4-fp32 turtle correct=True p50=180.17834 nll=0.017316274
+t4-fp32 valley correct=True p50=140.20187 nll=0.21120974
+t4-fp32 velvet correct=False p50=139.63792 nll=0.90246201
+t4-fp32 violet correct=False p50=142.0666 nll=0.36274096
+t4-fp32 walnut correct=False p50=139.43118 nll=0.78493458
+t4-fp32 willow correct=False p50=139.24812 nll=2.2456932
+t4-fp32 window correct=False p50=108.51019 nll=0.88362116
+t4-fp32 winter correct=False p50=104.90636 nll=0.60161692
+t4-fp32 wizard correct=True p50=175.07014 nll=0.14098376
+t4-fp32 yellow correct=True p50=106.84112 nll=0.5078547
+t4-fp32 zebra correct=False p50=174.91017 nll=1.9417028
+fp16 anchor correct=False p50=295.22245 nll=None
+fp16 barrel correct=False p50=305.64165 nll=None
+fp16 beacon correct=False p50=297.58689 nll=None
+fp16 biscuit correct=False p50=301.15212 nll=None
+fp16 blanket correct=False p50=303.39783 nll=None
+fp16 blossom correct=False p50=306.49206 nll=None
+fp16 border correct=False p50=299.41031 nll=None
+fp16 bottle correct=False p50=299.08818 nll=None
+fp16 breeze correct=False p50=298.75737 nll=None
+fp16 bronze correct=False p50=306.60304 nll=None
+fp16 bucket correct=False p50=304.31009 nll=None
+fp16 button correct=False p50=301.01774 nll=None
+fp16 cactus correct=False p50=315.54908 nll=None
+fp16 camera correct=False p50=299.37701 nll=None
+fp16 candle correct=False p50=300.17992 nll=None
+fp16 canyon correct=False p50=301.26239 nll=None
+fp16 carpet correct=False p50=299.41174 nll=None
+fp16 castle correct=False p50=302.35991 nll=None
+fp16 celery correct=False p50=297.86949 nll=None
+fp16 chapel correct=False p50=307.75764 nll=None
+fp16 cherry correct=False p50=302.26881 nll=None
+fp16 circle correct=False p50=297.92915 nll=None
+fp16 citrus correct=False p50=299.6844 nll=None
+fp16 cloak correct=False p50=304.55467 nll=None
+fp16 cobalt correct=False p50=303.60587 nll=None
+fp16 copper correct=False p50=308.2223 nll=None
+fp16 cradle correct=False p50=306.25613 nll=None
+fp16 cricket correct=False p50=293.12763 nll=None
+fp16 crystal correct=False p50=292.13649 nll=None
+fp16 curtain correct=False p50=292.92902 nll=None
+fp16 custom correct=False p50=296.83432 nll=None
+fp16 daisy correct=False p50=294.33608 nll=None
+fp16 desert correct=False p50=294.48895 nll=None
+fp16 donkey correct=False p50=305.19399 nll=None
+fp16 dragon correct=False p50=297.63612 nll=None
+fp16 drawer correct=False p50=298.37882 nll=None
+fp16 eagle correct=False p50=294.28529 nll=None
+fp16 ember correct=False p50=292.40367 nll=None
+fp16 engine correct=False p50=296.09472 nll=None
+fp16 fable correct=False p50=297.13459 nll=None
+fp16 feather correct=False p50=316.85532 nll=None
+fp16 fence correct=False p50=299.19838 nll=None
+fp16 field correct=False p50=299.26587 nll=None
+fp16 forest correct=False p50=294.44327 nll=None
+fp16 fountain correct=False p50=293.6392 nll=None
+fp16 frost correct=False p50=307.85425 nll=None
+fp16 galaxy correct=False p50=298.61364 nll=None
+fp16 garlic correct=False p50=295.20238 nll=None
+fp16 glacier correct=False p50=304.33272 nll=None
+fp16 goblet correct=False p50=301.47837 nll=None
+fp16 grape correct=False p50=296.94252 nll=None
+fp16 gravel correct=False p50=296.8363 nll=None
+fp16 guitar correct=False p50=302.74115 nll=None
+fp16 hammer correct=False p50=296.96626 nll=None
+fp16 hazel correct=False p50=296.28216 nll=None
+fp16 helmet correct=False p50=295.23573 nll=None
+fp16 honey correct=False p50=298.42946 nll=None
+fp16 horse correct=False p50=295.14553 nll=None
+fp16 ivory correct=False p50=297.3841 nll=None
+fp16 jacket correct=False p50=309.49869 nll=None
+fp16 jungle correct=False p50=296.86864 nll=None
+fp16 kettle correct=False p50=293.93625 nll=None
+fp16 knight correct=False p50=297.78873 nll=None
+fp16 ladder correct=False p50=297.44959 nll=None
+fp16 lantern correct=False p50=297.50404 nll=None
+fp16 lavender correct=False p50=295.9123 nll=None
+fp16 legend correct=False p50=303.75834 nll=None
+fp16 lizard correct=False p50=296.94067 nll=None
+fp16 lumber correct=False p50=297.79177 nll=None
+fp16 marble correct=False p50=299.43594 nll=None
+fp16 meadow correct=False p50=295.61312 nll=None
+fp16 melon correct=False p50=301.11032 nll=None
+fp16 mirror correct=False p50=292.8716 nll=None
+fp16 mossy correct=False p50=299.02721 nll=None
+fp16 needle correct=False p50=292.23308 nll=None
+fp16 nickel correct=False p50=297.55683 nll=None
+fp16 olive correct=False p50=289.37474 nll=None
+fp16 orange correct=False p50=297.876 nll=None
+fp16 orchid correct=False p50=307.52003 nll=None
+fp16 otter correct=False p50=328.80831 nll=None
+fp16 packet correct=False p50=298.02504 nll=None
+fp16 palace correct=False p50=298.9154 nll=None
+fp16 pebble correct=False p50=302.6781 nll=None
+fp16 pepper correct=False p50=303.03455 nll=None
+fp16 pickle correct=False p50=302.91019 nll=None
+fp16 pillow correct=False p50=311.02179 nll=None
+fp16 planet correct=False p50=304.35417 nll=None
+fp16 plum correct=False p50=302.40992 nll=None
+fp16 pocket correct=False p50=303.02188 nll=None
+fp16 pollen correct=False p50=301.72869 nll=None
+fp16 prairie correct=False p50=300.01714 nll=None
+fp16 pumpkin correct=False p50=295.40487 nll=None
+fp16 quail correct=False p50=309.64221 nll=None
+fp16 quartz correct=False p50=303.48413 nll=None
+fp16 rabbit correct=False p50=299.199 nll=None
+fp16 raven correct=False p50=298.0366 nll=None
+fp16 ribbon correct=False p50=300.88384 nll=None
+fp16 rocket correct=False p50=307.68091 nll=None
+fp16 saddle correct=False p50=301.63981 nll=None
+fp16 saffron correct=False p50=307.89745 nll=None
+fp16 sailor correct=False p50=297.79098 nll=None
+fp16 salmon correct=False p50=302.55502 nll=None
+fp16 scarlet correct=False p50=304.1454 nll=None
+fp16 shadow correct=False p50=297.40706 nll=None
+fp16 silver correct=False p50=302.38538 nll=None
+fp16 sparrow correct=False p50=300.95741 nll=None
+fp16 spice correct=False p50=310.57818 nll=None
+fp16 spider correct=False p50=302.78888 nll=None
+fp16 spruce correct=False p50=309.7104 nll=None
+fp16 squirrel correct=False p50=299.62953 nll=None
+fp16 stable correct=False p50=304.08719 nll=None
+fp16 storm correct=False p50=305.4161 nll=None
+fp16 saddlebag correct=False p50=301.23515 nll=None
+fp16 tablet correct=False p50=304.12737 nll=None
+fp16 temple correct=False p50=296.16048 nll=None
+fp16 thistle correct=False p50=299.15222 nll=None
+fp16 thunder correct=False p50=291.57274 nll=None
+fp16 timber correct=False p50=296.86268 nll=None
+fp16 turtle correct=False p50=295.64735 nll=None
+fp16 valley correct=False p50=293.60923 nll=None
+fp16 velvet correct=False p50=305.4652 nll=None
+fp16 violet correct=False p50=296.43707 nll=None
+fp16 walnut correct=False p50=287.75947 nll=None
+fp16 willow correct=False p50=290.41806 nll=None
+fp16 window correct=False p50=290.31181 nll=None
+fp16 winter correct=False p50=295.45824 nll=None
+fp16 wizard correct=False p50=298.46024 nll=None
+fp16 yellow correct=False p50=302.38536 nll=None
+fp16 zebra correct=False p50=295.44614 nll=None
+nf4 anchor correct=True p50=281.14025 nll=0.68359375
+nf4 barrel correct=False p50=228.76381 nll=0.703125
+nf4 beacon correct=True p50=283.73902 nll=0.10693359
+nf4 biscuit correct=False p50=279.08675 nll=0.61328125
+nf4 blanket correct=True p50=281.78012 nll=0.032470703
+nf4 blossom correct=False p50=280.65064 nll=0.36523438
+nf4 border correct=True p50=221.29535 nll=0.029174805
+nf4 bottle correct=True p50=282.14134 nll=0.16210938
+nf4 breeze correct=False p50=224.17303 nll=0.9609375
+nf4 bronze correct=True p50=281.83001 nll=0.0390625
+nf4 bucket correct=True p50=226.48235 nll=0.024047852
+nf4 button correct=True p50=161.16507 nll=0.52734375
+nf4 cactus correct=False p50=220.04702 nll=1.5546875
+nf4 camera correct=True p50=220.82293 nll=0.021850586
+nf4 candle correct=True p50=223.33657 nll=0.035644531
+nf4 canyon correct=False p50=282.18327 nll=0.828125
+nf4 carpet correct=True p50=224.13119 nll=0.1875
+nf4 castle correct=False p50=161.60745 nll=1.0859375
+nf4 celery correct=True p50=219.35913 nll=0.12988281
+nf4 chapel correct=True p50=281.65957 nll=2.15625
+nf4 cherry correct=True p50=227.5733 nll=0.083984375
+nf4 circle correct=True p50=221.81824 nll=0.065429688
+nf4 citrus correct=False p50=221.74185 nll=0.6875
+nf4 cloak correct=True p50=290.21043 nll=0.12695312
+nf4 cobalt correct=True p50=287.27583 nll=0.029296875
+nf4 copper correct=True p50=283.74648 nll=0.30273438
+nf4 cradle correct=False p50=289.51707 nll=0.90625
+nf4 cricket correct=True p50=281.74029 nll=0.10839844
+nf4 crystal correct=False p50=220.90428 nll=0.47070312
+nf4 curtain correct=False p50=281.82065 nll=1.015625
+nf4 custom correct=True p50=164.20666 nll=0.41992188
+nf4 daisy correct=True p50=282.14234 nll=0.065429688
+nf4 desert correct=True p50=290.38238 nll=1.1640625
+nf4 donkey correct=True p50=220.861 nll=0.20800781
+nf4 dragon correct=True p50=220.14501 nll=0.046386719
+nf4 drawer correct=False p50=162.12757 nll=0.51171875
+nf4 eagle correct=False p50=221.27932 nll=0.53515625
+nf4 ember correct=True p50=222.94211 nll=1.203125
+nf4 engine correct=True p50=161.98947 nll=0.12011719
+nf4 fable correct=True p50=224.14092 nll=1.578125
+nf4 feather correct=True p50=221.69255 nll=0.048095703
+nf4 fence correct=True p50=218.47018 nll=0.044677734
+nf4 field correct=True p50=162.31356 nll=0.059814453
+nf4 forest correct=True p50=219.92783 nll=0.125
+nf4 fountain correct=False p50=220.52202 nll=2.75
+nf4 frost correct=True p50=287.0819 nll=0.12011719
+nf4 galaxy correct=False p50=222.08873 nll=0.31445312
+nf4 garlic correct=False p50=221.72568 nll=1.1171875
+nf4 glacier correct=True p50=280.16798 nll=0.2421875
+nf4 goblet correct=False p50=281.38587 nll=1.421875
+nf4 grape correct=True p50=220.08235 nll=0.390625
+nf4 gravel correct=False p50=223.1679 nll=0.609375
+nf4 guitar correct=True p50=282.3731 nll=0.07421875
+nf4 hammer correct=True p50=222.16312 nll=0.40429688
+nf4 hazel correct=False p50=221.65549 nll=1.5546875
+nf4 helmet correct=False p50=281.40133 nll=0.55859375
+nf4 honey correct=True p50=223.43116 nll=0.1953125
+nf4 horse correct=True p50=279.35638 nll=0.010925293
+nf4 ivory correct=False p50=286.64325 nll=1.265625
+nf4 jacket correct=True p50=220.59061 nll=0.11376953
+nf4 jungle correct=True p50=283.5223 nll=0.0546875
+nf4 kettle correct=False p50=220.1251 nll=1.4375
+nf4 knight correct=True p50=223.35186 nll=0.27734375
+nf4 ladder correct=True p50=284.06516 nll=0.099121094
+nf4 lantern correct=True p50=281.20684 nll=0.090820312
+nf4 lavender correct=True p50=281.64745 nll=0.13867188
+nf4 legend correct=True p50=220.74053 nll=0.060302734
+nf4 lizard correct=False p50=220.33563 nll=1.015625
+nf4 lumber correct=False p50=520.82137 nll=0.65234375
+nf4 marble correct=True p50=221.28057 nll=0.032226562
+nf4 meadow correct=True p50=225.10431 nll=0.25976562
+nf4 melon correct=True p50=284.46434 nll=0.11669922
+nf4 mirror correct=True p50=221.0307 nll=0.095703125
+nf4 mossy correct=False p50=280.38718 nll=1.3046875
+nf4 needle correct=False p50=225.19193 nll=0.54296875
+nf4 nickel correct=False p50=221.89588 nll=0.57421875
+nf4 olive correct=False p50=219.66631 nll=0.390625
+nf4 orange correct=True p50=220.23643 nll=0.07421875
+nf4 orchid correct=True p50=280.35092 nll=0.19628906
+nf4 otter correct=True p50=225.34989 nll=0.093261719
+nf4 packet correct=False p50=161.77284 nll=0.37109375
+nf4 palace correct=True p50=223.17851 nll=0.35351562
+nf4 pebble correct=True p50=282.76089 nll=0.072265625
+nf4 pepper correct=True p50=225.15625 nll=0.040283203
+nf4 pickle correct=False p50=220.0756 nll=1.4140625
+nf4 pillow correct=False p50=224.45944 nll=1.96875
+nf4 planet correct=True p50=221.7123 nll=0.025024414
+nf4 plum correct=True p50=221.6045 nll=0.33398438
+nf4 pocket correct=False p50=219.48733 nll=1.8984375
+nf4 pollen correct=False p50=514.84534 nll=3.90625
+nf4 prairie correct=True p50=288.51296 nll=0.44726562
+nf4 pumpkin correct=False p50=278.50688 nll=0.359375
+nf4 quail correct=True p50=224.84043 nll=0.1171875
+nf4 quartz correct=True p50=281.50636 nll=0.052978516
+nf4 rabbit correct=True p50=280.922 nll=0.014221191
+nf4 raven correct=False p50=223.76922 nll=0.53125
+nf4 ribbon correct=True p50=342.1591 nll=0.024536133
+nf4 rocket correct=True p50=225.39419 nll=0.059326172
+nf4 saddle correct=False p50=220.81325 nll=1.546875
+nf4 saffron correct=False p50=282.91808 nll=0.30664062
+nf4 sailor correct=False p50=277.55122 nll=0.66796875
+nf4 salmon correct=False p50=219.2511 nll=0.86328125
+nf4 scarlet correct=True p50=288.19972 nll=0.029296875
+nf4 shadow correct=False p50=164.10479 nll=0.62890625
+nf4 silver correct=True p50=278.0555 nll=0.12402344
+nf4 sparrow correct=True p50=281.74205 nll=0.047851562
+nf4 spice correct=True p50=224.82875 nll=0.033691406
+nf4 spider correct=True p50=227.23416 nll=0.031982422
+nf4 spruce correct=False p50=223.06033 nll=0.703125
+nf4 squirrel correct=False p50=221.6861 nll=0.9609375
+nf4 stable correct=True p50=222.33898 nll=0.11230469
+nf4 storm correct=True p50=225.41078 nll=0.045410156
+nf4 saddlebag correct=False p50=284.71909 nll=0.640625
+nf4 tablet correct=False p50=221.22997 nll=0.51953125
+nf4 temple correct=True p50=223.9461 nll=0.032958984
+nf4 thistle correct=False p50=533.78216 nll=0.41992188
+nf4 thunder correct=True p50=220.99564 nll=0.20800781
+nf4 timber correct=True p50=222.08971 nll=0.016479492
+nf4 turtle correct=True p50=279.5896 nll=0.0091552734
+nf4 valley correct=True p50=221.09991 nll=0.028930664
+nf4 velvet correct=True p50=281.9731 nll=0.13183594
+nf4 violet correct=True p50=283.28619 nll=0.024047852
+nf4 walnut correct=False p50=222.92298 nll=0.640625
+nf4 willow correct=False p50=218.51413 nll=2.078125
+nf4 window correct=True p50=166.50404 nll=0.099609375
+nf4 winter correct=False p50=218.89199 nll=1.59375
+nf4 wizard correct=False p50=227.06574 nll=0.48632812
+nf4 yellow correct=True p50=161.58217 nll=0.13867188
+nf4 zebra correct=False p50=289.69602 nll=2.03125
 done

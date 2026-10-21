@@ -1,8 +1,8 @@
 {
   "probe": {
     "cuda_available": null,
-    "exception_type": "KernelOutputMissing",
-    "message": "replacement T4 kernel has not been ingested"
+    "exception_type": "KernelProgress",
+    "message": "fp16 is not a healthy compute dtype; skipped nf4-fp16"
   },
-  "reason": "kernel_output_missing"
+  "reason": "probed_failure"
 }

@@ -1,21 +1,21 @@
 {
   "body": {
-    "detail": "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. Soft-PASS is unused and is refused.",
+    "detail": "fp16 is not a healthy compute dtype; skipped nf4-fp16 Soft-PASS is unused and is refused.",
     "kernel": {
       "dir": "kaggle/quant_nf4",
-      "url": null,
-      "version": null
+      "url": "https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4",
+      "version": "2"
     },
     "precision": "nf4-fp16",
     "probe": {
       "cuda_available": null,
-      "exception_type": "KernelOutputMissing",
-      "message": "replacement T4 kernel has not been ingested"
+      "exception_type": "KernelProgress",
+      "message": "fp16 is not a healthy compute dtype; skipped nf4-fp16"
     },
-    "reason": "kernel_output_missing",
+    "reason": "probed_failure",
     "status": "unsupported"
   },
-  "comparison_sha256": "66994eb54225e07f1151beb2ee5739950f3ce9a89fa4ad9578ed6bf4340eecec",
+  "comparison_sha256": "60dd9d48af5664395c8bbe5ab730338edc4a6b4def87e3fbd0e70e3d06b3ba21",
   "document_kind": "quant-arm-projection",
   "precision": "nf4-fp16",
   "protocol_sha256": "b5fe0ba1136866ad026fdf874d16ead047e506f65f2e6acab2c574e99a2dd32b",

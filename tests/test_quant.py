@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from sft_loop.quant import (
+    additive_causal_mask,
     KERNEL_DIR_NF4,
     KERNEL_EVIDENCE_PREFIX,
     NF4_QUANT_CONFIG,
@@ -676,6 +677,7 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "t4-fp32" in script
             assert "Fail closed" in script
             assert "probe_numerics" in script
+            assert "exact_match" in script
         else:
             assert meta.get("enable_gpu") is False
             assert "quantize_dynamic" in script
@@ -684,6 +686,21 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "dynamo=False" in script
             assert "onnx-ir" not in script
             assert "record_export_mem" in script
+            assert "additive_causal_mask" in script
         for item_id in heldout:
             assert f'"{item_id}"' in script
         assert script.count("ITEM_IDS") >= 1
+
+
+def test_additive_causal_mask_is_4d_keep_or_min():
+    import torch
+
+    mask2 = torch.tensor([[1, 1, 0]], dtype=torch.long)
+    out = additive_causal_mask(mask2, torch.float32)
+    assert tuple(out.shape) == (1, 1, 3, 3)
+    fill = torch.finfo(torch.float32).min
+    assert out[0, 0, 0, 0] == 0
+    assert out[0, 0, 0, 1] == fill
+    assert out[0, 0, 1, 0] == 0
+    assert out[0, 0, 1, 1] == 0
+    assert out[0, 0, 2, 2] == fill
