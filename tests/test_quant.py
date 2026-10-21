@@ -678,6 +678,9 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "Fail closed" in script
             assert "probe_numerics" in script
             assert "exact_match" in script
+            assert "generation_config.json" in script
+            assert "predictions.json" in script
+            assert "min_new_tokens" in script
         else:
             assert meta.get("enable_gpu") is False
             assert "quantize_dynamic" in script

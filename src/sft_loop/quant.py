@@ -56,6 +56,10 @@ __all__ = [
     "probe_nf4",
     "tracked_relpaths",
     "assert_tracked_quant_file",
+    "assert_prompt_and_generation_parity",
+    "assert_kernel_arm_parity",
+    "check_kernel_scored_parity",
+    "load_kernel_scored_parity",
     "paired_difference",
     "apply_prompt_mask",
     "ingest_kernel_arm",
@@ -165,10 +169,24 @@ def is_kernel_evidence(rel: str) -> bool:
     return rel.startswith(KERNEL_EVIDENCE_PREFIX)
 
 
+ITEM_ROW_KEYS = frozenset(
+    {
+        "item_id",
+        "correct",
+        "latency_ms",
+        "generated_tokens",
+        "decode_latency_ms",
+        "decode_generated_tokens",
+        "nll",
+        "sequence_nll",
+    }
+)
+
+
 def _sanitize_kernel_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     cleaned: list[dict[str, Any]] = []
     for row in items:
-        item = dict(row)
+        item = {key: row[key] for key in ITEM_ROW_KEYS if key in row}
         for key in ("nll", "sequence_nll"):
             if key not in item:
                 continue
@@ -181,6 +199,50 @@ def _sanitize_kernel_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 del item[key]
         cleaned.append(item)
     return cleaned
+
+
+def assert_prompt_and_generation_parity(left: dict[str, Any], right: dict[str, Any]) -> None:
+    if left.get("prompt_hashes") != right.get("prompt_hashes"):
+        raise ValueError("prompt hashes drifted between arms")
+    if left.get("generation_config") != right.get("generation_config"):
+        raise ValueError("generation config drifted between arms")
+
+
+def load_kernel_scored_parity(source: Path, precision: str) -> dict[str, Any]:
+    arm = source / precision
+    hashes_path = arm / "prompt_hashes.json"
+    if not hashes_path.is_file():
+        hashes_path = source / "prompt_hashes.json"
+    config_path = arm / "generation_config.json"
+    if not hashes_path.is_file():
+        raise ValueError(f"{precision} prompt hashes missing")
+    if not config_path.is_file():
+        raise ValueError(f"{precision} generation config missing")
+    return {
+        "prompt_hashes": json.loads(hashes_path.read_text(encoding="utf-8")),
+        "generation_config": json.loads(config_path.read_text(encoding="utf-8")),
+    }
+
+
+def assert_kernel_arm_parity(source: Path, left: str, right: str) -> None:
+    assert_prompt_and_generation_parity(
+        load_kernel_scored_parity(source, left),
+        load_kernel_scored_parity(source, right),
+    )
+
+
+def check_kernel_scored_parity(source: Path) -> None:
+    names = [
+        precision.value
+        for precision in GPU_PRECISIONS
+        if (source / precision.value / "generation_config.json").is_file()
+    ]
+    if len(names) < 2:
+        return
+    first = names[0]
+    left = load_kernel_scored_parity(source, first)
+    for name in names[1:]:
+        assert_prompt_and_generation_parity(left, load_kernel_scored_parity(source, name))
 
 
 def sha256_text(text: str) -> str:
@@ -1010,6 +1072,7 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
             },
             kernel=kernel,
         )
+    check_kernel_scored_parity(source)
     items = _sanitize_kernel_items(
         json.loads((source / precision.value / "items.json").read_text(encoding="utf-8"))
     )

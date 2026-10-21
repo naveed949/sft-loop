@@ -8,7 +8,7 @@ CPU and GPU quantization arms on one pinned model share one seed, one held-out s
 - `quant-int8` is per-tensor symmetric dynamic PTQ (`default_dynamic_qconfig`) on every `nn.Linear`, including `lm_head`.
 - `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. Kaggle v1 failed to pip `onnx==1.17.0`. Kaggle v2 died on `onnx_ir`. Kaggle v3 died in TorchScript on `create_causal_mask` vmap (`unordered_map::at`). The kernel now passes `dynamo=False` and a 4D additive causal mask. A CPU retry lives at `kaggle/quant_onnx_int8`.
 - `quant-t4-fp32` is the T4 fp32 same-hardware baseline. Kernel v2 scored 47/129, matching CPU fp32. Ingest refuses a 0-score or non-finite-NLL baseline unless it is marked `finding: collapse`.
-- `quant-nf4` is bitsandbytes NF4 with float32 compute. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output.
+- `quant-nf4` is bitsandbytes NF4 with float32 compute. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output. The 79/129 exact-match headline is first-token exact match, not a quality win. Sequence NLL rose. Run-3 items omit raw generations, so they cannot be rescored. The next kernel writes `predictions.json` and per-arm `generation_config.json`. Ingest refuses a pairing when those hashes or configs drift.
 - `quant-nf4-fp16` is NF4 with fp16 compute. It runs only if T4 fp16 is healthy. Kernel v2 skipped it.
 - `quant-fp16` is T4 fp16. It is not a pairing baseline. Kernel v2 is `finding: overflow`.
 - `quant-table` is the README region generated from `runs/quant/comparison.json`.

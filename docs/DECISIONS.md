@@ -95,7 +95,7 @@ CPU int8 from PR #13 (same host as CPU fp32) scored 0/129. Target NLL mean rose 
 
 NF4 stores each 64-wide block as a 4-bit codebook index plus a scale. Double quant (`bnb_4bit_use_double_quant=true`) quantizes those scales too, about 4.125 bits per parameter. That is more compression than int8 (8 bits plus qconfig metadata) and much less than fp32 (32 bits). The extra scale quantization is more error than single-level NF4, not less.
 
-Quantization error and this task do not move together. NF4 raised exact match and lowered target-token NLL, and it raised full-sequence NLL. Int8 lowered exact match and raised both NLL numbers. Sequence NLL is the closer stand-in for perplexity. A first-token exact-match gain is not a perplexity win. Do not read the NF4 score delta as a general quality claim.
+Quantization error and this task do not move together. NF4 raised exact match and lowered target-token NLL, and it raised full-sequence NLL. Int8 lowered exact match and raised both NLL numbers. Sequence NLL is the closer stand-in for perplexity. A first-token exact-match gain is not a perplexity win. Do not read the NF4 score delta as a general quality claim. The field-by-field check is in the later "NF4 79/129 is first-token exact match" entry.
 
 ### Why fp16 failed
 
@@ -123,3 +123,40 @@ Local proof, torch 2.11.0+cpu, transformers 4.56.2, tiny `Qwen2Config` (hidden 6
 - 4D wrapper: wrote `/tmp/qwen2-4d.onnx` (524851 bytes).
 
 The ONNX arm stays `unsupported` / `probed_failure` until the 4D kernel reruns.
+
+## NF4 79/129 is first-token exact match, not a scorer bug (2026-10-21)
+
+The +25 point NF4 minus t4-fp32 exact-match delta is the wrong sign for lossy 4-bit storage of the same weights. That made it a measurement-bug candidate until the run-3 artifacts were compared field by field. No GPU rerun.
+
+### Prompt parity
+
+One tokenizer is loaded before any arm. `dump_prompt_hashes` runs once. `render_prompt` is `apply_chat_template(..., add_generation_prompt=True)` for every arm. Scored `generate_fn` kwargs are `max_new_tokens=8`, `do_sample=False`, `pad_token_id=tokenizer.pad_token_id`. `min_new_tokens` is unset on the scored path. The decode path is a second call with `min_new_tokens=8`. Temperature is unset. Stop is EOS or `max_new_tokens`. transformers 5.20.2 and tokenizers 0.23.3 match. There is no per-item per-arm prompt hash in the v2 tarball. The shared file is `runs/quant/kernel/quant_nf4/prompt_hashes.json`.
+
+### Scoring parity
+
+`prediction_token` strips the decode and takes the first whitespace token. Gold is `item_id.upper()`. Ingest `task_score` is the mean of `items[].correct` via `_summarize_items`. It does not re-grade text. Kernel `metrics.exact_match` is the same ratio. Both arms use that path.
+
+### Flips
+
+| class | n | item ids |
+| --- | --- | --- |
+| both right | 45 |  |
+| both wrong | 48 |  |
+| fp32 wrong, nf4 right | 34 | anchor, blanket, carpet, celery, cherry, cricket, custom, desert, ember, glacier, grape, hammer, horse, knight, ladder, meadow, mirror, orange, orchid, otter, palace, pebble, pepper, plum, prairie, quartz, rocket, scarlet, silver, stable, thunder, velvet, violet, window |
+| fp32 right, nf4 wrong | 2 | canyon, wizard |
+
+Net +32 equals 79 minus 47. Twenty of those 36 flips change `generated_tokens`, so the decoded sequences differed. The 15 same-length fp32-wrong/nf4-right items still dropped target NLL (mean 0.853 → 0.298). No flip has NF4 worse target NLL and NF4 `correct=true`. CPU fp32 from PR #13 matches t4-fp32 on all 129 `correct` flags and all 129 `generated_tokens`. Mean NLL matches to 1e-5. The 47/129 baseline is the same set.
+
+Raw generation strings are not in `items.json`, `metrics.json`, or the kernel log. The 15 requested verbatim generations cannot be printed. PR #13 CPU items have the same schema. A scorer change cannot rescore any arm. The #13 numbers do not change.
+
+### PR #15 79/123
+
+Coincidence. PR #15 eval_before is 79/123 on a 10-K figure extract task (`capitalcite`, n=123). This pairing is 79/129 on `quant-heldout-v1` uppercase words. Same numerator, different n, different labels.
+
+### Mechanism
+
+Not a prompt mismatch. Not `min_new_tokens=8` on the scored path. Not a leading-space or case artifact that one arm hits and the other does not. The first-token grader and teacher-forced target NLL move together. NF4 mean target NLL is 0.51175 versus 0.79975. Sequence NLL is 4.789 versus 4.636, the sign lossy quant predicts. Exact match is a different functional. The 1.5B instruct model often emits a short chatty prefix under fp32 (2–3 tokens, first token ≠ gold). NF4 more often emits the uppercase word and EOS. That can raise first-token exact match while making the full chat-template sequence less likely.
+
+The table keeps 79/129 and 47/129. Do not read the score delta as a general quality claim. Sequence NLL is the closer stand-in for perplexity, and it got worse.
+
+`assert_prompt_and_generation_parity` now fails ingest when two GPU arms in one kernel dir differ in prompt hashes or scored generation config. The next NF4 kernel writes per-arm `generation_config.json`, copies `prompt_hashes.json`, and writes `predictions.json` so a later rescore does not need a GPU rerun. Run-3 `generation_config.json` files are a backfill from `kernel.py`. pad and eos ids were not recorded, so those fields are null.

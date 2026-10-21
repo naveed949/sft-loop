@@ -427,20 +427,47 @@ def measure(precision: str, torch, tokenizer, model, *, on_disk_bytes: int, libr
     generate = generate_fn(torch, tokenizer, model)
     decode_generate = generate_fn(torch, tokenizer, model, min_new_tokens=DECODE_NEW_TOKENS)
     nll = nll_fn(torch, tokenizer, model)
+    hashes_path = OUT / "prompt_hashes.json"
+    if hashes_path.is_file():
+        write_json(OUT / precision / "prompt_hashes.json", json.loads(hashes_path.read_text(encoding="utf-8")))
+    write_json(
+        OUT / precision / "generation_config.json",
+        {
+            "add_generation_prompt": True,
+            "attn_implementation": "eager",
+            "chat_template": "tokenizer.apply_chat_template",
+            "do_sample": False,
+            "eos_token_id": tokenizer.eos_token_id,
+            "max_new_tokens": DECODE_NEW_TOKENS,
+            "min_new_tokens": None,
+            "pad_token_id": tokenizer.pad_token_id,
+            "stop_criteria": "eos_or_max_new_tokens",
+            "temperature": None,
+        },
+    )
     items = []
+    predictions = []
     for item_id in ITEM_IDS:
         prompt = prompt_for(item_id)
         prediction, tokens, latency_ms = repeat_generate(generate, prompt)
         _, decode_tokens, decode_latency_ms = repeat_generate(decode_generate, prompt)
         target_nll, sequence_nll = nll(prompt, item_id.upper())
+        token = prediction_token(prediction)
         row = {
             "item_id": item_id,
-            "correct": prediction_token(prediction) == item_id.upper(),
+            "correct": token == item_id.upper(),
             "latency_ms": latency_ms,
             "generated_tokens": int(tokens),
             "decode_latency_ms": decode_latency_ms,
             "decode_generated_tokens": int(decode_tokens),
         }
+        predictions.append(
+            {
+                "item_id": item_id,
+                "prediction": prediction,
+                "prediction_token": token,
+            }
+        )
         target_out = maybe_float(target_nll)
         sequence_out = maybe_float(sequence_nll)
         if target_out is not None:
@@ -471,6 +498,7 @@ def measure(precision: str, torch, tokenizer, model, *, on_disk_bytes: int, libr
     }
     write_json(OUT / precision / "items.json", items)
     write_json(OUT / precision / "metrics.json", metrics)
+    write_json(OUT / precision / "predictions.json", predictions)
     return items, metrics
 
 
