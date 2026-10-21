@@ -130,7 +130,9 @@ Smoke fails closed unless all of these hold after `trainer.train()`: `train_loss
 
 If smoke cannot finish, keep the plumbing artifact and fail the step. Do not estimate scores. Do not mint a schema-scored report.
 
-Feature recipes: `features/cli-unsupported-report.md`, `features/train-lora.md`, `features/eval-same-seed.md`, `features/loop.md`, `features/report-schema.md`, `features/quant-comparison.md`.
+Feature recipes: `features/cli-unsupported-report.md`, `features/train-lora.md`, `features/eval-same-seed.md`, `features/loop.md`, `features/report-schema.md`, `features/quant-comparison.md`, `features/phase4-kaggle.md`.
+
+Kaggle GPU kernels are a mapped surface this CPU skill cannot run. Mark them `unsupported` with `gpu_or_train_deps_unavailable`. Do not start `kaggle/phase4_train/kernel.py` and do not invent `runs/phase4/scored.json`. The kernel evidence path is `kaggle/phase4_train/` (and the files that kernel writes after Naveed's T4 run). The official CPU smoke path must still pass.
 
 ## Evidence
 

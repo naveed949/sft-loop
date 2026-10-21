@@ -161,6 +161,27 @@ python -m pip install -e ".[dev,train,unsloth]"
 python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda
 ```
 
+## Phase 4 (Kaggle GPU, two-phase)
+
+Phase 4 is a sibling of the uppercase fixture, not a new `sft_loop` task. The held-out task is `tenk-extract-v1`: open-book figure extraction from capitalcite passages at commit `34b42ee0b387738725705a0af682dd3f030a9944`. Eval n is at least 100. The grader is canonical-figure exact match. This checkout does not contain `runs/phase4/scored.json`. Do not invent before/after scores.
+
+### Push order (Naveed's machine)
+
+1. In both metadata files, replace `KAGGLE_USER` with your Kaggle username.
+2. Push the dataset directory `kaggle/phase4_data/` (`id` `KAGGLE_USER/phase4-tenk-data`).
+3. Confirm the kernel lists that dataset in `dataset_sources`.
+4. Push the kernel directory `kaggle/phase4_train/` (`id` `KAGGLE_USER/phase4-tenk-lora`, GPU on, internet on, private).
+5. Run the kernel on the 2x Tesla T4. Expected wall time is about 2 to 4 hours, under one 12 hour session and under about 15 GPU-hours for the ticket.
+6. Download every file from the kernel working directory and return them for Phase 2.
+
+Accelerator: 2x Tesla T4, 15 GB each, compute capability 7.5. fp16 only. bf16 is `unsupported` on that chip. The kernel trains LoRA on GPU 0 with fp16 autocast and `GradScaler`, `global_step` 200, then writes per-item eval JSON, a trainer log, a profiler summary, a gradient-checkpointing memory pair, an env dump, and the adapter plus sha256.
+
+### Interview notes
+
+LoRA stores a low-rank update ΔW = BA. Rank r is 8. Alpha is 16, so the applied scale is alpha/r = 2. Target modules are the attention projections `q_proj`, `k_proj`, `v_proj`, `o_proj`: those matrices route which year-column figure to copy, and they fit a 15 GB T4 with sequence length 1024. fp16 has a narrow exponent, so `GradScaler` keeps gradients from underflowing. bf16 has a wider exponent and does not need that scaler, but T4 cannot run it. Gradient checkpointing trades extra forward compute for lower activation memory; the kernel measures both peaks at the same batch and sequence length. Effective batch is 8 (microbatch 1 times 8 accumulation steps). The LR schedule is cosine with 5% warmup so the first steps do not jump from a cold adapter. Eval n=8 cannot show uplift: SE of a Bernoulli rate is sqrt(p(1-p)/n) ≈ 0.18 at p=0.5, which swallows a typical LoRA delta. This task uses n >= 100 and a contamination check (exact and 5-gram Jaccard near-duplicates between train and eval, and eval figures against the static prompt template).
+
+If the measured interval covers 0, the README must say `no uplift` exactly.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
