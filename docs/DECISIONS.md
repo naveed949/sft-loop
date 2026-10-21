@@ -145,17 +145,17 @@ One tokenizer is loaded before any arm. `dump_prompt_hashes` runs once. `render_
 | fp32 wrong, nf4 right | 34 | anchor, blanket, carpet, celery, cherry, cricket, custom, desert, ember, glacier, grape, hammer, horse, knight, ladder, meadow, mirror, orange, orchid, otter, palace, pebble, pepper, plum, prairie, quartz, rocket, scarlet, silver, stable, thunder, velvet, violet, window |
 | fp32 right, nf4 wrong | 2 | canyon, wizard |
 
-Net +32 equals 79 minus 47. Twenty of those 36 flips change `generated_tokens`, so the decoded sequences differed. The 15 same-length fp32-wrong/nf4-right items still dropped target NLL (mean 0.853 → 0.298). No flip has NF4 worse target NLL and NF4 `correct=true`. CPU fp32 from PR #13 matches t4-fp32 on all 129 `correct` flags and all 129 `generated_tokens`. Mean NLL matches to 1e-5. The 47/129 baseline is the same set.
+Net +32 equals 79 minus 47. Twenty of those 36 flips change `generated_tokens`, so the decoded sequences differed. The 15 same-length fp32-wrong/nf4-right items still dropped target NLL (mean 0.853 → 0.298). No flip has NF4 worse target NLL and NF4 `correct=true`. Canyon is the reverse case. Target NLL improved (`1.063` to `0.828`) while `correct` went false at the same length. Mean NLL over the gold word is not the greedy first token. CPU fp32 from PR #13 matches t4-fp32 on all 129 `correct` flags and all 129 `generated_tokens`. Mean NLL matches to 1e-5. The 47/129 baseline is the same set.
 
 Raw generation strings are not in `items.json`, `metrics.json`, or the kernel log. The 15 requested verbatim generations cannot be printed. PR #13 CPU items have the same schema. A scorer change cannot rescore any arm. The #13 numbers do not change.
 
 ### PR #15 79/123
 
-Coincidence. PR #15 eval_before is 79/123 on a 10-K figure extract task (`capitalcite`, n=123). This pairing is 79/129 on `quant-heldout-v1` uppercase words. Same numerator, different n, different labels.
+Disproven as the same measurement. PR #15 eval_before is 79/123 (`0.64227642`) on `tenk-extract-v1`. Item-id overlap with `quant-heldout-v1` is 0. This pairing is 79/129 (`0.6124031`) on uppercase words. Same numerator, different n, different labels, different task.
 
 ### Mechanism
 
-Not a prompt mismatch. Not `min_new_tokens=8` on the scored path. Not a leading-space or case artifact that one arm hits and the other does not. The first-token grader and teacher-forced target NLL move together. NF4 mean target NLL is 0.51175 versus 0.79975. Sequence NLL is 4.789 versus 4.636, the sign lossy quant predicts. Exact match is a different functional. The 1.5B instruct model often emits a short chatty prefix under fp32 (2–3 tokens, first token ≠ gold). NF4 more often emits the uppercase word and EOS. That can raise first-token exact match while making the full chat-template sequence less likely.
+Not a prompt mismatch. Not `min_new_tokens=8` on the scored path. Not a leading-space or case artifact that one arm hits and the other does not. The first-token grader and teacher-forced target NLL move together on the 34 gains. NF4 mean target NLL is 0.51175 versus 0.79975. Sequence NLL rose on all 129 items (4.789 versus 4.636). That is the sign lossy quant predicts. The sequence mean is dominated by the shared chat template, so a better gold-word NLL does not pull it down. Exact match is a different functional. The 1.5B instruct model often emits a short chatty prefix under fp32 (2–3 tokens, first token ≠ gold). NF4 more often emits the uppercase word and EOS. That can raise first-token exact match while making the full chat-template sequence less likely.
 
 The table keeps 79/129 and 47/129. Do not read the score delta as a general quality claim. Sequence NLL is the closer stand-in for perplexity, and it got worse.
 
