@@ -16,6 +16,8 @@ Do not export `VERIFY_EVIDENCE_DIR` or `VERIFY_SCRATCH_DIR` unless the path ends
 
 Kaggle GPU kernels are not a local verify surface. The scripts live at `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`. `verify quant` checks those directories exist and that ingest of a missing output dir is `kernel_output_missing`. It does not run the kernels.
 
+`issue9-quant-gpu-p1/` is the Phase 1 proof. `scripts/verify all --run-id issue9-quant-gpu-p1` exited 0. `surfaces.json` lists `kaggle-quant-kernels` as unsupported and points at those dirs. `quant/kernel-missing.json` is the fail-closed ingest.
+
 Read these first:
 
 - `summary.json` (all steps exit 0, 72.263s, `failed_step` null)
