@@ -42,4 +42,33 @@ The kernel pins `transformers==5.20.2` and `tokenizers==0.23.3` to match the CPU
 
 Expected T4 wall is about 2 hours. Budget 2.5 hours. Stay under 3 GPU hours.
 
+PR #15's Phase 4 T4 kernel hit a non-finite training loss at step 1 in fp16 on the same accelerator. That is a training-loop observation, not this eval harness, and it is consistent with the fp16 overflow hypothesis.
+
 The ONNX kernel failed during pip. `onnx==1.17.0` has no cp313 wheel; the image is Python 3.13.15. The pin is now `onnx==1.18.0`. That kernel is being rerun separately. The ONNX arm stays `unsupported` / `probed_failure` until those outputs land.
+
+## Quant ONNX torch 2.11 exporter: dynamo=False, not onnx-ir (2026-10-21)
+
+ONNX Kaggle rerun v2 at `2eede76` installed `onnx==1.18.0`, `onnxruntime==1.20.1`, `onnxscript==0.2.0`, `transformers==4.56.2` and then failed in `torch.onnx.export`:
+
+`ModuleNotFoundError: No module named 'onnx_ir'`
+
+The host was 4 CPUs and `ram_bytes=33658318848` (33.658 GB). Python 3.13.15, torch 2.11.0. v2 never reached graph export; peak RSS during export is unmeasured.
+
+Chose **(b) `dynamo=False`**, not **(a) pin `onnx-ir` plus a dynamo-compatible onnxscript**.
+
+torch 2.11's `torch.onnx.export` defaults `dynamo=True`. That branch is the only one that does `from torch.onnx._internal.exporter import _compat`. `_compat` → `_core` → `_schemas` → `_lazy_import("onnx_ir")`. The TorchScript branch (`else`) imports `torch.onnx._internal.torchscript_exporter.utils` and never touches `onnx_ir`.
+
+Rejected (a) because v2 already had `onnxscript==0.2.0` and still died on `onnx_ir`. The dynamo path needs both, and the versions have to match torch 2.11's private API (`onnxscript._framework_apis.torch_2_11`). pytorch/pytorch#179280 on 2.11.0 needed `onnx-ir` plus onnxscript 0.6.2, not 0.2.0. Pinning that pair is a second moving dependency after the 1.17.0 wheel miss. `dynamic_axes` / `do_constant_folding` are the TorchScript flags.
+
+Local proof, same torch 2.11.0+cpu, pins `onnx==1.18.0` and `onnxscript==0.2.0`, no `onnx-ir`. This VM has Python 3.12.3, not 3.13; the wheel's `torch/onnx/__init__.py` and `_schemas.py` match the Kaggle traceback line for line.
+
+```
+python -c "import torch.onnx._internal.exporter._core"
+# ModuleNotFoundError: No module named 'onnx_ir'
+```
+
+`torch.onnx.export(..., dynamo=False)` on a one-add module wrote a 184-byte ONNX file. After that call, `onnx_ir` and `torch.onnx._internal.exporter._compat` were still absent from `sys.modules`. `dynamo=True` still raised `No module named 'onnxscript'` or `onnx_ir` depending on whether 0.2.0 was installed.
+
+Export peak RAM vs 33.6 GB: v2 died at import, so there is no Kaggle export peak to report. The earlier local 1.5B export on this 16.781 GB host wrote a 5.8 GB `model.onnx.data` and then took SIGKILL 137 in `quantize_dynamic`. Export of the same model already fit in 16.781 GB, so 33.658 GB (2.0×) has headroom for export. The remaining RAM risk is quantize, not `torch.onnx.export`. The kernel writes `export_mem.json` at `export_start`, `export_done` (file sizes included), and `quantize_done` with `peak_rss_bytes`, `host_ram_bytes`, and `fraction_of_host`. Compare the next run's `export_done` peak against 33658318848.
+
+The ONNX arm stays `unsupported` / `probed_failure` until that rerun lands. v2 logs are under `runs/quant/kernel/quant_onnx_int8/`.

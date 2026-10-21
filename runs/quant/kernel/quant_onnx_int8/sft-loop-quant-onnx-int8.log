@@ -1,90 +1,122 @@
-[{"stream_name":"stdout","time":0.844741099,"data":"pip --no-cache-dir onnx==1.17.0 onnxruntime==1.20.1 onnxscript==0.2.0 transformers==4.56.2\n"}
-,{"stream_name":"stdout","time":5.007584737,"data":"Collecting onnx==1.17.0\n"}
-,{"stream_name":"stdout","time":5.20731198,"data":"  Downloading onnx-1.17.0.tar.gz (12.2 MB)\n"}
-,{"stream_name":"stdout","time":5.654066973,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.2/12.2 MB 67.6 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":8.326214007,"data":"  Installing build dependencies: started\n"}
-,{"stream_name":"stdout","time":16.138599454,"data":"  Installing build dependencies: finished with status 'done'\n"}
-,{"stream_name":"stdout","time":16.139545883,"data":"  Getting requirements to build wheel: started\n"}
-,{"stream_name":"stdout","time":17.777240496,"data":"  Getting requirements to build wheel: finished with status 'done'\n"}
-,{"stream_name":"stdout","time":17.778697956,"data":"  Preparing metadata (pyproject.toml): started\n"}
-,{"stream_name":"stdout","time":19.210255341,"data":"  Preparing metadata (pyproject.toml): finished with status 'done'\n"}
-,{"stream_name":"stdout","time":19.402316273,"data":"Collecting onnxruntime==1.20.1\n"}
-,{"stream_name":"stdout","time":19.460241606,"data":"  Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.5 kB)\n"}
-,{"stream_name":"stdout","time":19.766629582,"data":"Collecting onnxscript==0.2.0\n"}
-,{"stream_name":"stdout","time":19.825395894,"data":"  Downloading onnxscript-0.2.0-py3-none-any.whl.metadata (15 kB)\n"}
-,{"stream_name":"stdout","time":19.974733019,"data":"Collecting transformers==4.56.2\n"}
-,{"stream_name":"stdout","time":20.032561911,"data":"  Downloading transformers-4.56.2-py3-none-any.whl.metadata (40 kB)\n"}
-,{"stream_name":"stdout","time":20.03593642,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 202.3 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":20.130175082,"data":"Requirement already satisfied: numpy\u003e=1.20 in /usr/local/lib/python3.13/dist-packages (from onnx==1.17.0) (2.1.3)\n"}
-,{"stream_name":"stdout","time":20.131125181,"data":"Requirement already satisfied: protobuf\u003e=3.20.2 in /usr/local/lib/python3.13/dist-packages (from onnx==1.17.0) (5.29.5)\n"}
-,{"stream_name":"stdout","time":20.208152228,"data":"Collecting coloredlogs (from onnxruntime==1.20.1)\n"}
-,{"stream_name":"stdout","time":20.265887781,"data":"  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)\n"}
-,{"stream_name":"stdout","time":20.26960432,"data":"Requirement already satisfied: flatbuffers in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (25.12.19)\n"}
-,{"stream_name":"stdout","time":20.273490758,"data":"Requirement already satisfied: packaging in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (26.3)\n"}
-,{"stream_name":"stdout","time":20.275226618,"data":"Requirement already satisfied: sympy in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (1.14.0)\n"}
-,{"stream_name":"stdout","time":20.282532766,"data":"Requirement already satisfied: typing_extensions\u003e=4.10 in /usr/local/lib/python3.13/dist-packages (from onnxscript==0.2.0) (4.16.0)\n"}
-,{"stream_name":"stdout","time":20.283600905,"data":"Requirement already satisfied: ml_dtypes in /usr/local/lib/python3.13/dist-packages (from onnxscript==0.2.0) (0.6.0)\n"}
-,{"stream_name":"stdout","time":20.317803205,"data":"Requirement already satisfied: filelock in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (3.32.5)\n"}
-,{"stream_name":"stdout","time":20.494720382,"data":"Collecting huggingface-hub\u003c1.0,\u003e=0.34.0 (from transformers==4.56.2)\n"}
-,{"stream_name":"stdout","time":20.551985834,"data":"  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)\n"}
-,{"stream_name":"stdout","time":20.581940145,"data":"Requirement already satisfied: pyyaml\u003e=5.1 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (6.0.3)\n"}
-,{"stream_name":"stdout","time":20.583767185,"data":"Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2025.11.3)\n"}
-,{"stream_name":"stdout","time":20.584823914,"data":"Requirement already satisfied: requests in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2.34.2)\n"}
-,{"stream_name":"stdout","time":20.928644889,"data":"Collecting tokenizers\u003c=0.23.0,\u003e=0.22.0 (from transformers==4.56.2)\n"}
-,{"stream_name":"stdout","time":20.985891482,"data":"  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)\n"}
-,{"stream_name":"stdout","time":20.990049051,"data":"Requirement already satisfied: safetensors\u003e=0.4.3 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (0.8.0)\n"}
-,{"stream_name":"stdout","time":20.99284601,"data":"Requirement already satisfied: tqdm\u003e=4.27 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (4.67.3)\n"}
-,{"stream_name":"stdout","time":21.004852176,"data":"Requirement already satisfied: fsspec\u003e=2023.5.0 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (2025.12.0)\n"}
-,{"stream_name":"stdout","time":21.006381396,"data":"Requirement already satisfied: hf-xet\u003c2.0.0,\u003e=1.1.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (1.6.0)\n"}
-,{"stream_name":"stdout","time":21.144011924,"data":"Collecting humanfriendly\u003e=9.1 (from coloredlogs-\u003eonnxruntime==1.20.1)\n"}
-,{"stream_name":"stdout","time":21.201216326,"data":"  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)\n"}
-,{"stream_name":"stdout","time":21.217254352,"data":"Requirement already satisfied: charset_normalizer\u003c4,\u003e=2 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.4.9)\n"}
-,{"stream_name":"stdout","time":21.218479511,"data":"Requirement already satisfied: idna\u003c4,\u003e=2.5 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.19)\n"}
-,{"stream_name":"stdout","time":21.219636031,"data":"Requirement already satisfied: urllib3\u003c3,\u003e=1.26 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2.8.0)\n"}
-,{"stream_name":"stdout","time":21.22068471,"data":"Requirement already satisfied: certifi\u003e=2023.5.7 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2026.7.22)\n"}
-,{"stream_name":"stdout","time":21.22339191,"data":"Requirement already satisfied: mpmath\u003c1.4,\u003e=1.1.0 in /usr/local/lib/python3.13/dist-packages (from sympy-\u003eonnxruntime==1.20.1) (1.3.0)\n"}
-,{"stream_name":"stdout","time":21.304110555,"data":"Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (13.3 MB)\n"}
-,{"stream_name":"stdout","time":21.368090276,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 253.5 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.426071871,"data":"Downloading onnxscript-0.2.0-py3-none-any.whl (691 kB)\n"}
-,{"stream_name":"stdout","time":21.431056129,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 691.6/691.6 kB 275.3 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.488808652,"data":"Downloading transformers-4.56.2-py3-none-any.whl (11.6 MB)\n"}
-,{"stream_name":"stdout","time":21.548405484,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 201.8 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.605648016,"data":"Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)\n"}
-,{"stream_name":"stdout","time":21.609348914999998,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 339.7 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.667217308,"data":"Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)\n"}
-,{"stream_name":"stdout","time":21.679593824,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 327.3 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.736593736,"data":"Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)\n"}
-,{"stream_name":"stdout","time":21.738774306,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 180.1 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.795768379,"data":"Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)\n"}
-,{"stream_name":"stdout","time":21.798321678,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 218.1 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":21.848295083,"data":"Building wheels for collected packages: onnx\n"}
-,{"stream_name":"stdout","time":21.849553202,"data":"  Building wheel for onnx (pyproject.toml): started\n"}
-,{"stream_name":"stderr","time":89.724520547,"data":"  error: subprocess-exited-with-error\n"}
-,{"stream_name":"stderr","time":89.724565547,"data":"  \n"}
-,{"stream_name":"stderr","time":89.724571547,"data":"  × Building wheel for onnx (pyproject.toml) did not run successfully.\n"}
-,{"stream_name":"stderr","time":89.724576337,"data":"  │ exit code: 1\n"}
-,{"stream_name":"stderr","time":89.724579177,"data":"  ╰─\u003e See above for output.\n"}
-,{"stream_name":"stderr","time":89.724582437,"data":"  \n"}
-,{"stream_name":"stderr","time":89.724585317,"data":"  note: This error originates from a subprocess, and is likely not a problem with pip.\n"}
-,{"stream_name":"stdout","time":89.724912577,"data":"  Building wheel for onnx (pyproject.toml): finished with status 'error'\n"}
-,{"stream_name":"stderr","time":89.725377067,"data":"  ERROR: Failed building wheel for onnx\n"}
-,{"stream_name":"stdout","time":89.725927717,"data":"Failed to build onnx\n"}
-,{"stream_name":"stderr","time":89.726210267,"data":"ERROR: ERROR: Failed to build installable wheels for some pyproject.toml based projects (onnx)\n"}
-,{"stream_name":"stdout","time":90.88390488,"data":"Traceback (most recent call last):\n"}
-,{"stream_name":"stdout","time":90.88393236900001,"data":"  File \"/kaggle/src/script.py\", line 446, in main\n"}
-,{"stream_name":"stdout","time":90.883937749,"data":"    pip_install()\n"}
-,{"stream_name":"stdout","time":90.8839418,"data":"    ~~~~~~~~~~~^^\n"}
-,{"stream_name":"stdout","time":90.88394586,"data":"  File \"/kaggle/src/script.py\", line 193, in pip_install\n"}
-,{"stream_name":"stdout","time":90.88395018,"data":"    subprocess.check_call(cmd)\n"}
-,{"stream_name":"stdout","time":90.88396431,"data":"    ~~~~~~~~~~~~~~~~~~~~~^^^^^\n"}
-,{"stream_name":"stdout","time":90.88396763,"data":"  File \"/usr/lib/python3.13/subprocess.py\", line 419, in check_call\n"}
-,{"stream_name":"stdout","time":90.883970679,"data":"    raise CalledProcessError(retcode, cmd)\n"}
-,{"stream_name":"stdout","time":90.88397431,"data":"subprocess.CalledProcessError: Command '['/usr/bin/python3', '-m', 'pip', 'install', '--no-cache-dir', 'onnx==1.17.0', 'onnxruntime==1.20.1', 'onnxscript==0.2.0', 'transformers==4.56.2']' returned non-zero exit status 1.\n"}
-,{"stream_name":"stdout","time":90.88398081,"data":"\n"}
-,{"stream_name":"stderr","time":93.099127316,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
-,{"stream_name":"stderr","time":93.099161236,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
-,{"stream_name":"stderr","time":93.442857404,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
-,{"stream_name":"stderr","time":93.442882304,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
-,{"stream_name":"stderr","time":94.367584538,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
-,{"stream_name":"stderr","time":95.548927892,"data":"[NbConvertApp] Writing 341979 bytes to __results__.html\n"}
+[{"stream_name":"stdout","time":0.736324586,"data":"pip --no-cache-dir onnx==1.18.0 onnxruntime==1.20.1 onnxscript==0.2.0 transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":4.611535109,"data":"Collecting onnx==1.18.0\n"}
+,{"stream_name":"stdout","time":4.693648027,"data":"  Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.9 kB)\n"}
+,{"stream_name":"stdout","time":4.877083624,"data":"Collecting onnxruntime==1.20.1\n"}
+,{"stream_name":"stdout","time":4.899942885,"data":"  Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.5 kB)\n"}
+,{"stream_name":"stdout","time":5.266325044,"data":"Collecting onnxscript==0.2.0\n"}
+,{"stream_name":"stdout","time":5.288885809,"data":"  Downloading onnxscript-0.2.0-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":5.435310295,"data":"Collecting transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":5.457452839,"data":"  Downloading transformers-4.56.2-py3-none-any.whl.metadata (40 kB)\n"}
+,{"stream_name":"stdout","time":5.468218534,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 5.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.598735609,"data":"Requirement already satisfied: numpy\u003e=1.22 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (2.1.3)\n"}
+,{"stream_name":"stdout","time":5.600132214,"data":"Requirement already satisfied: protobuf\u003e=4.25.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (5.29.5)\n"}
+,{"stream_name":"stdout","time":5.601620002,"data":"Requirement already satisfied: typing_extensions\u003e=4.7.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (4.16.0)\n"}
+,{"stream_name":"stdout","time":5.651937512,"data":"Collecting coloredlogs (from onnxruntime==1.20.1)\n"}
+,{"stream_name":"stdout","time":5.673539883,"data":"  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)\n"}
+,{"stream_name":"stdout","time":5.678348888,"data":"Requirement already satisfied: flatbuffers in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (25.12.19)\n"}
+,{"stream_name":"stdout","time":5.683932435,"data":"Requirement already satisfied: packaging in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (26.3)\n"}
+,{"stream_name":"stdout","time":5.68612008,"data":"Requirement already satisfied: sympy in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (1.14.0)\n"}
+,{"stream_name":"stdout","time":5.696541979,"data":"Requirement already satisfied: ml_dtypes in /usr/local/lib/python3.13/dist-packages (from onnxscript==0.2.0) (0.6.0)\n"}
+,{"stream_name":"stdout","time":5.739745792,"data":"Requirement already satisfied: filelock in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (3.32.5)\n"}
+,{"stream_name":"stdout","time":5.922992097,"data":"Collecting huggingface-hub\u003c1.0,\u003e=0.34.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":5.944506825,"data":"  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":5.983978013,"data":"Requirement already satisfied: pyyaml\u003e=5.1 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (6.0.3)\n"}
+,{"stream_name":"stdout","time":5.986725761,"data":"Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2025.11.3)\n"}
+,{"stream_name":"stdout","time":5.9881600299999995,"data":"Requirement already satisfied: requests in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2.34.2)\n"}
+,{"stream_name":"stdout","time":6.377747971,"data":"Collecting tokenizers\u003c=0.23.0,\u003e=0.22.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":6.399378909,"data":"  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)\n"}
+,{"stream_name":"stdout","time":6.4047451,"data":"Requirement already satisfied: safetensors\u003e=0.4.3 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (0.8.0)\n"}
+,{"stream_name":"stdout","time":6.408936311,"data":"Requirement already satisfied: tqdm\u003e=4.27 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (4.67.3)\n"}
+,{"stream_name":"stdout","time":6.424915769,"data":"Requirement already satisfied: fsspec\u003e=2023.5.0 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (2025.12.0)\n"}
+,{"stream_name":"stdout","time":6.426663745,"data":"Requirement already satisfied: hf-xet\u003c2.0.0,\u003e=1.1.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (1.6.0)\n"}
+,{"stream_name":"stdout","time":6.55017428,"data":"Collecting humanfriendly\u003e=9.1 (from coloredlogs-\u003eonnxruntime==1.20.1)\n"}
+,{"stream_name":"stdout","time":6.571860839,"data":"  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)\n"}
+,{"stream_name":"stdout","time":6.5933211,"data":"Requirement already satisfied: charset_normalizer\u003c4,\u003e=2 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.4.9)\n"}
+,{"stream_name":"stdout","time":6.595006609,"data":"Requirement already satisfied: idna\u003c4,\u003e=2.5 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.19)\n"}
+,{"stream_name":"stdout","time":6.596721592,"data":"Requirement already satisfied: urllib3\u003c3,\u003e=1.26 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2.8.0)\n"}
+,{"stream_name":"stdout","time":6.598060406,"data":"Requirement already satisfied: certifi\u003e=2023.5.7 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2026.7.22)\n"}
+,{"stream_name":"stdout","time":6.6017805769999995,"data":"Requirement already satisfied: mpmath\u003c1.4,\u003e=1.1.0 in /usr/local/lib/python3.13/dist-packages (from sympy-\u003eonnxruntime==1.20.1) (1.3.0)\n"}
+,{"stream_name":"stdout","time":6.654534656,"data":"Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.6 MB)\n"}
+,{"stream_name":"stdout","time":6.857263823,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.6/17.6 MB 142.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.878662422,"data":"Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (13.3 MB)\n"}
+,{"stream_name":"stdout","time":6.980500802,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 131.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":7.003606106,"data":"Downloading onnxscript-0.2.0-py3-none-any.whl (691 kB)\n"}
+,{"stream_name":"stdout","time":7.008933667,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 691.6/691.6 kB 297.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":7.030277573,"data":"Downloading transformers-4.56.2-py3-none-any.whl (11.6 MB)\n"}
+,{"stream_name":"stdout","time":7.120374959,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 126.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":7.141667804,"data":"Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)\n"}
+,{"stream_name":"stdout","time":7.146942094,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 241.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":7.168475622,"data":"Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)\n"}
+,{"stream_name":"stdout","time":7.194413787,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 141.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":7.216034407,"data":"Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)\n"}
+,{"stream_name":"stdout","time":7.219393617,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 169.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":7.240645766,"data":"Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)\n"}
+,{"stream_name":"stdout","time":7.243481364,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 269.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":10.044133812,"data":"Installing collected packages: onnx, humanfriendly, onnxscript, huggingface-hub, coloredlogs, tokenizers, onnxruntime, transformers\n"}
+,{"stream_name":"stdout","time":10.044481343,"data":"  Attempting uninstall: onnx\n"}
+,{"stream_name":"stdout","time":10.102594267,"data":"    Found existing installation: onnx 1.22.0\n"}
+,{"stream_name":"stdout","time":12.80323723,"data":"    Uninstalling onnx-1.22.0:\n"}
+,{"stream_name":"stdout","time":20.669632295,"data":"      Successfully uninstalled onnx-1.22.0\n"}
+,{"stream_name":"stdout","time":24.364238505,"data":"  Attempting uninstall: huggingface-hub\n"}
+,{"stream_name":"stdout","time":24.776566374,"data":"    Found existing installation: huggingface_hub 1.29.0\n"}
+,{"stream_name":"stdout","time":24.803988147,"data":"    Uninstalling huggingface_hub-1.29.0:\n"}
+,{"stream_name":"stdout","time":25.004955469,"data":"      Successfully uninstalled huggingface_hub-1.29.0\n"}
+,{"stream_name":"stdout","time":25.473949514,"data":"  Attempting uninstall: tokenizers\n"}
+,{"stream_name":"stdout","time":25.843724952,"data":"    Found existing installation: tokenizers 0.23.1\n"}
+,{"stream_name":"stdout","time":25.855212365,"data":"    Uninstalling tokenizers-0.23.1:\n"}
+,{"stream_name":"stdout","time":25.929868947,"data":"      Successfully uninstalled tokenizers-0.23.1\n"}
+,{"stream_name":"stdout","time":27.106986439,"data":"  Attempting uninstall: transformers\n"}
+,{"stream_name":"stdout","time":27.350205619,"data":"    Found existing installation: transformers 5.16.1\n"}
+,{"stream_name":"stdout","time":27.893393485,"data":"    Uninstalling transformers-5.16.1:\n"}
+,{"stream_name":"stdout","time":30.49198785,"data":"      Successfully uninstalled transformers-5.16.1\n"}
+,{"stream_name":"stderr","time":40.515359415,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":40.515417627,"data":"gradio 6.26.0 requires huggingface-hub\u003c2.0,\u003e=1.16.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":40.51542594,"data":"diffusers 0.40.0 requires huggingface-hub\u003c2.0,\u003e=1.23.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stdout","time":40.515748027,"data":"Successfully installed coloredlogs-15.0.1 huggingface-hub-0.36.2 humanfriendly-10.0 onnx-1.18.0 onnxruntime-1.20.1 onnxscript-0.2.0 tokenizers-0.22.2 transformers-4.56.2\n"}
+,{"stream_name":"stderr","time":79.245053992,"data":"WARNING:torchao.kernel.intmm:Warning: Detected no triton, on systems without Triton certain kernels will not work\n"}
+,{"stream_name":"stdout","time":116.100084164,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stdout","time":116.100124797,"data":"  File \"/kaggle/src/script.py\", line 453, in main\n"}
+,{"stream_name":"stdout","time":116.100131874,"data":"    np, sess, size, onnx, ort = export_and_quantize(torch, tokenizer, model)\n"}
+,{"stream_name":"stdout","time":116.100137107,"data":"                                ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":116.100141967,"data":"  File \"/kaggle/src/script.py\", line 302, in export_and_quantize\n"}
+,{"stream_name":"stdout","time":116.100147514,"data":"    torch.onnx.export(\n"}
+,{"stream_name":"stdout","time":116.100152247,"data":"    ~~~~~~~~~~~~~~~~~^\n"}
+,{"stream_name":"stdout","time":116.100156841,"data":"        wrapper,\n"}
+,{"stream_name":"stdout","time":116.100161295,"data":"        ^^^^^^^^\n"}
+,{"stream_name":"stdout","time":116.100165753,"data":"    ...\u003c10 lines\u003e...\n"}
+,{"stream_name":"stdout","time":116.100170749,"data":"        do_constant_folding=True,\n"}
+,{"stream_name":"stdout","time":116.100175328,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":116.100178202,"data":"    )\n"}
+,{"stream_name":"stdout","time":116.100181057,"data":"    ^\n"}
+,{"stream_name":"stdout","time":116.10018379,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/__init__.py\", line 286, in export\n"}
+,{"stream_name":"stdout","time":116.100186961,"data":"    from torch.onnx._internal.exporter import _compat\n"}
+,{"stream_name":"stdout","time":116.100189873,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/exporter/_compat.py\", line 16, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":116.100192987,"data":"    from torch.onnx._internal.exporter import (\n"}
+,{"stream_name":"stdout","time":116.100195786,"data":"    ...\u003c6 lines\u003e...\n"}
+,{"stream_name":"stdout","time":116.100198659,"data":"    )\n"}
+,{"stream_name":"stdout","time":116.100202429,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/exporter/_core.py\", line 28, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":116.100205986,"data":"    from torch.onnx._internal.exporter import (\n"}
+,{"stream_name":"stdout","time":116.100208889,"data":"    ...\u003c15 lines\u003e...\n"}
+,{"stream_name":"stdout","time":116.100212159,"data":"    )\n"}
+,{"stream_name":"stdout","time":116.100216524,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/exporter/_analysis.py\", line 17, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":116.100221671,"data":"    from torch.onnx._internal.exporter import _dispatching, _registration\n"}
+,{"stream_name":"stdout","time":116.10022658,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/exporter/_registration.py\", line 27, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":116.100231695,"data":"    from torch.onnx._internal.exporter import _constants, _schemas\n"}
+,{"stream_name":"stdout","time":116.100236585,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/exporter/_schemas.py\", line 22, in \u003cmodule\u003e\n"}
+,{"stream_name":"stdout","time":116.100241829,"data":"    float: ir.AttributeType.FLOAT,\n"}
+,{"stream_name":"stdout","time":116.100258711,"data":"           ^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":116.100262642,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/_lazy_import.py\", line 21, in __getattr__\n"}
+,{"stream_name":"stdout","time":116.100266743,"data":"    self._module = importlib.import_module(\".\", self._name)\n"}
+,{"stream_name":"stdout","time":116.100270644,"data":"                   ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":116.100274353,"data":"  File \"/usr/lib/python3.13/importlib/__init__.py\", line 88, in import_module\n"}
+,{"stream_name":"stdout","time":116.10027828,"data":"    return _bootstrap._gcd_import(name[level:], package, level)\n"}
+,{"stream_name":"stdout","time":116.10028205,"data":"           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stdout","time":116.100286156,"data":"ModuleNotFoundError: No module named 'onnx_ir'\n"}
+,{"stream_name":"stdout","time":116.100289703,"data":"\n"}
+,{"stream_name":"stderr","time":121.059982143,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":121.06002889,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":121.345597261,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":121.345625303,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":122.227303559,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":122.874764954,"data":"[NbConvertApp] Writing 342359 bytes to __results__.html\n"}
 ]

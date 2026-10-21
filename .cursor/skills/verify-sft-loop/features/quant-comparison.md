@@ -6,7 +6,7 @@ CPU and GPU quantization arms on one pinned model share one seed, one held-out s
 
 - `quant-fp32` is the CPU float32 baseline for `Qwen/Qwen2.5-1.5B-Instruct`.
 - `quant-int8` is per-tensor symmetric dynamic PTQ (`default_dynamic_qconfig`) on every `nn.Linear`, including `lm_head`.
-- `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. The first Kaggle CPU retry is `unsupported` / `probed_failure`. A CPU retry lives at `kaggle/quant_onnx_int8`.
+- `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. Kaggle v1 failed to pip `onnx==1.17.0`. Kaggle v2 at `2eede76` installed `onnx==1.18.0` and died in `torch.onnx.export` on `onnx_ir`. The kernel now passes `dynamo=False`. A CPU retry lives at `kaggle/quant_onnx_int8`.
 - `quant-t4-fp32` is the T4 fp32 same-hardware baseline. Ingest refuses a 0-score or non-finite-NLL baseline unless it is marked `finding: collapse`.
 - `quant-nf4` is bitsandbytes NF4 with float32 compute. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output.
 - `quant-nf4-fp16` is NF4 with fp16 compute. It runs only if T4 fp16 is healthy.
@@ -45,7 +45,7 @@ Preconditions:
 - A quant file is not a run report. `validate_report` must reject it.
 - NF4 numbers are never estimated on this VM. Missing CUDA is `unsupported`. Missing kernel output is `kernel_output_missing`.
 - Do not pair NF4 or T4 fp16 against CPU fp32. That view is `not_paired`. T4 fp16 is not the GPU baseline.
-- Torch 2.14 ONNX export needs `onnxscript`. A missing module is `dependency_missing`. Export that dies after `model.onnx.data` is written is `oom`.
+- Torch 2.11+ defaults `torch.onnx.export` to the dynamo exporter, which imports `onnx_ir`. The kernel and the local ONNX path pass `dynamo=False` so they stay on TorchScript. A missing `onnx` / `onnxruntime` is `dependency_missing`. Export that dies after `model.onnx.data` is written is `oom`.
 - Do not write quant output into `runs/phase3/`.
 - `verify quant` does not reload the 1.5B weights. That is `python -m sft_loop.quant run`.
 - scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass (`min_new_tokens == max_new_tokens == 8`). Do not treat scored emitted tokens / scored wall as matched throughput.

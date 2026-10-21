@@ -1599,6 +1599,7 @@ def _measure_onnx(protocol: dict[str, Any]) -> dict[str, Any]:
             },
             opset_version=17,
             do_constant_folding=True,
+            dynamo=False,
         )
     del model, wrapper
     gc.collect()

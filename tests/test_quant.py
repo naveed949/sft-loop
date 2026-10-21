@@ -304,6 +304,45 @@ def test_ingest_kernel_failure_without_refusal_stays_unsupported(tmp_path: Path)
     assert "task_score" not in body
 
 
+def test_ingest_onnx_ir_missing_is_probed_failure(tmp_path: Path):
+    tmp_path.joinpath("env.json").write_text(
+        json.dumps(
+            {
+                "logical_cpus": 4,
+                "ram_bytes": 33658318848,
+                "python": "3.13.15",
+            }
+        ),
+        encoding="utf-8",
+    )
+    tmp_path.joinpath("log.txt").write_text(
+        "ModuleNotFoundError: No module named 'onnx_ir'\n",
+        encoding="utf-8",
+    )
+    tmp_path.joinpath("progress.json").write_text(
+        json.dumps(
+            {
+                "status": "failed",
+                "reason": "probed_failure",
+                "detail": "ModuleNotFoundError: No module named 'onnx_ir'",
+                "probe": {
+                    "exception_type": "ModuleNotFoundError",
+                    "message": "No module named 'onnx_ir'",
+                    "cuda_available": False,
+                },
+                "arms": {"onnx-int8": {"status": "unsupported", "reason": "probed_failure"}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    body = ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
+    assert body["status"] == "unsupported"
+    assert body["reason"] == "probed_failure"
+    assert "onnx_ir" in body["detail"]
+    assert REFUSAL_SENTENCE in body["detail"]
+    assert "task_score" not in body
+
+
 def test_ingest_progress_failure_without_env_is_probed_failure(tmp_path: Path):
     tmp_path.joinpath("log.txt").write_text("pip failed\n", encoding="utf-8")
     tmp_path.joinpath("progress.json").write_text(
@@ -642,6 +681,9 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "quantize_dynamic" in script
             assert "onnx==1.18.0" in script
             assert "onnx==1.17.0" not in script
+            assert "dynamo=False" in script
+            assert "onnx-ir" not in script
+            assert "record_export_mem" in script
         for item_id in heldout:
             assert f'"{item_id}"' in script
         assert script.count("ITEM_IDS") >= 1

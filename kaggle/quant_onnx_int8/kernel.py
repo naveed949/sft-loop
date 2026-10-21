@@ -177,11 +177,42 @@ def write_progress(payload: dict) -> None:
     write_json(OUT / "progress.json", payload)
 
 
+def peak_rss_bytes() -> int:
+    import resource
+
+    return max(int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) * 1024, 1)
+
+
+def host_ram_bytes() -> int:
+    return int(os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES"))
+
+
+def record_export_mem(stage: str, **extra) -> dict:
+    host = host_ram_bytes()
+    rss = peak_rss_bytes()
+    payload = {
+        "stage": stage,
+        "peak_rss_bytes": rss,
+        "host_ram_bytes": host,
+        "host_ram_gb": round(host / 1e9, 3),
+        "fraction_of_host": round(rss / host, 4) if host else None,
+    }
+    payload.update(extra)
+    write_json(OUT / "export_mem.json", payload)
+    log(
+        f"export_mem stage={stage} peak_rss_bytes={rss} "
+        f"host_ram_bytes={host} fraction={payload['fraction_of_host']}"
+    )
+    return payload
+
+
 def pip_install() -> None:
     # onnx 1.17.0 has no cp313 wheel. Kaggle is Python 3.13, so 1.17.0
     # built from sdist and failed. 1.18.0 is the oldest release with
     # cp313 manylinux wheels. onnxruntime 1.20.1 and onnxscript 0.2.0
     # already have cp313 / py3 wheels. onnxscript requires onnx>=1.16.
+    # Do not add the onnx_ir package. torch 2.11's dynamo exporter
+    # imports it; this kernel uses dynamo=False and TorchScript instead.
     cmd = [
         sys.executable,
         "-m",
@@ -298,7 +329,11 @@ def export_and_quantize(torch, tokenizer, model):
     fp_path = work / "model.onnx"
     int8_path = work / "model.int8.onnx"
     write_progress({"status": "running", "stage": "export", "arms": {}})
+    record_export_mem("export_start")
     with torch.no_grad():
+        # torch 2.11 defaults dynamo=True and imports onnx_ir via the
+        # exporter internals. dynamo=False stays on TorchScript and does
+        # not import that module. Verified on torch 2.11.0+cpu.
         torch.onnx.export(
             wrapper,
             (sample["input_ids"], sample["attention_mask"]),
@@ -312,12 +347,23 @@ def export_and_quantize(torch, tokenizer, model):
             },
             opset_version=17,
             do_constant_folding=True,
+            dynamo=False,
         )
+    data_path = Path(str(fp_path) + ".data")
+    record_export_mem(
+        "export_done",
+        fp_onnx_bytes=fp_path.stat().st_size if fp_path.is_file() else 0,
+        fp_onnx_data_bytes=data_path.stat().st_size if data_path.is_file() else 0,
+    )
     del model, wrapper
     gc.collect()
     write_progress({"status": "running", "stage": "quantize", "arms": {}})
     quantize_dynamic(str(fp_path), str(int8_path), weight_type=QuantType.QInt8)
     fp_path.unlink(missing_ok=True)
+    record_export_mem(
+        "quantize_done",
+        int8_onnx_bytes=int8_path.stat().st_size if int8_path.is_file() else 0,
+    )
     size = max(int8_path.stat().st_size, 1)
     sess = ort.InferenceSession(str(int8_path), providers=["CPUExecutionProvider"])
     return np, sess, size, onnx, ort

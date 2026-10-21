@@ -2684,7 +2684,7 @@
       "status": "unsupported"
     },
     "onnx-int8": {
-      "detail": "CalledProcessError: Command '['/usr/bin/python3', '-m', 'pip', 'install', '--no-cache-dir', 'onnx==1.17.0', 'onnxruntime==1.20.1', 'onnxscript==0.2.0', 'transformers==4.56.2']' returned non-zero exit status 1. Soft-PASS is unused and is refused.",
+      "detail": "ModuleNotFoundError: No module named 'onnx_ir' Soft-PASS is unused and is refused.",
       "kernel": {
         "dir": "kaggle/quant_onnx_int8",
         "url": null,
@@ -2693,8 +2693,8 @@
       "precision": "onnx-int8",
       "probe": {
         "cuda_available": false,
-        "exception_type": "CalledProcessError",
-        "message": "Command '['/usr/bin/python3', '-m', 'pip', 'install', '--no-cache-dir', 'onnx==1.17.0', 'onnxruntime==1.20.1', 'onnxscript==0.2.0', 'transformers==4.56.2']' returned non-zero exit status 1."
+        "exception_type": "ModuleNotFoundError",
+        "message": "No module named 'onnx_ir'"
       },
       "reason": "probed_failure",
       "status": "unsupported"
