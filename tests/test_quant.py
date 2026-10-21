@@ -7,6 +7,7 @@ import pytest
 
 from sft_loop.quant import (
     KERNEL_DIR_NF4,
+    KERNEL_EVIDENCE_PREFIX,
     NF4_QUANT_CONFIG,
     PINNED_REVISION,
     Precision,
@@ -299,6 +300,102 @@ def test_ingest_kernel_failure_without_refusal_stays_unsupported(tmp_path: Path)
     assert "task_score" not in body
 
 
+def test_ingest_progress_failure_without_env_is_probed_failure(tmp_path: Path):
+    tmp_path.joinpath("log.txt").write_text("pip failed\n", encoding="utf-8")
+    tmp_path.joinpath("progress.json").write_text(
+        json.dumps(
+            {
+                "status": "failed",
+                "reason": "probed_failure",
+                "detail": "CalledProcessError: onnx==1.17.0 has no cp313 wheel",
+                "probe": {
+                    "exception_type": "CalledProcessError",
+                    "message": "pip install onnx==1.17.0 failed",
+                    "cuda_available": False,
+                },
+                "arms": {"onnx-int8": {"status": "unsupported", "reason": "probed_failure"}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    body = ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
+    assert body["status"] == "unsupported"
+    assert body["reason"] == "probed_failure"
+    assert REFUSAL_SENTENCE in body["detail"]
+    assert "task_score" not in body
+
+
+def test_ingest_drops_non_finite_nll(tmp_path: Path):
+    protocol = load_protocol()
+    tmp_path.joinpath("env.json").write_text(
+        json.dumps(
+            {
+                "kernel_url": "https://www.kaggle.com/code/example/nf4",
+                "kernel_version": "1",
+                "hardware": {
+                    "accelerator": "NvidiaTeslaT4",
+                    "gpu_name": "Tesla T4",
+                    "gpu_count": 1,
+                    "gpu_memory_bytes": 15 * 1024 ** 3,
+                    "compute_capability": "7.5",
+                    "driver": "580",
+                    "cuda": True,
+                    "mps": False,
+                    "logical_cpus": 4,
+                    "ram_bytes": 32 * 1024 ** 3,
+                    "cpu_model": "x86_64",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    tmp_path.joinpath("log.txt").write_text("ok\n", encoding="utf-8")
+    tmp_path.joinpath("progress.json").write_text(
+        json.dumps({"status": "measured", "arms": {"fp16": {"status": "measured"}}}),
+        encoding="utf-8",
+    )
+    items = []
+    for item_id in protocol["item_ids"]:
+        items.append(
+            {
+                "item_id": item_id,
+                "correct": False,
+                "latency_ms": 10.0,
+                "generated_tokens": 8,
+                "decode_latency_ms": 10.0,
+                "decode_generated_tokens": 8,
+                "nll": float("nan"),
+                "sequence_nll": float("nan"),
+            }
+        )
+    (tmp_path / "fp16").mkdir()
+    (tmp_path / "fp16" / "items.json").write_text(json.dumps(items), encoding="utf-8")
+    (tmp_path / "fp16" / "metrics.json").write_text(
+        json.dumps(
+            {
+                "on_disk_bytes": 1000,
+                "peak_rss_bytes": 2000,
+                "peak_gpu_bytes": 3000,
+                "compute_dtype": "float16",
+                "libraries": {"kind": "torch", "torch": "2.11.0", "transformers": "4.56.2"},
+                "limiter": {
+                    "kind": "gpu",
+                    "wall_s": 1.0,
+                    "cpu_time_s": 1.0,
+                    "peak_rss_bytes": 2000,
+                    "available_ram_bytes_at_start": 10000,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    body = ingest_kernel_arm(tmp_path, Precision.FP16)
+    assert body["status"] == "measured"
+    assert body["task_score"] == 0.0
+    assert "nll" not in body["items"][0]
+    assert "sequence_nll" not in body["items"][0]
+
+
 def test_ingest_export_stage_without_items_is_oom(tmp_path: Path):
     tmp_path.joinpath("env.json").write_text("{}", encoding="utf-8")
     tmp_path.joinpath("log.txt").write_text("export started\n", encoding="utf-8")
@@ -378,6 +475,7 @@ def test_tracked_relpaths_are_derived_from_precision():
         assert f"runs/quant/{precision.value}.json" in paths
         assert f"runs/quant/raw/{precision.value}.json" in paths
     assert "runs/quant/extra.json" not in paths
+    assert not any(path.startswith(KERNEL_EVIDENCE_PREFIX) for path in paths)
 
 
 def test_source_does_not_assign_weight_change_claimed_true():
@@ -454,6 +552,8 @@ def test_kernels_embed_the_heldout_split_and_metadata():
         else:
             assert meta.get("enable_gpu") is False
             assert "quantize_dynamic" in script
+            assert "onnx==1.18.0" in script
+            assert "onnx==1.17.0" not in script
         for item_id in heldout:
             assert f'"{item_id}"' in script
         assert script.count("ITEM_IDS") >= 1

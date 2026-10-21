@@ -33,7 +33,7 @@ from sft_loop.task import (
     prediction_token,
     train_examples,
 )
-from sft_loop.quant import assert_tracked_quant_file, tracked_relpaths
+from sft_loop.quant import assert_tracked_quant_file, is_kernel_evidence, tracked_relpaths
 from sft_loop.train import execute_train, main as train_main
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -147,6 +147,19 @@ def _check_runs_json(path: Path, document: dict) -> None:
     if rel.startswith("runs/quant/"):
         if rel in tracked_relpaths():
             assert_tracked_quant_file(ROOT, rel, document)
+            return
+        if is_kernel_evidence(rel):
+            if isinstance(document, dict) and "weight_change_claimed" in document:
+                raise AssertionError(f"{path} kernel evidence must not set weight_change_claimed")
+            if "adaptiveSandboxQualified" in json.dumps(document):
+                raise AssertionError(f"{path} must not set adaptiveSandboxQualified")
+            if isinstance(document, dict):
+                try:
+                    validate_report(document)
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError(f"{path} kernel evidence must not validate as a run report")
             return
         raise AssertionError(f"{path} is under runs/quant and is not a tracked quant file")
     if "status" not in document:

@@ -1,0 +1,12 @@
+{
+  "arms": {
+    "fp16": {
+      "status": "measured"
+    },
+    "nf4": {
+      "status": "measured"
+    }
+  },
+  "stage": "done",
+  "status": "measured"
+}

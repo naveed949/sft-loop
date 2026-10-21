@@ -30,4 +30,14 @@ GPU measured arms require `hardware.accelerator`, `peak_gpu_bytes`, a kernel URL
 
 Local `python -m sft_loop.quant probe-nf4` stays unsupported on this CPU VM. The only measured GPU path is `python -m sft_loop.quant ingest`. A missing kernel directory is `unsupported` / `kernel_output_missing` with no metric keys.
 
-Kernels live at `kaggle/quant_nf4` (NvidiaTeslaT4, about 2 hours, budget 4) and `kaggle/quant_onnx_int8` (CPU only, about 4 hours, budget 8). They pin deps, download the public Hub revision, and write env, logs, progress, and per-arm items. Local verify cannot run them. Phase 2 commits downloaded outputs under `runs/quant/` and regenerates the table.
+Kernels live at `kaggle/quant_nf4` (NvidiaTeslaT4) and `kaggle/quant_onnx_int8` (CPU only). They pin deps, download the public Hub revision, and write env, logs, progress, and per-arm items. Local verify cannot run them. Downloaded outputs are committed under `runs/quant/kernel/`. The table is regenerated from ingest. `python -m sft_loop.quant run` reuses measured kernel arms so it cannot overwrite them with a local probe.
+
+## Quant T4 ingest and ONNX cp313 pin (2026-10-21)
+
+Kaggle kernel `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 1 ran both T4 arms. Wall time was about 27 minutes. Ingest wrote measured `fp16` and `nf4` rows. The pairing is `nf4-minus-fp16` on `NvidiaTeslaT4`.
+
+Trust the memory and decode-throughput numbers. Do not treat the exact-match of 0.0 as a quality result. Both GPU arms scored 0/129 and emitted 8 tokens on the scored pass (CPU fp32 mean generated tokens is 3.25). Kernel `nll` / `sequence_nll` were non-finite; ingest dropped those keys and stored `nll_delta` as null. The paired score delta is 0.0 with a degenerate CI because every item pair is 0 − 0, not because the task still works.
+
+Peak GPU bytes are 3122830336 (fp16) and 1189611520 (NF4). That matches 1.54B × 2 bytes plus a small activation tail versus 4-bit storage plus embeddings / quant state. NF4 decode is 17.860264 tok/s against fp16 24.543959 tok/s on the fixed-length pass. NF4 is slower. That is the expected T4 outcome: dequant to fp16 for GEMM, so the win is memory, not compute.
+
+The ONNX kernel failed during pip. `onnx==1.17.0` has no cp313 wheel; the image is Python 3.13.15. `onnxruntime==1.20.1` and `onnxscript==0.2.0` already had cp313 / py3 wheels. The pin is now `onnx==1.18.0`, the oldest release with cp313 manylinux wheels. onnxscript requires `onnx>=1.16`. The ONNX arm stays `unsupported` / `probed_failure` until that kernel is rerun.

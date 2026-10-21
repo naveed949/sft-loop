@@ -1,0 +1,353 @@
+[{"stream_name":"stdout","time":0.600185754,"data":"pip --no-cache-dir bitsandbytes==0.50.2 transformers==4.56.2 accelerate==1.4.0\n"}
+,{"stream_name":"stdout","time":3.344378981,"data":"Collecting bitsandbytes==0.50.2\n"}
+,{"stream_name":"stdout","time":3.552224422,"data":"  Downloading bitsandbytes-0.50.2-py3-none-manylinux_2_24_x86_64.whl.metadata (10 kB)\n"}
+,{"stream_name":"stdout","time":3.757616853,"data":"Collecting transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":3.8162857199999998,"data":"  Downloading transformers-4.56.2-py3-none-any.whl.metadata (40 kB)\n"}
+,{"stream_name":"stdout","time":3.844679835,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 1.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":4.032317323,"data":"Collecting accelerate==1.4.0\n"}
+,{"stream_name":"stdout","time":4.090919856,"data":"  Downloading accelerate-1.4.0-py3-none-any.whl.metadata (19 kB)\n"}
+,{"stream_name":"stdout","time":4.110739264,"data":"Requirement already satisfied: torch\u003c3,\u003e=2.4 in /usr/local/lib/python3.13/dist-packages (from bitsandbytes==0.50.2) (2.11.0+cu128)\n"}
+,{"stream_name":"stdout","time":4.117927451,"data":"Requirement already satisfied: numpy\u003e=1.17 in /usr/local/lib/python3.13/dist-packages (from bitsandbytes==0.50.2) (2.1.3)\n"}
+,{"stream_name":"stdout","time":4.11890937,"data":"Requirement already satisfied: packaging\u003e=20.9 in /usr/local/lib/python3.13/dist-packages (from bitsandbytes==0.50.2) (26.3)\n"}
+,{"stream_name":"stdout","time":4.155910969,"data":"Requirement already satisfied: filelock in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (3.32.5)\n"}
+,{"stream_name":"stdout","time":4.358437513,"data":"Collecting huggingface-hub\u003c1.0,\u003e=0.34.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":4.417130656,"data":"  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":4.453875906,"data":"Requirement already satisfied: pyyaml\u003e=5.1 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (6.0.3)\n"}
+,{"stream_name":"stdout","time":4.455824284,"data":"Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2025.11.3)\n"}
+,{"stream_name":"stdout","time":4.456897907,"data":"Requirement already satisfied: requests in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2.34.2)\n"}
+,{"stream_name":"stdout","time":4.869045843,"data":"Collecting tokenizers\u003c=0.23.0,\u003e=0.22.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":4.928046688,"data":"  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)\n"}
+,{"stream_name":"stdout","time":4.9332648500000005,"data":"Requirement already satisfied: safetensors\u003e=0.4.3 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (0.8.0)\n"}
+,{"stream_name":"stdout","time":4.936709837,"data":"Requirement already satisfied: tqdm\u003e=4.27 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (4.67.3)\n"}
+,{"stream_name":"stdout","time":4.948023893,"data":"Requirement already satisfied: psutil in /usr/local/lib/python3.13/dist-packages (from accelerate==1.4.0) (5.9.5)\n"}
+,{"stream_name":"stdout","time":4.979087332,"data":"Requirement already satisfied: fsspec\u003e=2023.5.0 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (2025.12.0)\n"}
+,{"stream_name":"stdout","time":4.98038368,"data":"Requirement already satisfied: hf-xet\u003c2.0.0,\u003e=1.1.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (1.6.0)\n"}
+,{"stream_name":"stdout","time":4.983908522,"data":"Requirement already satisfied: typing-extensions\u003e=3.7.4.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (4.16.0)\n"}
+,{"stream_name":"stdout","time":5.028612479,"data":"Requirement already satisfied: setuptools\u003c82 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (81.0.0)\n"}
+,{"stream_name":"stdout","time":5.030097954,"data":"Requirement already satisfied: sympy\u003e=1.13.3 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (1.14.0)\n"}
+,{"stream_name":"stdout","time":5.031484515,"data":"Requirement already satisfied: networkx\u003e=2.5.1 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (3.6.1)\n"}
+,{"stream_name":"stdout","time":5.03252661,"data":"Requirement already satisfied: jinja2 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (3.1.6)\n"}
+,{"stream_name":"stdout","time":5.034764236,"data":"Requirement already satisfied: cuda-toolkit==12.8.1 in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.1)\n"}
+,{"stream_name":"stdout","time":5.036808543,"data":"Requirement already satisfied: cuda-bindings\u003c13,\u003e=12.9.4 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.9.7)\n"}
+,{"stream_name":"stdout","time":5.038084234,"data":"Requirement already satisfied: nvidia-cudnn-cu12==9.19.0.56 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (9.19.0.56)\n"}
+,{"stream_name":"stdout","time":5.039386061,"data":"Requirement already satisfied: nvidia-cusparselt-cu12==0.7.1 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (0.7.1)\n"}
+,{"stream_name":"stdout","time":5.040624157,"data":"Requirement already satisfied: nvidia-nccl-cu12==2.28.9 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (2.28.9)\n"}
+,{"stream_name":"stdout","time":5.041899083,"data":"Requirement already satisfied: nvidia-nvshmem-cu12==3.4.5 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (3.4.5)\n"}
+,{"stream_name":"stdout","time":5.043204205,"data":"Requirement already satisfied: triton==3.6.0 in /usr/local/lib/python3.13/dist-packages (from torch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (3.6.0)\n"}
+,{"stream_name":"stdout","time":5.065931698,"data":"Requirement already satisfied: nvidia-cublas-cu12==12.8.4.1.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.4.1)\n"}
+,{"stream_name":"stdout","time":5.067238237,"data":"Requirement already satisfied: nvidia-cuda-runtime-cu12==12.8.90.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.90)\n"}
+,{"stream_name":"stdout","time":5.068626637,"data":"Requirement already satisfied: nvidia-cufft-cu12==11.3.3.83.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (11.3.3.83)\n"}
+,{"stream_name":"stdout","time":5.069992994,"data":"Requirement already satisfied: nvidia-cufile-cu12==1.13.1.3.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (1.13.1.3)\n"}
+,{"stream_name":"stdout","time":5.071314867,"data":"Requirement already satisfied: nvidia-cuda-cupti-cu12==12.8.90.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.90)\n"}
+,{"stream_name":"stdout","time":5.072899564,"data":"Requirement already satisfied: nvidia-curand-cu12==10.3.9.90.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (10.3.9.90)\n"}
+,{"stream_name":"stdout","time":5.074312029,"data":"Requirement already satisfied: nvidia-cusolver-cu12==11.7.3.90.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (11.7.3.90)\n"}
+,{"stream_name":"stdout","time":5.075830797,"data":"Requirement already satisfied: nvidia-cusparse-cu12==12.5.8.93.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.5.8.93)\n"}
+,{"stream_name":"stdout","time":5.077216001,"data":"Requirement already satisfied: nvidia-nvjitlink-cu12==12.8.93.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.93)\n"}
+,{"stream_name":"stdout","time":5.078604139,"data":"Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.93.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.93)\n"}
+,{"stream_name":"stdout","time":5.079978618,"data":"Requirement already satisfied: nvidia-nvtx-cu12==12.8.90.* in /usr/local/lib/python3.13/dist-packages (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==12.8.1; platform_system == \"Linux\"-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (12.8.90)\n"}
+,{"stream_name":"stdout","time":5.116223226,"data":"Requirement already satisfied: charset_normalizer\u003c4,\u003e=2 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.4.9)\n"}
+,{"stream_name":"stdout","time":5.117524154,"data":"Requirement already satisfied: idna\u003c4,\u003e=2.5 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.19)\n"}
+,{"stream_name":"stdout","time":5.118824586,"data":"Requirement already satisfied: urllib3\u003c3,\u003e=1.26 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2.8.0)\n"}
+,{"stream_name":"stdout","time":5.119889464,"data":"Requirement already satisfied: certifi\u003e=2023.5.7 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2026.7.22)\n"}
+,{"stream_name":"stdout","time":5.127603341,"data":"Requirement already satisfied: cuda-pathfinder~=1.1 in /usr/local/lib/python3.13/dist-packages (from cuda-bindings\u003c13,\u003e=12.9.4-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (1.8.0)\n"}
+,{"stream_name":"stdout","time":5.157679633,"data":"Requirement already satisfied: mpmath\u003c1.4,\u003e=1.1.0 in /usr/local/lib/python3.13/dist-packages (from sympy\u003e=1.13.3-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (1.3.0)\n"}
+,{"stream_name":"stdout","time":5.163865803,"data":"Requirement already satisfied: MarkupSafe\u003e=2.0 in /usr/local/lib/python3.13/dist-packages (from jinja2-\u003etorch\u003c3,\u003e=2.4-\u003ebitsandbytes==0.50.2) (3.0.3)\n"}
+,{"stream_name":"stdout","time":5.235696942,"data":"Downloading bitsandbytes-0.50.2-py3-none-manylinux_2_24_x86_64.whl (43.1 MB)\n"}
+,{"stream_name":"stdout","time":5.8070353919999995,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.1/43.1 MB 174.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.867803218,"data":"Downloading transformers-4.56.2-py3-none-any.whl (11.6 MB)\n"}
+,{"stream_name":"stdout","time":5.930815096,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 188.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":5.991801433,"data":"Downloading accelerate-1.4.0-py3-none-any.whl (342 kB)\n"}
+,{"stream_name":"stdout","time":5.994999496,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 342.1/342.1 kB 329.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.05555025,"data":"Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)\n"}
+,{"stream_name":"stdout","time":6.059229829,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 373.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.119592412,"data":"Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)\n"}
+,{"stream_name":"stdout","time":6.137237989,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 219.4 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.524399996,"data":"Installing collected packages: huggingface-hub, tokenizers, transformers, bitsandbytes, accelerate\n"}
+,{"stream_name":"stdout","time":8.524553092,"data":"  Attempting uninstall: huggingface-hub\n"}
+,{"stream_name":"stdout","time":8.874928453,"data":"    Found existing installation: huggingface_hub 1.29.0\n"}
+,{"stream_name":"stdout","time":8.895635773,"data":"    Uninstalling huggingface_hub-1.29.0:\n"}
+,{"stream_name":"stdout","time":9.026636598,"data":"      Successfully uninstalled huggingface_hub-1.29.0\n"}
+,{"stream_name":"stdout","time":9.372560602,"data":"  Attempting uninstall: tokenizers\n"}
+,{"stream_name":"stdout","time":9.70152714,"data":"    Found existing installation: tokenizers 0.23.1\n"}
+,{"stream_name":"stdout","time":9.71076865,"data":"    Uninstalling tokenizers-0.23.1:\n"}
+,{"stream_name":"stdout","time":9.758940592,"data":"      Successfully uninstalled tokenizers-0.23.1\n"}
+,{"stream_name":"stdout","time":9.842184995,"data":"  Attempting uninstall: transformers\n"}
+,{"stream_name":"stdout","time":10.052389577,"data":"    Found existing installation: transformers 5.16.1\n"}
+,{"stream_name":"stdout","time":10.484446965,"data":"    Uninstalling transformers-5.16.1:\n"}
+,{"stream_name":"stdout","time":12.293731673,"data":"      Successfully uninstalled transformers-5.16.1\n"}
+,{"stream_name":"stdout","time":20.617907135,"data":"  Attempting uninstall: accelerate\n"}
+,{"stream_name":"stdout","time":20.836994347,"data":"    Found existing installation: accelerate 1.14.0\n"}
+,{"stream_name":"stdout","time":20.85136046,"data":"    Uninstalling accelerate-1.14.0:\n"}
+,{"stream_name":"stdout","time":20.951403835,"data":"      Successfully uninstalled accelerate-1.14.0\n"}
+,{"stream_name":"stderr","time":21.214913411,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":21.214935713,"data":"gradio 6.26.0 requires huggingface-hub\u003c2.0,\u003e=1.16.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":21.214941004,"data":"diffusers 0.40.0 requires huggingface-hub\u003c2.0,\u003e=1.23.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stdout","time":21.215146909,"data":"Successfully installed accelerate-1.4.0 bitsandbytes-0.50.2 huggingface-hub-0.36.2 tokenizers-0.22.2 transformers-4.56.2\n"}
+,{"stream_name":"stderr","time":86.57788967,"data":"\rFetching 1 files:   0%|          | 0/1 [00:00\u003c?, ?it/s]\rFetching 1 files: 100%|██████████| 1/1 [00:00\u003c00:00, 12018.06it/s]\n"}
+,{"stream_name":"stderr","time":86.59356537,"data":"The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.\n"}
+,{"stream_name":"stdout","time":92.262695735,"data":"fp16 anchor correct=False p50=333.7131\n"}
+,{"stream_name":"stdout","time":97.333094338,"data":"fp16 barrel correct=False p50=329.33704\n"}
+,{"stream_name":"stdout","time":101.991096117,"data":"fp16 beacon correct=False p50=332.56835\n"}
+,{"stream_name":"stdout","time":106.664705371,"data":"fp16 biscuit correct=False p50=325.86285\n"}
+,{"stream_name":"stdout","time":111.296806208,"data":"fp16 blanket correct=False p50=323.22387\n"}
+,{"stream_name":"stdout","time":115.939892363,"data":"fp16 blossom correct=False p50=331.50623\n"}
+,{"stream_name":"stdout","time":120.611981323,"data":"fp16 border correct=False p50=329.43843\n"}
+,{"stream_name":"stdout","time":125.350917885,"data":"fp16 bottle correct=False p50=343.01631\n"}
+,{"stream_name":"stdout","time":130.0499797,"data":"fp16 breeze correct=False p50=330.8315\n"}
+,{"stream_name":"stdout","time":134.749418465,"data":"fp16 bronze correct=False p50=330.21684\n"}
+,{"stream_name":"stdout","time":139.395339472,"data":"fp16 bucket correct=False p50=327.53205\n"}
+,{"stream_name":"stdout","time":144.054076167,"data":"fp16 button correct=False p50=327.24411\n"}
+,{"stream_name":"stdout","time":148.682097461,"data":"fp16 cactus correct=False p50=328.31715\n"}
+,{"stream_name":"stdout","time":153.32600357,"data":"fp16 camera correct=False p50=327.92253\n"}
+,{"stream_name":"stdout","time":157.959648447,"data":"fp16 candle correct=False p50=324.63183\n"}
+,{"stream_name":"stdout","time":162.622119516,"data":"fp16 canyon correct=False p50=328.63748\n"}
+,{"stream_name":"stdout","time":167.202907522,"data":"fp16 carpet correct=False p50=321.76636\n"}
+,{"stream_name":"stdout","time":171.835820052,"data":"fp16 castle correct=False p50=325.41045\n"}
+,{"stream_name":"stdout","time":176.569896703,"data":"fp16 celery correct=False p50=328.8429\n"}
+,{"stream_name":"stdout","time":181.30056928,"data":"fp16 chapel correct=False p50=332.12938\n"}
+,{"stream_name":"stdout","time":186.177114751,"data":"fp16 cherry correct=False p50=349.7189\n"}
+,{"stream_name":"stdout","time":190.928957663,"data":"fp16 circle correct=False p50=333.58015\n"}
+,{"stream_name":"stdout","time":195.634259481,"data":"fp16 citrus correct=False p50=339.09979\n"}
+,{"stream_name":"stdout","time":200.241650272,"data":"fp16 cloak correct=False p50=323.86334\n"}
+,{"stream_name":"stdout","time":204.910003516,"data":"fp16 cobalt correct=False p50=337.70351\n"}
+,{"stream_name":"stdout","time":209.483253104,"data":"fp16 copper correct=False p50=324.84139\n"}
+,{"stream_name":"stdout","time":214.084604378,"data":"fp16 cradle correct=False p50=323.05516\n"}
+,{"stream_name":"stdout","time":218.667192874,"data":"fp16 cricket correct=False p50=322.74873\n"}
+,{"stream_name":"stdout","time":223.32022649499999,"data":"fp16 crystal correct=False p50=324.49427\n"}
+,{"stream_name":"stdout","time":227.924954272,"data":"fp16 curtain correct=False p50=325.09902\n"}
+,{"stream_name":"stdout","time":232.524641859,"data":"fp16 custom correct=False p50=322.3175\n"}
+,{"stream_name":"stdout","time":237.104947967,"data":"fp16 daisy correct=False p50=324.50132\n"}
+,{"stream_name":"stdout","time":241.705205788,"data":"fp16 desert correct=False p50=325.94315\n"}
+,{"stream_name":"stdout","time":246.345457328,"data":"fp16 donkey correct=False p50=324.5792\n"}
+,{"stream_name":"stdout","time":250.906384753,"data":"fp16 dragon correct=False p50=323.26157\n"}
+,{"stream_name":"stdout","time":255.543679051,"data":"fp16 drawer correct=False p50=329.71417\n"}
+,{"stream_name":"stdout","time":260.151172795,"data":"fp16 eagle correct=False p50=324.5581\n"}
+,{"stream_name":"stdout","time":264.755238487,"data":"fp16 ember correct=False p50=329.5788\n"}
+,{"stream_name":"stdout","time":269.315622837,"data":"fp16 engine correct=False p50=323.06558\n"}
+,{"stream_name":"stdout","time":273.923194725,"data":"fp16 fable correct=False p50=321.55028\n"}
+,{"stream_name":"stdout","time":278.525026385,"data":"fp16 feather correct=False p50=323.23528\n"}
+,{"stream_name":"stdout","time":283.169165703,"data":"fp16 fence correct=False p50=326.97667\n"}
+,{"stream_name":"stdout","time":287.774168343,"data":"fp16 field correct=False p50=323.60099\n"}
+,{"stream_name":"stdout","time":292.371933467,"data":"fp16 forest correct=False p50=323.47962\n"}
+,{"stream_name":"stdout","time":296.932163199,"data":"fp16 fountain correct=False p50=322.57308\n"}
+,{"stream_name":"stdout","time":301.499257518,"data":"fp16 frost correct=False p50=323.68582\n"}
+,{"stream_name":"stdout","time":306.111647812,"data":"fp16 galaxy correct=False p50=327.97191\n"}
+,{"stream_name":"stdout","time":310.705333414,"data":"fp16 garlic correct=False p50=324.40299\n"}
+,{"stream_name":"stdout","time":315.333549383,"data":"fp16 glacier correct=False p50=332.74339\n"}
+,{"stream_name":"stdout","time":319.992580638,"data":"fp16 goblet correct=False p50=332.7083\n"}
+,{"stream_name":"stdout","time":324.666812389,"data":"fp16 grape correct=False p50=331.56546\n"}
+,{"stream_name":"stdout","time":329.305139998,"data":"fp16 gravel correct=False p50=326.48349\n"}
+,{"stream_name":"stdout","time":333.94558978,"data":"fp16 guitar correct=False p50=323.82586\n"}
+,{"stream_name":"stdout","time":338.544892029,"data":"fp16 hammer correct=False p50=323.97252\n"}
+,{"stream_name":"stdout","time":343.173113939,"data":"fp16 hazel correct=False p50=325.9985\n"}
+,{"stream_name":"stdout","time":347.739607656,"data":"fp16 helmet correct=False p50=321.57936\n"}
+,{"stream_name":"stdout","time":352.293887354,"data":"fp16 honey correct=False p50=319.99581\n"}
+,{"stream_name":"stdout","time":356.890271839,"data":"fp16 horse correct=False p50=326.08556\n"}
+,{"stream_name":"stdout","time":361.439249515,"data":"fp16 ivory correct=False p50=319.76165\n"}
+,{"stream_name":"stdout","time":366.020380132,"data":"fp16 jacket correct=False p50=329.21983\n"}
+,{"stream_name":"stdout","time":370.573802882,"data":"fp16 jungle correct=False p50=321.17363\n"}
+,{"stream_name":"stdout","time":375.159210293,"data":"fp16 kettle correct=False p50=328.85766\n"}
+,{"stream_name":"stdout","time":379.730607887,"data":"fp16 knight correct=False p50=321.0502\n"}
+,{"stream_name":"stdout","time":384.29341169,"data":"fp16 ladder correct=False p50=318.91419\n"}
+,{"stream_name":"stdout","time":388.904163196,"data":"fp16 lantern correct=False p50=325.92726\n"}
+,{"stream_name":"stdout","time":393.494177868,"data":"fp16 lavender correct=False p50=321.48502\n"}
+,{"stream_name":"stdout","time":398.049263317,"data":"fp16 legend correct=False p50=320.94236\n"}
+,{"stream_name":"stdout","time":402.638125865,"data":"fp16 lizard correct=False p50=322.62259\n"}
+,{"stream_name":"stdout","time":407.168967991,"data":"fp16 lumber correct=False p50=319.9363\n"}
+,{"stream_name":"stdout","time":411.782553589,"data":"fp16 marble correct=False p50=331.35679\n"}
+,{"stream_name":"stdout","time":416.401716914,"data":"fp16 meadow correct=False p50=326.23548\n"}
+,{"stream_name":"stdout","time":420.997644791,"data":"fp16 melon correct=False p50=321.96914\n"}
+,{"stream_name":"stdout","time":425.603731081,"data":"fp16 mirror correct=False p50=330.65867\n"}
+,{"stream_name":"stdout","time":430.161523105,"data":"fp16 mossy correct=False p50=322.13325\n"}
+,{"stream_name":"stdout","time":434.739627258,"data":"fp16 needle correct=False p50=327.07348\n"}
+,{"stream_name":"stdout","time":439.276807796,"data":"fp16 nickel correct=False p50=320.83704\n"}
+,{"stream_name":"stdout","time":443.861716807,"data":"fp16 olive correct=False p50=322.78874\n"}
+,{"stream_name":"stdout","time":448.422736234,"data":"fp16 orange correct=False p50=319.76538\n"}
+,{"stream_name":"stdout","time":453.005475365,"data":"fp16 orchid correct=False p50=322.73083\n"}
+,{"stream_name":"stdout","time":457.588366895,"data":"fp16 otter correct=False p50=318.70962\n"}
+,{"stream_name":"stdout","time":462.163574762,"data":"fp16 packet correct=False p50=323.1209\n"}
+,{"stream_name":"stdout","time":466.755599493,"data":"fp16 palace correct=False p50=322.10076\n"}
+,{"stream_name":"stdout","time":471.348454543,"data":"fp16 pebble correct=False p50=323.08782\n"}
+,{"stream_name":"stdout","time":475.943705861,"data":"fp16 pepper correct=False p50=329.94945\n"}
+,{"stream_name":"stdout","time":480.525045134,"data":"fp16 pickle correct=False p50=324.9697\n"}
+,{"stream_name":"stdout","time":485.162574757,"data":"fp16 pillow correct=False p50=333.96746\n"}
+,{"stream_name":"stdout","time":489.763975313,"data":"fp16 planet correct=False p50=327.70422\n"}
+,{"stream_name":"stdout","time":494.362717066,"data":"fp16 plum correct=False p50=321.32738\n"}
+,{"stream_name":"stdout","time":498.946087576,"data":"fp16 pocket correct=False p50=329.63855\n"}
+,{"stream_name":"stdout","time":503.551161405,"data":"fp16 pollen correct=False p50=321.36949\n"}
+,{"stream_name":"stdout","time":508.091122326,"data":"fp16 prairie correct=False p50=320.95845\n"}
+,{"stream_name":"stdout","time":512.666651938,"data":"fp16 pumpkin correct=False p50=320.39492\n"}
+,{"stream_name":"stdout","time":517.205048667,"data":"fp16 quail correct=False p50=319.89186\n"}
+,{"stream_name":"stdout","time":521.775723868,"data":"fp16 quartz correct=False p50=321.40334\n"}
+,{"stream_name":"stdout","time":526.367989991,"data":"fp16 rabbit correct=False p50=321.27608\n"}
+,{"stream_name":"stdout","time":530.929094027,"data":"fp16 raven correct=False p50=322.02333\n"}
+,{"stream_name":"stdout","time":535.509045664,"data":"fp16 ribbon correct=False p50=327.88142\n"}
+,{"stream_name":"stdout","time":540.051740335,"data":"fp16 rocket correct=False p50=319.86893\n"}
+,{"stream_name":"stdout","time":544.643789394,"data":"fp16 saddle correct=False p50=323.86821\n"}
+,{"stream_name":"stdout","time":549.226921112,"data":"fp16 saffron correct=False p50=323.1797\n"}
+,{"stream_name":"stdout","time":554.20862415,"data":"fp16 sailor correct=False p50=320.12147\n"}
+,{"stream_name":"stdout","time":558.725669078,"data":"fp16 salmon correct=False p50=319.10088\n"}
+,{"stream_name":"stdout","time":563.303112972,"data":"fp16 scarlet correct=False p50=318.61587\n"}
+,{"stream_name":"stdout","time":567.836341074,"data":"fp16 shadow correct=False p50=318.85726\n"}
+,{"stream_name":"stdout","time":572.409723309,"data":"fp16 silver correct=False p50=322.35326\n"}
+,{"stream_name":"stdout","time":576.959140677,"data":"fp16 sparrow correct=False p50=320.78685\n"}
+,{"stream_name":"stdout","time":581.485711518,"data":"fp16 spice correct=False p50=318.4901\n"}
+,{"stream_name":"stdout","time":586.055809184,"data":"fp16 spider correct=False p50=325.72834\n"}
+,{"stream_name":"stdout","time":590.597936384,"data":"fp16 spruce correct=False p50=320.69442\n"}
+,{"stream_name":"stdout","time":595.150886137,"data":"fp16 squirrel correct=False p50=327.01163\n"}
+,{"stream_name":"stdout","time":599.662271535,"data":"fp16 stable correct=False p50=318.73245\n"}
+,{"stream_name":"stdout","time":604.233965223,"data":"fp16 storm correct=False p50=319.93303\n"}
+,{"stream_name":"stdout","time":608.766876896,"data":"fp16 saddlebag correct=False p50=319.95736\n"}
+,{"stream_name":"stdout","time":613.317040885,"data":"fp16 tablet correct=False p50=317.86486\n"}
+,{"stream_name":"stdout","time":617.83329393,"data":"fp16 temple correct=False p50=319.2451\n"}
+,{"stream_name":"stdout","time":622.422386859,"data":"fp16 thistle correct=False p50=325.11117\n"}
+,{"stream_name":"stdout","time":626.940014699,"data":"fp16 thunder correct=False p50=318.09289\n"}
+,{"stream_name":"stdout","time":631.455741122,"data":"fp16 timber correct=False p50=318.7627\n"}
+,{"stream_name":"stdout","time":636.006741709,"data":"fp16 turtle correct=False p50=326.25384\n"}
+,{"stream_name":"stdout","time":640.559076309,"data":"fp16 valley correct=False p50=322.37632\n"}
+,{"stream_name":"stdout","time":645.134909247,"data":"fp16 velvet correct=False p50=326.40132\n"}
+,{"stream_name":"stdout","time":649.666930292,"data":"fp16 violet correct=False p50=320.08269\n"}
+,{"stream_name":"stdout","time":654.270123888,"data":"fp16 walnut correct=False p50=328.54322\n"}
+,{"stream_name":"stdout","time":658.815747481,"data":"fp16 willow correct=False p50=322.20708\n"}
+,{"stream_name":"stdout","time":663.428403903,"data":"fp16 window correct=False p50=319.6611\n"}
+,{"stream_name":"stdout","time":667.962084629,"data":"fp16 winter correct=False p50=320.46053\n"}
+,{"stream_name":"stdout","time":672.512366098,"data":"fp16 wizard correct=False p50=319.53355\n"}
+,{"stream_name":"stdout","time":677.031031106,"data":"fp16 yellow correct=False p50=318.7943\n"}
+,{"stream_name":"stdout","time":681.549818694,"data":"fp16 zebra correct=False p50=319.07263\n"}
+,{"stream_name":"stdout","time":694.900068715,"data":"nf4 anchor correct=False p50=442.32818\n"}
+,{"stream_name":"stdout","time":701.177564642,"data":"nf4 barrel correct=False p50=444.21505\n"}
+,{"stream_name":"stdout","time":707.455731668,"data":"nf4 beacon correct=False p50=447.89735\n"}
+,{"stream_name":"stdout","time":713.737298124,"data":"nf4 biscuit correct=False p50=441.45926\n"}
+,{"stream_name":"stdout","time":720.008317038,"data":"nf4 blanket correct=False p50=441.53879\n"}
+,{"stream_name":"stdout","time":726.315090971,"data":"nf4 blossom correct=False p50=453.6875\n"}
+,{"stream_name":"stdout","time":732.579638716,"data":"nf4 border correct=False p50=438.1411\n"}
+,{"stream_name":"stdout","time":738.860306324,"data":"nf4 bottle correct=False p50=444.12836\n"}
+,{"stream_name":"stdout","time":745.181926262,"data":"nf4 breeze correct=False p50=441.88529\n"}
+,{"stream_name":"stdout","time":751.460236468,"data":"nf4 bronze correct=False p50=441.67305\n"}
+,{"stream_name":"stdout","time":757.780335262,"data":"nf4 bucket correct=False p50=450.10384\n"}
+,{"stream_name":"stdout","time":764.131684234,"data":"nf4 button correct=False p50=442.76862\n"}
+,{"stream_name":"stdout","time":770.401815508,"data":"nf4 cactus correct=False p50=440.14019\n"}
+,{"stream_name":"stdout","time":776.691584584,"data":"nf4 camera correct=False p50=451.25708\n"}
+,{"stream_name":"stdout","time":782.969214473,"data":"nf4 candle correct=False p50=439.12591\n"}
+,{"stream_name":"stdout","time":789.241541581,"data":"nf4 canyon correct=False p50=442.38982\n"}
+,{"stream_name":"stdout","time":795.545392432,"data":"nf4 carpet correct=False p50=444.22648\n"}
+,{"stream_name":"stdout","time":801.784581111,"data":"nf4 castle correct=False p50=440.68668\n"}
+,{"stream_name":"stdout","time":808.089857819,"data":"nf4 celery correct=False p50=447.21503\n"}
+,{"stream_name":"stdout","time":814.368973837,"data":"nf4 chapel correct=False p50=439.93741\n"}
+,{"stream_name":"stdout","time":820.649405726,"data":"nf4 cherry correct=False p50=446.96691\n"}
+,{"stream_name":"stdout","time":826.945302082,"data":"nf4 circle correct=False p50=448.45982\n"}
+,{"stream_name":"stdout","time":833.222710188,"data":"nf4 citrus correct=False p50=442.25279\n"}
+,{"stream_name":"stdout","time":839.465429444,"data":"nf4 cloak correct=False p50=439.77145\n"}
+,{"stream_name":"stdout","time":845.768032359,"data":"nf4 cobalt correct=False p50=450.91356\n"}
+,{"stream_name":"stdout","time":852.046745054,"data":"nf4 copper correct=False p50=441.39329\n"}
+,{"stream_name":"stdout","time":858.367146699,"data":"nf4 cradle correct=False p50=444.14171\n"}
+,{"stream_name":"stdout","time":864.666458579,"data":"nf4 cricket correct=False p50=441.31934\n"}
+,{"stream_name":"stdout","time":870.900533339,"data":"nf4 crystal correct=False p50=440.90292\n"}
+,{"stream_name":"stdout","time":877.197286218,"data":"nf4 curtain correct=False p50=448.54503\n"}
+,{"stream_name":"stdout","time":883.907703275,"data":"nf4 custom correct=False p50=442.68896\n"}
+,{"stream_name":"stdout","time":890.193479113,"data":"nf4 daisy correct=False p50=448.15138\n"}
+,{"stream_name":"stdout","time":896.471181422,"data":"nf4 desert correct=False p50=445.42306\n"}
+,{"stream_name":"stdout","time":902.741402401,"data":"nf4 donkey correct=False p50=438.27744\n"}
+,{"stream_name":"stdout","time":908.964806243,"data":"nf4 dragon correct=False p50=439.04657\n"}
+,{"stream_name":"stdout","time":915.227753703,"data":"nf4 drawer correct=False p50=440.40475\n"}
+,{"stream_name":"stdout","time":921.385115225,"data":"nf4 eagle correct=False p50=434.93632\n"}
+,{"stream_name":"stdout","time":927.632991703,"data":"nf4 ember correct=False p50=446.20998\n"}
+,{"stream_name":"stdout","time":933.903977302,"data":"nf4 engine correct=False p50=440.29758\n"}
+,{"stream_name":"stdout","time":940.135676388,"data":"nf4 fable correct=False p50=438.77737\n"}
+,{"stream_name":"stdout","time":946.390781496,"data":"nf4 feather correct=False p50=445.28783\n"}
+,{"stream_name":"stdout","time":952.68139886,"data":"nf4 fence correct=False p50=443.7305\n"}
+,{"stream_name":"stdout","time":958.907249813,"data":"nf4 field correct=False p50=439.26395\n"}
+,{"stream_name":"stdout","time":965.199656124,"data":"nf4 forest correct=False p50=441.31833\n"}
+,{"stream_name":"stdout","time":971.451241134,"data":"nf4 fountain correct=False p50=442.79966\n"}
+,{"stream_name":"stdout","time":977.723351743,"data":"nf4 frost correct=False p50=442.08955\n"}
+,{"stream_name":"stdout","time":984.089327057,"data":"nf4 galaxy correct=False p50=444.5692\n"}
+,{"stream_name":"stdout","time":990.393437541,"data":"nf4 garlic correct=False p50=443.89828\n"}
+,{"stream_name":"stdout","time":996.704325256,"data":"nf4 glacier correct=False p50=450.64754\n"}
+,{"stream_name":"stdout","time":1003.00779667,"data":"nf4 goblet correct=False p50=441.15128\n"}
+,{"stream_name":"stdout","time":1009.265875205,"data":"nf4 grape correct=False p50=440.66609\n"}
+,{"stream_name":"stdout","time":1015.595571272,"data":"nf4 gravel correct=False p50=448.02109\n"}
+,{"stream_name":"stdout","time":1021.87370763,"data":"nf4 guitar correct=False p50=444.01032\n"}
+,{"stream_name":"stdout","time":1028.182992305,"data":"nf4 hammer correct=False p50=442.06975\n"}
+,{"stream_name":"stdout","time":1034.491315817,"data":"nf4 hazel correct=False p50=442.73274\n"}
+,{"stream_name":"stdout","time":1040.76190825,"data":"nf4 helmet correct=False p50=442.33255\n"}
+,{"stream_name":"stdout","time":1047.056875976,"data":"nf4 honey correct=False p50=450.9832\n"}
+,{"stream_name":"stdout","time":1053.380037583,"data":"nf4 horse correct=False p50=443.40564\n"}
+,{"stream_name":"stdout","time":1059.681621778,"data":"nf4 ivory correct=False p50=445.12553\n"}
+,{"stream_name":"stdout","time":1066.02043706,"data":"nf4 jacket correct=False p50=450.08399\n"}
+,{"stream_name":"stdout","time":1072.34695665,"data":"nf4 jungle correct=False p50=450.77902\n"}
+,{"stream_name":"stdout","time":1078.692636686,"data":"nf4 kettle correct=False p50=447.35485\n"}
+,{"stream_name":"stdout","time":1085.101166337,"data":"nf4 knight correct=False p50=448.27337\n"}
+,{"stream_name":"stdout","time":1091.380553689,"data":"nf4 ladder correct=False p50=445.69153\n"}
+,{"stream_name":"stdout","time":1097.682369077,"data":"nf4 lantern correct=False p50=448.37102\n"}
+,{"stream_name":"stdout","time":1103.985034918,"data":"nf4 lavender correct=False p50=442.18512\n"}
+,{"stream_name":"stdout","time":1110.241346219,"data":"nf4 legend correct=False p50=440.78588\n"}
+,{"stream_name":"stdout","time":1116.594763222,"data":"nf4 lizard correct=False p50=452.40213\n"}
+,{"stream_name":"stdout","time":1122.91995522,"data":"nf4 lumber correct=False p50=443.52388\n"}
+,{"stream_name":"stdout","time":1129.186312305,"data":"nf4 marble correct=False p50=441.30371\n"}
+,{"stream_name":"stdout","time":1135.496972856,"data":"nf4 meadow correct=False p50=443.45555\n"}
+,{"stream_name":"stdout","time":1141.784596456,"data":"nf4 melon correct=False p50=441.71128\n"}
+,{"stream_name":"stdout","time":1148.124978004,"data":"nf4 mirror correct=False p50=443.2007\n"}
+,{"stream_name":"stdout","time":1154.401717414,"data":"nf4 mossy correct=False p50=437.73066\n"}
+,{"stream_name":"stdout","time":1160.679598443,"data":"nf4 needle correct=False p50=442.3397\n"}
+,{"stream_name":"stdout","time":1166.980335811,"data":"nf4 nickel correct=False p50=448.58498\n"}
+,{"stream_name":"stdout","time":1173.314519194,"data":"nf4 olive correct=False p50=443.17138\n"}
+,{"stream_name":"stdout","time":1179.599253781,"data":"nf4 orange correct=False p50=443.70587\n"}
+,{"stream_name":"stdout","time":1185.948919132,"data":"nf4 orchid correct=False p50=449.08075\n"}
+,{"stream_name":"stdout","time":1192.216292357,"data":"nf4 otter correct=False p50=442.62326\n"}
+,{"stream_name":"stdout","time":1198.503320444,"data":"nf4 packet correct=False p50=441.28642\n"}
+,{"stream_name":"stdout","time":1204.812473638,"data":"nf4 palace correct=False p50=441.52409\n"}
+,{"stream_name":"stdout","time":1211.086545306,"data":"nf4 pebble correct=False p50=443.73713\n"}
+,{"stream_name":"stdout","time":1217.390964839,"data":"nf4 pepper correct=False p50=449.94658\n"}
+,{"stream_name":"stdout","time":1223.702252606,"data":"nf4 pickle correct=False p50=443.56707\n"}
+,{"stream_name":"stdout","time":1229.956135476,"data":"nf4 pillow correct=False p50=441.93397\n"}
+,{"stream_name":"stdout","time":1236.257326373,"data":"nf4 planet correct=False p50=450.94156\n"}
+,{"stream_name":"stdout","time":1242.572060037,"data":"nf4 plum correct=False p50=440.11136\n"}
+,{"stream_name":"stdout","time":1248.930491526,"data":"nf4 pocket correct=False p50=447.13699\n"}
+,{"stream_name":"stdout","time":1255.302775523,"data":"nf4 pollen correct=False p50=447.02308\n"}
+,{"stream_name":"stdout","time":1261.599363049,"data":"nf4 prairie correct=False p50=444.81136\n"}
+,{"stream_name":"stdout","time":1267.978645148,"data":"nf4 pumpkin correct=False p50=444.17683\n"}
+,{"stream_name":"stdout","time":1274.331695598,"data":"nf4 quail correct=False p50=441.65075\n"}
+,{"stream_name":"stdout","time":1280.679052704,"data":"nf4 quartz correct=False p50=450.61679\n"}
+,{"stream_name":"stdout","time":1287.070803392,"data":"nf4 rabbit correct=False p50=455.61473\n"}
+,{"stream_name":"stdout","time":1293.697816667,"data":"nf4 raven correct=False p50=453.33866\n"}
+,{"stream_name":"stdout","time":1300.058122058,"data":"nf4 ribbon correct=False p50=446.88778\n"}
+,{"stream_name":"stdout","time":1306.592599583,"data":"nf4 rocket correct=False p50=462.79276\n"}
+,{"stream_name":"stdout","time":1313.097696021,"data":"nf4 saddle correct=False p50=456.87025\n"}
+,{"stream_name":"stdout","time":1319.511914158,"data":"nf4 saffron correct=False p50=451.42645\n"}
+,{"stream_name":"stdout","time":1326.108103213,"data":"nf4 sailor correct=False p50=482.47532\n"}
+,{"stream_name":"stdout","time":1332.536745769,"data":"nf4 salmon correct=False p50=454.42051\n"}
+,{"stream_name":"stdout","time":1338.890038099,"data":"nf4 scarlet correct=False p50=449.8692\n"}
+,{"stream_name":"stdout","time":1345.338619268,"data":"nf4 shadow correct=False p50=450.72602\n"}
+,{"stream_name":"stdout","time":1351.789021646,"data":"nf4 silver correct=False p50=453.80911\n"}
+,{"stream_name":"stdout","time":1358.25374204,"data":"nf4 sparrow correct=False p50=453.68879\n"}
+,{"stream_name":"stdout","time":1364.741442562,"data":"nf4 spice correct=False p50=460.87583\n"}
+,{"stream_name":"stdout","time":1371.124955042,"data":"nf4 spider correct=False p50=451.76686\n"}
+,{"stream_name":"stdout","time":1377.582166641,"data":"nf4 spruce correct=False p50=457.76502\n"}
+,{"stream_name":"stdout","time":1384.043214869,"data":"nf4 squirrel correct=False p50=454.47769\n"}
+,{"stream_name":"stdout","time":1390.39825863,"data":"nf4 stable correct=False p50=449.01551\n"}
+,{"stream_name":"stdout","time":1396.841831799,"data":"nf4 storm correct=False p50=459.85436\n"}
+,{"stream_name":"stdout","time":1403.181030689,"data":"nf4 saddlebag correct=False p50=447.14217\n"}
+,{"stream_name":"stdout","time":1409.473381388,"data":"nf4 tablet correct=False p50=444.94797\n"}
+,{"stream_name":"stdout","time":1415.875703768,"data":"nf4 temple correct=False p50=456.69925\n"}
+,{"stream_name":"stdout","time":1422.19815942,"data":"nf4 thistle correct=False p50=446.24605\n"}
+,{"stream_name":"stdout","time":1428.649028457,"data":"nf4 thunder correct=False p50=453.6331\n"}
+,{"stream_name":"stdout","time":1435.103259617,"data":"nf4 timber correct=False p50=451.71627\n"}
+,{"stream_name":"stdout","time":1441.47780662,"data":"nf4 turtle correct=False p50=445.16103\n"}
+,{"stream_name":"stdout","time":1447.901478538,"data":"nf4 valley correct=False p50=449.54061\n"}
+,{"stream_name":"stdout","time":1454.250427761,"data":"nf4 velvet correct=False p50=442.64914\n"}
+,{"stream_name":"stdout","time":1460.608599182,"data":"nf4 violet correct=False p50=452.93902\n"}
+,{"stream_name":"stdout","time":1466.989835359,"data":"nf4 walnut correct=False p50=456.67705\n"}
+,{"stream_name":"stdout","time":1473.327718826,"data":"nf4 willow correct=False p50=443.10004\n"}
+,{"stream_name":"stdout","time":1479.657377026,"data":"nf4 window correct=False p50=446.26653\n"}
+,{"stream_name":"stdout","time":1486.041964185,"data":"nf4 winter correct=False p50=456.1899\n"}
+,{"stream_name":"stdout","time":1492.359984175,"data":"nf4 wizard correct=False p50=445.71559\n"}
+,{"stream_name":"stdout","time":1498.675962745,"data":"nf4 yellow correct=False p50=444.66879\n"}
+,{"stream_name":"stdout","time":1504.990867728,"data":"nf4 zebra correct=False p50=441.28818\n"}
+,{"stream_name":"stdout","time":1504.993448124,"data":"done\n"}
+,{"stream_name":"stderr","time":1510.753691349,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":1510.753720988,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":1510.971452891,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":1510.971479196,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":1511.701744476,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":1512.259999446,"data":"[NbConvertApp] Writing 343564 bytes to __results__.html\n"}
+]

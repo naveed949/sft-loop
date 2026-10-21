@@ -58,3 +58,5 @@ runs/quant/raw/**
 !runs/quant/raw/onnx-int8.json
 !runs/quant/raw/nf4.json
 !runs/quant/raw/fp16.json
+!runs/quant/kernel/
+!runs/quant/kernel/**

@@ -1,0 +1,16 @@
+{
+  "arms": {
+    "onnx-int8": {
+      "reason": "probed_failure",
+      "status": "unsupported"
+    }
+  },
+  "detail": "CalledProcessError: Command '['/usr/bin/python3', '-m', 'pip', 'install', '--no-cache-dir', 'onnx==1.17.0', 'onnxruntime==1.20.1', 'onnxscript==0.2.0', 'transformers==4.56.2']' returned non-zero exit status 1.",
+  "probe": {
+    "cuda_available": false,
+    "exception_type": "CalledProcessError",
+    "message": "Command '['/usr/bin/python3', '-m', 'pip', 'install', '--no-cache-dir', 'onnx==1.17.0', 'onnxruntime==1.20.1', 'onnxscript==0.2.0', 'transformers==4.56.2']' returned non-zero exit status 1."
+  },
+  "reason": "probed_failure",
+  "status": "failed"
+}

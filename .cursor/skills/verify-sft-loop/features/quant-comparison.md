@@ -6,11 +6,11 @@ CPU and GPU quantization arms on one pinned model share one seed, one held-out s
 
 - `quant-fp32` is the CPU float32 baseline for `Qwen/Qwen2.5-1.5B-Instruct`.
 - `quant-int8` is per-tensor symmetric dynamic PTQ (`default_dynamic_qconfig`) on every `nn.Linear`, including `lm_head`.
-- `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. A CPU Kaggle retry lives at `kaggle/quant_onnx_int8`.
-- `quant-nf4` is bitsandbytes NF4. On this CPU VM it is `unsupported`. Measured numbers come only from `kaggle/quant_nf4`.
-- `quant-fp16` is the T4 fp16 baseline in that same kernel. Missing kernel output is `unsupported` / `kernel_output_missing`.
+- `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. The first Kaggle CPU retry is `unsupported` / `probed_failure`. A CPU retry lives at `kaggle/quant_onnx_int8`.
+- `quant-nf4` is bitsandbytes NF4. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output.
+- `quant-fp16` is the T4 fp16 baseline in that same kernel. Measured numbers come from the same ingested output.
 - `quant-table` is the README region generated from `runs/quant/comparison.json`.
-- `kaggle-quant-kernels` is a local-unsupported surface. The evidence is the kernel directories, not a scored local run.
+- `kaggle-quant-kernels` is a local-unsupported surface. The scripts live at `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`. Downloaded outputs live at `runs/quant/kernel/`. Local verify does not run those scripts.
 
 ## How to get to it (user POV)
 
@@ -18,9 +18,9 @@ CPU and GPU quantization arms on one pinned model share one seed, one held-out s
 - `python -m sft_loop.quant validate`
 - `python -m sft_loop.quant table --check README.md`
 - `python -m sft_loop.quant probe-nf4`
-- `python -m sft_loop.quant ingest --precision nf4 --from-dir <kernel-output>`
+- `python -m sft_loop.quant ingest --precision nf4 --from-dir <kernel-output> --write`
 - Inspect `runs/quant/<precision>.json` and `runs/quant/comparison.json`.
-- Inspect `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`.
+- Inspect `kaggle/quant_nf4`, `kaggle/quant_onnx_int8`, and `runs/quant/kernel/`.
 
 ## Driving it with verify-sft-loop
 
@@ -34,7 +34,7 @@ Preconditions:
 - **Missing kernel.** The same command ingests a missing kernel dir. Evidence `quant/kernel-missing.json` is `unsupported` / `kernel_output_missing` with no metric keys. The CLI exits 2.
 - **Portfolio.** The same command runs `python -m sft_loop.quant validate`. Exit 0 means the comparison and its projections match.
 - **Table.** The same command runs `table --check README.md`. Exit 0 means the marked README region equals `render_table`.
-- **Kernel evidence.** `kaggle/quant_nf4/kernel-metadata.json` and `kaggle/quant_onnx_int8/kernel-metadata.json` exist. Local verify does not execute those scripts.
+- **Kernel evidence.** `kaggle/quant_nf4/kernel-metadata.json` and `kaggle/quant_onnx_int8/kernel-metadata.json` exist. Downloaded outputs, when present, live under `runs/quant/kernel/`. Local verify does not execute those scripts.
 - **Official SFT CLIs.** Leave `scripts/verify unsupported` as the seven fail-closed SFT reports. Do not add quant scores there.
 
 ## Gotchas

@@ -1,0 +1,18 @@
+{
+  "compute_dtype": "float16",
+  "libraries": {
+    "kind": "torch",
+    "torch": "2.11.0+cu128",
+    "transformers": "4.56.2"
+  },
+  "limiter": {
+    "available_ram_bytes_at_start": 30829895680,
+    "cpu_time_s": 594.78029,
+    "kind": "gpu",
+    "peak_rss_bytes": 5079891968,
+    "wall_s": 594.96932
+  },
+  "on_disk_bytes": 3098955668,
+  "peak_gpu_bytes": 3122830336,
+  "peak_rss_bytes": 5079891968
+}

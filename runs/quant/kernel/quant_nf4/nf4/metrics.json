@@ -1,0 +1,25 @@
+{
+  "compute_dtype": "float16",
+  "libraries": {
+    "bitsandbytes": "0.50.2",
+    "kind": "bitsandbytes",
+    "torch": "2.11.0+cu128",
+    "transformers": "4.56.2"
+  },
+  "limiter": {
+    "available_ram_bytes_at_start": 30088364032,
+    "cpu_time_s": 816.6595,
+    "kind": "gpu",
+    "peak_rss_bytes": 5838807040,
+    "wall_s": 816.42858
+  },
+  "on_disk_bytes": 1143625737,
+  "peak_gpu_bytes": 1189611520,
+  "peak_rss_bytes": 5838807040,
+  "quant_config": {
+    "bnb_4bit_compute_dtype": "float16",
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_use_double_quant": true,
+    "load_in_4bit": true
+  }
+}

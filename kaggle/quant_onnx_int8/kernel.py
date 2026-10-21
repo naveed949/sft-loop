@@ -178,13 +178,17 @@ def write_progress(payload: dict) -> None:
 
 
 def pip_install() -> None:
+    # onnx 1.17.0 has no cp313 wheel. Kaggle is Python 3.13, so 1.17.0
+    # built from sdist and failed. 1.18.0 is the oldest release with
+    # cp313 manylinux wheels. onnxruntime 1.20.1 and onnxscript 0.2.0
+    # already have cp313 / py3 wheels. onnxscript requires onnx>=1.16.
     cmd = [
         sys.executable,
         "-m",
         "pip",
         "install",
         "--no-cache-dir",
-        "onnx==1.17.0",
+        "onnx==1.18.0",
         "onnxruntime==1.20.1",
         "onnxscript==0.2.0",
         "transformers==4.56.2",

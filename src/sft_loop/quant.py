@@ -59,8 +59,11 @@ __all__ = [
     "paired_difference",
     "apply_prompt_mask",
     "ingest_kernel_arm",
+    "merge_ingested_arm",
     "cross_hardware_view",
+    "is_kernel_evidence",
     "PAIRING_SPECS",
+    "KERNEL_EVIDENCE_PREFIX",
 ]
 
 
@@ -97,6 +100,7 @@ PAIRING_SPECS: tuple[PairingSpec, ...] = (
 GPU_PRECISIONS = frozenset({Precision.NF4, Precision.FP16})
 KERNEL_DIR_NF4 = "kaggle/quant_nf4"
 KERNEL_DIR_ONNX = "kaggle/quant_onnx_int8"
+KERNEL_EVIDENCE_PREFIX = "runs/quant/kernel/"
 KERNEL_STUB_FILES = ("env.json", "progress.json", "log.txt")
 KERNEL_ARM_FILES = {
     Precision.NF4: ("nf4/items.json", "nf4/metrics.json"),
@@ -132,7 +136,29 @@ def heldout_path() -> Path:
 
 
 def canonical_dumps(payload: dict[str, Any]) -> str:
-    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    return json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n"
+
+
+def is_kernel_evidence(rel: str) -> bool:
+    return rel.startswith(KERNEL_EVIDENCE_PREFIX)
+
+
+def _sanitize_kernel_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    cleaned: list[dict[str, Any]] = []
+    for row in items:
+        item = dict(row)
+        for key in ("nll", "sequence_nll"):
+            if key not in item:
+                continue
+            try:
+                number = float(item[key])
+            except (TypeError, ValueError):
+                del item[key]
+                continue
+            if not math.isfinite(number):
+                del item[key]
+        cleaned.append(item)
+    return cleaned
 
 
 def sha256_text(text: str) -> str:
@@ -621,6 +647,8 @@ def validate_comparison(path: Path, *, rewrite_projections: bool = False) -> dic
             rel = found.resolve().relative_to(root.resolve()).as_posix()
             if rel.endswith(".tmp"):
                 continue
+            if is_kernel_evidence(rel):
+                continue
             if rel not in tracked_relpaths():
                 extra.append(rel)
     if extra:
@@ -768,6 +796,75 @@ def kernel_placeholder(rel_dir: str) -> dict[str, Any]:
     return {"dir": rel_dir, "url": None, "version": None}
 
 
+def _unsupported_from_progress(
+    precision: Precision,
+    kernel: dict[str, Any],
+    progress: dict[str, Any],
+    arm_state: dict[str, Any],
+) -> dict[str, Any]:
+    reason_text = str(arm_state.get("reason") or progress.get("reason") or "probed_failure")
+    stage = str(progress.get("stage") or "")
+    if reason_text == "probed_failure" and stage in {"export", "quantize"}:
+        reason_text = "oom"
+    try:
+        reason = UnsupportedReason(reason_text)
+    except ValueError:
+        reason = UnsupportedReason.PROBED_FAILURE
+    raw_detail = arm_state.get("detail") or progress.get("detail")
+    return unsupported_arm(
+        precision=precision,
+        reason=reason,
+        detail=_detail_from_external(raw_detail),
+        probe=_probe_from_external(
+            arm_state.get("probe") or progress.get("probe"),
+            str(raw_detail or reason_text),
+        ),
+        kernel=kernel,
+    )
+
+
+def attach_kernel_ref(
+    arm: dict[str, Any],
+    *,
+    url: str | None = None,
+    version: str | None = None,
+) -> dict[str, Any]:
+    if url is None and version is None:
+        return arm
+    body = dict(arm)
+    kernel = dict(body.get("kernel") or {})
+    if not kernel.get("dir"):
+        kernel["dir"] = (
+            KERNEL_DIR_NF4
+            if body.get("precision") in {item.value for item in GPU_PRECISIONS}
+            else KERNEL_DIR_ONNX
+        )
+    if url is not None:
+        kernel["url"] = url
+    if version is not None:
+        kernel["version"] = version
+    if "url" not in kernel:
+        kernel["url"] = None
+    if "version" not in kernel:
+        kernel["version"] = None
+    body["kernel"] = kernel
+    return body
+
+
+def merge_ingested_arm(
+    dest: Path,
+    precision: Precision,
+    arm: dict[str, Any],
+) -> dict[str, Any]:
+    payload = json.loads((dest / "comparison.json").read_text(encoding="utf-8"))
+    current = parse_comparison(payload)
+    arms = dict(current["arms"])
+    arms[precision.value] = arm
+    comparison = assemble_comparison(current["protocol"], arms, current["hardware"])
+    _commit(dest, comparison)
+    return comparison
+
+
 def kernel_dir_for(precision: Precision) -> Path:
     if precision in {Precision.NF4, Precision.FP16}:
         return repo_root() / KERNEL_DIR_NF4
@@ -792,6 +889,13 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
             },
             kernel=kernel,
         )
+    progress_path = source / "progress.json"
+    if progress_path.is_file():
+        progress = json.loads(progress_path.read_text(encoding="utf-8"))
+        arm_state = progress.get("arms", {}).get(precision.value, {})
+        status = arm_state.get("status") or progress.get("status")
+        if status != "measured":
+            return _unsupported_from_progress(precision, kernel, progress, arm_state)
     stub_missing = [name for name in KERNEL_STUB_FILES if not (source / name).is_file()]
     if stub_missing:
         return unsupported_arm(
@@ -803,29 +907,6 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
                 "message": "missing " + ", ".join(stub_missing),
                 "cuda_available": None,
             },
-            kernel=kernel,
-        )
-    progress = json.loads((source / "progress.json").read_text(encoding="utf-8"))
-    arm_state = progress.get("arms", {}).get(precision.value, {})
-    status = arm_state.get("status") or progress.get("status")
-    if status != "measured":
-        reason_text = str(arm_state.get("reason") or progress.get("reason") or "probed_failure")
-        stage = str(progress.get("stage") or "")
-        if reason_text == "probed_failure" and stage in {"export", "quantize"}:
-            reason_text = "oom"
-        try:
-            reason = UnsupportedReason(reason_text)
-        except ValueError:
-            reason = UnsupportedReason.PROBED_FAILURE
-        raw_detail = arm_state.get("detail") or progress.get("detail")
-        return unsupported_arm(
-            precision=precision,
-            reason=reason,
-            detail=_detail_from_external(raw_detail),
-            probe=_probe_from_external(
-                arm_state.get("probe") or progress.get("probe"),
-                str(raw_detail or reason_text),
-            ),
             kernel=kernel,
         )
     arm_missing = [name for name in KERNEL_ARM_FILES[precision] if not (source / name).is_file()]
@@ -841,7 +922,9 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
             },
             kernel=kernel,
         )
-    items = json.loads((source / precision.value / "items.json").read_text(encoding="utf-8"))
+    items = _sanitize_kernel_items(
+        json.loads((source / precision.value / "items.json").read_text(encoding="utf-8"))
+    )
     metrics = json.loads((source / precision.value / "metrics.json").read_text(encoding="utf-8"))
     env = json.loads((source / "env.json").read_text(encoding="utf-8"))
     protocol = load_protocol()
@@ -964,7 +1047,7 @@ def _commit(out_dir: Path, comparison: dict[str, Any]) -> None:
         os.replace(tmp, dest)
 
 
-def _reuse_unsupported(dest: Path, precision: Precision) -> dict[str, Any] | None:
+def _reuse_arm(dest: Path, precision: Precision) -> dict[str, Any] | None:
     path = dest / "comparison.json"
     if not path.is_file():
         return None
@@ -973,7 +1056,7 @@ def _reuse_unsupported(dest: Path, precision: Precision) -> dict[str, Any] | Non
         arm = payload["arms"][precision.value]
     except (OSError, KeyError, json.JSONDecodeError, TypeError):
         return None
-    if arm.get("status") == "unsupported" and arm.get("precision") == precision.value:
+    if arm.get("precision") == precision.value and arm.get("status") in {"unsupported", "measured"}:
         return arm
     return None
 
@@ -982,17 +1065,17 @@ def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = Tru
     dest = out_dir if out_dir is not None else repo_root() / "runs" / "quant"
     protocol = load_protocol()
     hardware = probe_hardware()
-    onnx = (
-        _reuse_unsupported(dest, Precision.ONNX_INT8)
-        if reuse_unsupported
-        else None
-    )
+    onnx = _reuse_arm(dest, Precision.ONNX_INT8) if reuse_unsupported else None
+    nf4 = _reuse_arm(dest, Precision.NF4)
+    fp16 = _reuse_arm(dest, Precision.FP16)
     arms = {
         Precision.FP32.value: _run_child(Precision.FP32, protocol),
         Precision.INT8.value: _run_child(Precision.INT8, protocol),
         Precision.ONNX_INT8.value: onnx if onnx is not None else _run_child(Precision.ONNX_INT8, protocol),
-        Precision.NF4.value: probe_nf4(),
-        Precision.FP16.value: ingest_kernel_arm(
+        Precision.NF4.value: nf4 if nf4 is not None else probe_nf4(),
+        Precision.FP16.value: fp16
+        if fp16 is not None
+        else ingest_kernel_arm(
             repo_root() / KERNEL_DIR_NF4 / "output",
             Precision.FP16,
         ),
@@ -1538,6 +1621,9 @@ def main(argv: list[str] | None = None) -> int:
     ingest = sub.add_parser("ingest")
     ingest.add_argument("--precision", required=True, choices=[p.value for p in Precision])
     ingest.add_argument("--from-dir", type=Path, required=True)
+    ingest.add_argument("--write", action="store_true")
+    ingest.add_argument("--kernel-url", default=None)
+    ingest.add_argument("--kernel-version", default=None)
     child = sub.add_parser("_child")
     child.add_argument("--precision", required=True)
     child.add_argument("--protocol", type=Path, required=True)
@@ -1579,9 +1665,16 @@ def main(argv: list[str] | None = None) -> int:
                 sys.stdout.write(text)
             return 0
         if args.command == "ingest":
-            body = ingest_kernel_arm(args.from_dir, Precision(args.precision))
+            body = attach_kernel_ref(
+                ingest_kernel_arm(args.from_dir, Precision(args.precision)),
+                url=args.kernel_url,
+                version=args.kernel_version,
+            )
+            if args.write:
+                dest = repo_root() / "runs" / "quant"
+                merge_ingested_arm(dest, Precision(args.precision), body)
             sys.stdout.write(canonical_dumps(body))
-            if body.get("status") == "measured":
+            if args.write or body.get("status") == "measured":
                 return 0
             return 2
         if args.command == "_child":
