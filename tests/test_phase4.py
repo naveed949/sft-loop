@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -213,3 +215,91 @@ def test_phase4_cli_fence_exits_zero():
         env=env,
     )
     assert completed.returncode == 0, completed.stdout + completed.stderr
+
+
+def _load_kernel():
+    spec = importlib.util.spec_from_file_location("phase4_kernel", KERNEL / "kernel.py")
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_kernel_pins_committed_manifest_hash():
+    kernel = _load_kernel()
+    manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
+    assert kernel.EXPECTED_SPLIT_HASH == manifest["split_hash"]
+    assert kernel.EXPECTED_EVAL_SHA256 == manifest["eval_sha256"]
+    assert kernel.EXPECTED_TRAIN_SHA256 == manifest["train_sha256"]
+
+
+def test_kernel_finds_nested_kaggle_input(tmp_path, monkeypatch):
+    kernel = _load_kernel()
+    monkeypatch.delenv("PHASE4_DATA_DIR", raising=False)
+    nested = tmp_path / "input" / "datasets" / "inaveed101" / "phase4-tenk-data"
+    nested.mkdir(parents=True)
+    for name in ("manifest.json", "eval.jsonl", "train.jsonl", "grade.py"):
+        shutil.copyfile(DATA / name, nested / name)
+    decoy = tmp_path / "input" / "datasets" / "other" / "wrong-set"
+    decoy.mkdir(parents=True)
+    (decoy / "eval.jsonl").write_text('{"item_id": "x"}\n', encoding="utf-8")
+    (decoy / "train.jsonl").write_text('{"item_id": "y"}\n', encoding="utf-8")
+    (decoy / "manifest.json").write_text(
+        json.dumps(
+            {
+                "task_id": "tenk-extract-v1",
+                "capitalcite_commit": "34b42ee0b387738725705a0af682dd3f030a9944",
+                "split_hash": "0" * 64,
+                "eval_sha256": "0" * 64,
+                "train_sha256": "0" * 64,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    found = kernel.find_data(tmp_path / "input")
+    assert found.resolve() == nested.resolve()
+
+
+def test_kernel_missing_data_writes_unsupported_json(tmp_path, monkeypatch):
+    kernel = _load_kernel()
+    monkeypatch.delenv("PHASE4_DATA_DIR", raising=False)
+    kernel.WORK = tmp_path / "work"
+    kernel.WORK.mkdir()
+    with pytest.raises(kernel.DatasetNotFound, match="manifest.json"):
+        kernel.find_data(tmp_path / "empty-input")
+    try:
+        kernel.find_data(tmp_path / "empty-input")
+    except kernel.DatasetNotFound as exc:
+        code = kernel.write_unsupported(exc.reason, str(exc), exit_code=1)
+    assert code == 1
+    body = json.loads((kernel.WORK / "unsupported.json").read_text(encoding="utf-8"))
+    assert body["status"] == "unsupported"
+    assert body["adapter_written"] is False
+    assert body["unsupported"]["reason"] == "dataset_not_found"
+    assert "before" not in body
+    assert "after" not in body
+
+
+def test_kernel_rejects_nested_dataset_with_wrong_hash(tmp_path, monkeypatch):
+    kernel = _load_kernel()
+    monkeypatch.delenv("PHASE4_DATA_DIR", raising=False)
+    nested = tmp_path / "input" / "datasets" / "inaveed101" / "phase4-tenk-data"
+    nested.mkdir(parents=True)
+    (nested / "eval.jsonl").write_text('{"item_id": "x"}\n', encoding="utf-8")
+    (nested / "train.jsonl").write_text('{"item_id": "y"}\n', encoding="utf-8")
+    (nested / "manifest.json").write_text(
+        json.dumps(
+            {
+                "task_id": "tenk-extract-v1",
+                "capitalcite_commit": "34b42ee0b387738725705a0af682dd3f030a9944",
+                "split_hash": "0" * 64,
+                "eval_sha256": "0" * 64,
+                "train_sha256": "0" * 64,
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(kernel.DatasetHashMismatch, match="split_hash"):
+        kernel.find_data(tmp_path / "input")

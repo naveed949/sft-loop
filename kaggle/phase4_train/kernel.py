@@ -37,16 +37,24 @@ PACKAGES = [
     "trl==0.24.0",
 ]
 WORK = Path(os.environ.get("PHASE4_WORK_DIR", "/kaggle/working"))
-DATA_HINTS = [
-    Path(os.environ["PHASE4_DATA_DIR"]) if os.environ.get("PHASE4_DATA_DIR") else None,
-    Path("/kaggle/input/phase4-tenk-data"),
-    Path("/kaggle/input"),
-]
+DEFAULT_INPUT_ROOT = Path("/kaggle/input")
+EXPECTED_SPLIT_HASH = "3a298f9e0d83b00c9d3cfac99f90a160ebef3ce28c94d926b3f5efa266c95e33"
+EXPECTED_EVAL_SHA256 = "09a6e33011761caf02a5eb3f732d172f778c234ed29d434af1298360d3e6a459"
+EXPECTED_TRAIN_SHA256 = "c73756013ef53e615cc774e8bf5e354033346e0812a325d5c72ea1f262f06abc"
+EXPECTED_CAPITALCITE_COMMIT = "34b42ee0b387738725705a0af682dd3f030a9944"
 
 
 def write_json(path: Path, body: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(body, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+class DatasetNotFound(Exception):
+    reason = "dataset_not_found"
+
+
+class DatasetHashMismatch(Exception):
+    reason = "dataset_hash_mismatch"
 
 
 def refuse_phase3(path: Path) -> Path:
@@ -56,17 +64,82 @@ def refuse_phase3(path: Path) -> Path:
     return Path(path)
 
 
-def find_data() -> Path:
-    for hint in DATA_HINTS:
-        if hint is None:
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def manifest_is_expected(directory: Path) -> bool:
+    manifest_path = directory / "manifest.json"
+    eval_path = directory / "eval.jsonl"
+    train_path = directory / "train.jsonl"
+    if not (manifest_path.is_file() and eval_path.is_file() and train_path.is_file()):
+        return False
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return False
+    if manifest.get("task_id") != TASK_ID:
+        return False
+    if manifest.get("capitalcite_commit") != EXPECTED_CAPITALCITE_COMMIT:
+        return False
+    if manifest.get("split_hash") != EXPECTED_SPLIT_HASH:
+        return False
+    if manifest.get("eval_sha256") != EXPECTED_EVAL_SHA256:
+        return False
+    if manifest.get("train_sha256") != EXPECTED_TRAIN_SHA256:
+        return False
+    return sha256_file(eval_path) == EXPECTED_EVAL_SHA256 and sha256_file(train_path) == EXPECTED_TRAIN_SHA256
+
+
+def search_roots(search_root: Path | None = None) -> list[Path]:
+    roots: list[Path] = []
+    override = os.environ.get("PHASE4_DATA_DIR")
+    if override:
+        roots.append(Path(override))
+    roots.append(Path(search_root) if search_root is not None else DEFAULT_INPUT_ROOT)
+    unique: list[Path] = []
+    for root in roots:
+        if root not in unique:
+            unique.append(root)
+    return unique
+
+
+def find_data(search_root: Path | None = None) -> Path:
+    seen: set[Path] = set()
+    mismatches: list[str] = []
+    searched: list[str] = []
+    for base in search_roots(search_root):
+        searched.append(base.as_posix())
+        if not base.exists():
             continue
-        if (hint / "eval.jsonl").is_file():
-            return hint
-        if hint.is_dir():
-            for child in sorted(hint.iterdir()):
-                if (child / "eval.jsonl").is_file():
-                    return child
-    raise SystemExit("phase4 dataset (eval.jsonl) not found")
+        if base.is_file():
+            continue
+        candidates = [base]
+        candidates.extend(path.parent for path in sorted(base.rglob("manifest.json")))
+        for directory in candidates:
+            resolved = directory.resolve() if directory.exists() else directory
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            if not (directory / "manifest.json").is_file():
+                continue
+            if manifest_is_expected(directory):
+                return directory
+            if (directory / "eval.jsonl").is_file():
+                mismatches.append(directory.as_posix())
+    if mismatches:
+        raise DatasetHashMismatch(
+            "phase4 dataset hash mismatch; "
+            f"expected split_hash={EXPECTED_SPLIT_HASH} "
+            f"among {mismatches}"
+        )
+    raise DatasetNotFound(
+        "phase4 dataset (manifest.json) not found under " + ", ".join(searched)
+    )
 
 
 def load_grade(data: Path):
@@ -155,14 +228,6 @@ def require_scaler(torch):
     if scaler_cls is None or autocast is None:
         raise RuntimeError("GradScaler missing")
     return scaler_cls, autocast
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def format_text(tokenizer, prompt: str, completion: str | None = None) -> str:
@@ -403,7 +468,7 @@ def try_ddp(torch) -> dict:
         return {"status": "unsupported", "reason": str(exc), "traceback": traceback.format_exc()}
 
 
-def write_unsupported(reason: str, detail: str) -> int:
+def write_unsupported(reason: str, detail: str, *, exit_code: int = 0) -> int:
     write_json(
         refuse_phase3(WORK / "unsupported.json"),
         {
@@ -414,7 +479,7 @@ def write_unsupported(reason: str, detail: str) -> int:
             "adapter_written": False,
         },
     )
-    return 0
+    return exit_code
 
 
 def main() -> int:
@@ -436,7 +501,10 @@ def main() -> int:
         scaler_cls, autocast = require_scaler(torch)
     except Exception as exc:
         return write_unsupported("gpu_or_train_deps_unavailable", str(exc))
-    data = find_data()
+    try:
+        data = find_data()
+    except (DatasetNotFound, DatasetHashMismatch) as exc:
+        return write_unsupported(exc.reason, str(exc), exit_code=1)
     grade = load_grade(data)
     train_rows = load_jsonl(data / "train.jsonl")
     eval_rows = load_jsonl(data / "eval.jsonl")
@@ -514,12 +582,29 @@ def main() -> int:
     return 0
 
 
+def _work_dir() -> Path:
+    return Path(os.environ.get("PHASE4_WORK_DIR", "/kaggle/working"))
+
+
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
+    except (DatasetNotFound, DatasetHashMismatch) as exc:
+        write_unsupported(exc.reason, str(exc), exit_code=1)
+        raise SystemExit(1)
     except Exception:
-        Path(os.environ.get("PHASE4_WORK_DIR", "/kaggle/working")).mkdir(parents=True, exist_ok=True)
-        Path(os.environ.get("PHASE4_WORK_DIR", "/kaggle/working"), "kernel_crash.txt").write_text(
-            traceback.format_exc(), encoding="utf-8"
-        )
+        work = _work_dir()
+        work.mkdir(parents=True, exist_ok=True)
+        (work / "kernel_crash.txt").write_text(traceback.format_exc(), encoding="utf-8")
+        if not (work / "unsupported.json").is_file():
+            write_json(
+                work / "unsupported.json",
+                {
+                    "schema_version": "phase4-1",
+                    "document_kind": "phase4-tenk-lora",
+                    "status": "unsupported",
+                    "unsupported": {"reason": "kernel_crash", "detail": traceback.format_exc()},
+                    "adapter_written": False,
+                },
+            )
         raise
