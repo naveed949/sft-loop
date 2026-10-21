@@ -1,0 +1,6 @@
+# GS/2013/page_47.pdf
+## page
+management 2019s discussion and analysis net interest income 2013 versus 2012 .
+net interest income on the consolidated statements of earnings was $ 3.39 billion for 2013 , 13% ( 13 % ) lower than 2012 .
+the decrease compared with 2012 was primarily due to lower average yields on financial instruments owned , at fair value , partially offset by lower interest expense on financial instruments sold , but not yet purchased , at fair value and collateralized financings .
+[["$ in millions", "year ended december 2013", "year ended december 2012", "year ended december 2011"], ["compensation and benefits", "$ 12613", "$ 12944", "$ 12223"], ["brokerage clearing exchange anddistribution fees", "2341", "2208", "2463"], ["market development", "541", "509", "640"], ["communications and technology", "776", "782", "828"], ["depreciation and amortization", "1322", "1738", "1865"]]

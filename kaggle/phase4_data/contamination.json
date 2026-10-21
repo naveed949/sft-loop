@@ -1,0 +1,8 @@
+{
+  "eval_in_prompt_template": [],
+  "exact_chunk_overlap": 0,
+  "exact_chunk_shas": [],
+  "near_duplicate_pairs": [],
+  "near_duplicate_threshold": 0.8,
+  "ok": true
+}

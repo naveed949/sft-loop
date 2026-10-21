@@ -1,0 +1,57 @@
+{
+  "builder": "phase4.build",
+  "capitalcite_commit": "34b42ee0b387738725705a0af682dd3f030a9944",
+  "capitalcite_repo": "https://github.com/naveed949/capitalcite",
+  "ceiling": 0.85,
+  "chunks_jsonl": "absent",
+  "eval_docs": [
+    "0001628280-26-008131",
+    "3M_2018_10K",
+    "GS__2013__page_47.pdf",
+    "GS__2014__page_134.pdf",
+    "GS__2014__page_47.pdf",
+    "GS__2016__page_79.pdf"
+  ],
+  "eval_issuers": [
+    "GS",
+    "0001628280",
+    "3M"
+  ],
+  "eval_sha256": "6baac0eb57e1462d7e634f9593cf9a4e034a6893110f321cc9f8529922bfdb58",
+  "grade_sha256": "58c6c1ebf7107453b05801d701335a25800dadd388a3d90d6c504c537021148e",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "n_eval": 106,
+  "n_items": 228,
+  "n_train": 122,
+  "source_dir": "evals/phase4/capitalcite",
+  "source_kind": "evals/golden/passages",
+  "split_issuers_sha256": "527f518855fb49b996ca33008da5dae968f726237bbe5189e295c776b2ac636d",
+  "split_seed": 0,
+  "task_id": "tenk-extract-v1",
+  "train_docs": [
+    "0000019617-24-000225",
+    "0000019617-25-000270",
+    "0000072971-24-000064",
+    "0000072971-25-000066",
+    "0000072971-26-000133",
+    "0000831001-24-000033",
+    "0000831001-25-000067",
+    "0000831001-26-000011",
+    "AMERICANEXPRESS_2022_10K",
+    "BOEING_2018_10K",
+    "JPMORGAN_2021Q1_10Q",
+    "JPMORGAN_2022Q2_10Q",
+    "JPM__2003__page_100.pdf",
+    "JPM__2003__page_51.pdf",
+    "JPM__2018__page_73.pdf"
+  ],
+  "train_issuers": [
+    "0000831001",
+    "JPM",
+    "0000072971",
+    "BOEING",
+    "AMERICANEXPRESS"
+  ],
+  "train_sha256": "c77962a334fadf36a3f75823ec17890080783567aca494aae4a4d22ae92b17ad"
+}

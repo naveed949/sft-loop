@@ -56,3 +56,10 @@ runs/quant/raw/**
 !runs/quant/raw/int8.json
 !runs/quant/raw/onnx-int8.json
 !runs/quant/raw/nf4.json
+
+# Phase 4 kernel outputs stay ignored until Phase 2 carves in scored.json
+# after Naveed returns the Kaggle files. Do not invent that report here.
+!runs/phase4/
+runs/phase4/**
+!runs/phase4/proof/
+runs/phase4/proof/**

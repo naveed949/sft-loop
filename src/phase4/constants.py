@@ -1,0 +1,41 @@
+"""Pins for the Phase 4 10-K extraction sibling. Not imported by sft_loop."""
+
+from __future__ import annotations
+
+CAPITALCITE_COMMIT = "34b42ee0b387738725705a0af682dd3f030a9944"
+CAPITALCITE_REPO = "https://github.com/naveed949/capitalcite"
+MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
+MODEL_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+SMOKE_MODEL_ID = "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5"
+SMOKE_MODEL_REVISION = "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda"
+TASK_ID = "tenk-extract-v1"
+METRIC_NAME = "exact_match"
+SPLIT_SEED = 0
+MIN_EVAL = 100
+MIN_TRAIN = 8
+MIN_DISTINCT_NUMS = 3
+CEILING = 0.85
+NEAR_DUP_THRESHOLD = 0.8
+SHINGLE_N = 5
+LORA_R = 8
+LORA_ALPHA = 16
+LORA_SCALE = LORA_ALPHA / LORA_R
+TARGET_MODULES = ("q_proj", "k_proj", "v_proj", "o_proj")
+MAX_STEPS = 200
+SMOKE_STEPS = 2
+PER_DEVICE_BATCH = 1
+GRAD_ACCUM = 8
+EFFECTIVE_BATCH = PER_DEVICE_BATCH * GRAD_ACCUM
+MAX_SEQ_LENGTH = 1024
+MAX_NEW_TOKENS = 16
+LEARNING_RATE = 2e-4
+WARMUP_RATIO = 0.05
+LR_SCHEDULE = "cosine"
+CHUNK_RADIUS = 700
+MAX_CHUNK_CHARS = 2200
+BOOTSTRAP_ROUNDS = 10000
+ISSUER_ALIASES = {
+    "0000019617": "JPM",
+    "JPM": "JPM",
+    "JPMORGAN": "JPM",
+}

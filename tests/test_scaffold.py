@@ -337,5 +337,7 @@ def test_gitignore_carve_out_for_fixtures():
     assert excluded("runs/scratch/unsupported.json")
     assert excluded("runs/phase3/scratch.json")
     assert excluded("runs/phase3/proof/adapter_model.safetensors")
+    assert excluded("runs/phase4/scored.json")
+    assert excluded("runs/phase4/proof/adapter_model.safetensors")
     assert excluded("checkpoints/adapter.safetensors")
     assert excluded("adapters/run/adapter_model.safetensors")

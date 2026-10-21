@@ -1,0 +1,217 @@
+# AMERICANEXPRESS_2022_10K
+## page 0
+Registrants telephone number, including area code: (212) 640-2000
+Securities registered pursuant to Section 12(b) of the Act:
+Title of each class
+Trading Symbol(s)
+Name of each exchange on which registered
+Common Shares (par value $0.20 per Share)
+AXP
+New York Stock Exchange
+Securities registered pursuant to section 12(g) of the Act: None
+## page 154
+(Millions)
+United States
+EMEA
+APAC
+LACC
+Other Unallocated
+Consolidated
+2022
+Total revenues net of interest expense
+$
+41,396 
+$
+4,871 
+$
+3,835 
+$
+2,917 
+$
+(157)
+$
+52,862 
+Pretax income (loss) from continuing operations
+10,383 
+550 
+376 
+500 
+(2,224)
+9,585 
+2021
+Total revenues net of interest expense
+$
+33,103 
+$
+3,643 
+$
+3,418 
+$
+2,238 
+$
+(22)
+$
+42,380 
+Pretax income (loss) from continuing operations
+10,325 
+460 
+420 
+494 
+(1,010)
+10,689 
+2020
+Total revenues net of interest expense
+$
+28,263 
+$
+3,087 
+$
+3,271 
+$
+2,019 
+$
+(553)
+$
+36,087 
+Pretax income (loss) from continuing operations
+5,422 
+187 
+328 
+273 
+(1,914)
+4,296
+## page 43
+TABLE 1: SUMMARY OF FINANCIAL PERFORMANCE
+Years Ended December 31,
+Change
+Change
+(Millions, except percentages, per share amounts and where indicated)
+2022
+2021
+2020
+2022 vs. 2021
+2021 vs. 2020
+Selected Income Statement Data
+Total revenues net of interest expense
+$
+52,862
+$
+42,380
+$
+36,087
+$
+10,482 
+25 %
+$
+6,293 
+17 %
+Provisions for credit losses
+2,182
+(1,419)
+4,730
+3,601 
+#
+(6,149)
+#
+Expenses
+41,095
+33,110
+27,061
+7,985 
+24 
+6,049 
+22 
+Pretax income
+9,585
+10,689
+4,296
+(1,104)
+(10)
+6,393 
+#
+Income tax provision
+2,071
+2,629
+1,161
+(558)
+(21)
+1,468 
+#
+Net income
+7,514
+8,060
+3,135
+(546)
+(7)
+4,925 
+#
+Earnings per common share diluted 
+$
+9.85
+$
+10.02
+$
+3.77
+$
+(0.17)
+(2)%
+$
+6.25 
+# %
+Common Share Statistics 
+Cash dividends declared per common share
+$
+2.08
+$
+1.72
+$
+1.72
+$
+0.36 
+21 %
+$
+ 
+ %
+Average common shares outstanding:
+Basic
+751
+789
+805
+(38)
+(5)%
+(16)
+(2)%
+Diluted
+752
+790
+806
+(38)
+(5)%
+(16)
+
+## page 97
+CONSOLIDATED BALANCE SHEETS
+December 31 (Millions, except share data)
+2022
+2021
+Assets
+Cash and cash equivalents
+Cash and due from banks (includes restricted cash of consolidated variable interest entities: 2022, $5; 2021, $11)
+$
+5,510 
+$
+1,292 
+Interest-bearing deposits in other banks (includes securities purchased under resale agreements: 2022, $318; 2021, $463)
+28,097 
+20,548 
+Short-term investment securities (includes restricted investments of consolidated variable interest entities: 2022, $54; 2021, $32)
+307 
+188 
+Total cash and cash equivalents
+33,914 
+22,028 
+Card Member receivables (includes gross receivables available to settle obligations of a consolidated variable interest entity: 2022, $5,193; 2021,
+$5,175), less reserves for credit losses: 2022, $229; 2021, $64
+57,384 
+53,581 
+Card Member loans (includes gross loans available to settle obligations of a consolidated variable 

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/naveed949/sft-loop/schema/phase4_run.schema.json",
+  "title": "phase4 tenk lora report",
+  "description": "Sibling of schema/run_report.schema.json. No weight_change_claimed field. Used by phase4.assemble after the Kaggle kernel returns raw outputs. additionalProperties is false.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "document_kind",
+    "task_id",
+    "status"
+  ],
+  "properties": {
+    "schema_version": { "const": "phase4-1" },
+    "document_kind": { "const": "phase4-tenk-lora" },
+    "task_id": { "const": "tenk-extract-v1" },
+    "metric_name": { "const": "exact_match" },
+    "status": { "type": "string", "enum": ["unsupported", "refused_ceiling", "scored"] },
+    "n": { "type": "integer", "minimum": 100 },
+    "seed": { "type": "integer", "minimum": 0 },
+    "model_id": { "type": "string" },
+    "model_revision": { "type": "string" },
+    "device": { "const": "cuda" },
+    "backend": { "const": "trl-peft" },
+    "before": { "$ref": "#/$defs/eval_slice" },
+    "after": { "$ref": "#/$defs/eval_slice" },
+    "paired_ci": { "$ref": "#/$defs/paired_ci" },
+    "uplift": { "type": "string" },
+    "train_proof": { "type": "object", "additionalProperties": true },
+    "hardware": { "type": "object", "additionalProperties": true },
+    "unsupported": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "detail"],
+      "properties": {
+        "reason": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string", "minLength": 1 }
+      }
+    },
+    "adapter_written": { "type": "boolean" },
+    "bf16": { "const": "unsupported" },
+    "ddp": { "type": "string" }
+  },
+  "$defs": {
+    "eval_slice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_name", "task_score", "n"],
+      "properties": {
+        "metric_name": { "const": "exact_match" },
+        "task_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "n": { "type": "integer", "minimum": 100 }
+      }
+    },
+    "paired_ci": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mean_delta", "low", "high", "n", "rounds", "seed", "verdict"],
+      "properties": {
+        "mean_delta": { "type": "number" },
+        "low": { "type": "number" },
+        "high": { "type": "number" },
+        "n": { "type": "integer", "minimum": 100 },
+        "rounds": { "type": "integer", "minimum": 1 },
+        "seed": { "type": "integer", "minimum": 0 },
+        "verdict": { "type": "string" }
+      }
+    }
+  }
+}
