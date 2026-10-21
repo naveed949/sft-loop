@@ -1,0 +1,23 @@
+{
+  "body": {
+    "detail": "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. Soft-PASS is unused and is refused.",
+    "kernel": {
+      "dir": "kaggle/quant_nf4",
+      "url": null,
+      "version": null
+    },
+    "precision": "fp16",
+    "probe": {
+      "cuda_available": false,
+      "exception_type": "KernelOutputMissing",
+      "message": "kaggle/quant_nf4 output is not on this host"
+    },
+    "reason": "kernel_output_missing",
+    "status": "unsupported"
+  },
+  "comparison_sha256": "859d500ab5828e613e56aa88aee4782af1fdf6b6c5945b5b7229417078897f0e",
+  "document_kind": "quant-arm-projection",
+  "precision": "fp16",
+  "protocol_sha256": "b5fe0ba1136866ad026fdf874d16ead047e506f65f2e6acab2c574e99a2dd32b",
+  "schema_version": "1"
+}

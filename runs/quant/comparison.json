@@ -1,5 +1,21 @@
 {
   "arms": {
+    "fp16": {
+      "detail": "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. Soft-PASS is unused and is refused.",
+      "kernel": {
+        "dir": "kaggle/quant_nf4",
+        "url": null,
+        "version": null
+      },
+      "precision": "fp16",
+      "probe": {
+        "cuda_available": false,
+        "exception_type": "KernelOutputMissing",
+        "message": "kaggle/quant_nf4 output is not on this host"
+      },
+      "reason": "kernel_output_missing",
+      "status": "unsupported"
+    },
     "fp32": {
       "decode_tokens_per_s": 1.9207317,
       "items": [
@@ -2668,22 +2684,32 @@
   },
   "metric_role": "task_score_not_safety",
   "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
-  "outcome": {
-    "bootstrap_draws": 1000,
-    "bootstrap_seed": 0,
-    "kind": "paired",
-    "latency_ms_delta": -897.79363,
-    "latency_ms_delta_se": 37.71913,
-    "method": "paired-item-mean",
-    "n": 129,
-    "nll_delta": 9.2324017,
-    "nll_delta_se": 0.25757911,
-    "score_delta": -0.36434109,
-    "score_delta_ci95_high": -0.27906977,
-    "score_delta_ci95_low": -0.4496124,
-    "score_delta_se": 0.042536442,
-    "sequence_nll_delta": 3.4331923,
-    "sequence_nll_delta_se": 0.053405898
+  "outcomes": {
+    "int8-minus-fp32": {
+      "baseline": "fp32",
+      "bootstrap_draws": 1000,
+      "bootstrap_seed": 0,
+      "kind": "paired",
+      "latency_ms_delta": -897.79363,
+      "latency_ms_delta_se": 37.71913,
+      "method": "paired-item-mean",
+      "minus": "int8",
+      "n": 129,
+      "nll_delta": 9.2324017,
+      "nll_delta_se": 0.25757911,
+      "score_delta": -0.36434109,
+      "score_delta_ci95_high": -0.27906977,
+      "score_delta_ci95_low": -0.4496124,
+      "score_delta_se": 0.042536442,
+      "sequence_nll_delta": 3.4331923,
+      "sequence_nll_delta_se": 0.053405898
+    },
+    "nf4-minus-fp16": {
+      "baseline": "fp16",
+      "kind": "unavailable",
+      "minus": "nf4",
+      "reason": "fp16_unmeasured"
+    }
   },
   "protocol": {
     "decode": {

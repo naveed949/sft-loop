@@ -25,7 +25,7 @@ This directory is the maintained source for verifying the user-facing behavior o
 - Capture the command, stdout, stderr, exit code, and the JSON file written.
 - Mutation proof includes a second read of the report on disk and `validate_report`.
 - Record the feature ID with every artifact.
-- A blocked GPU path is `unsupported` with `gpu_or_train_deps_unavailable` or `train_not_run`. It is not a skip and not a pass.
+- A blocked GPU path is `unsupported` with `gpu_or_train_deps_unavailable` or `train_not_run`. It is not a skip and not a pass. Kaggle quant kernels stay `unsupported` here. Link `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`.
 - Do not report a skipped MPS entry point as verified through the CPU smoke.
 - CPU smoke is a plumbing artifact (`status: plumbing`). It is not a scored report.
 
@@ -47,4 +47,4 @@ Keep implementation details out of the map. Name only user paths, stable flags, 
 - [Same-seed eval](./eval-same-seed.md) covers before/after splits that must share seed, task, and grader.
 - [Same-seed loop](./loop.md) covers `python -m sft_loop.loop` before, train, after.
 - [Run report schema](./report-schema.md) covers `schema/run_report.schema.json` validation and honesty locks.
-- [Quant comparison](./quant-comparison.md) covers `python -m sft_loop.quant` and the fail-closed NF4 report.
+- [Quant comparison](./quant-comparison.md) covers `python -m sft_loop.quant`, the fail-closed NF4 report, and the local-unsupported Kaggle kernel surface.

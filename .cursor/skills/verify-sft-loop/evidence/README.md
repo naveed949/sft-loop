@@ -14,6 +14,8 @@ Do not export `VERIFY_EVIDENCE_DIR` or `VERIFY_SCRATCH_DIR` unless the path ends
 
 `issue9-quant-r2/` is the remasurement proof after the throughput and NLL blockers. `scripts/verify all --run-id issue9-quant-r2` exited 0. The table now has scored p50/p95, mean generated tokens, and decode tokens/s from a `min_new_tokens == max_new_tokens == 8` pass.
 
+Kaggle GPU kernels are not a local verify surface. The scripts live at `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`. `verify quant` checks those directories exist and that ingest of a missing output dir is `kernel_output_missing`. It does not run the kernels.
+
 Read these first:
 
 - `summary.json` (all steps exit 0, 72.263s, `failed_step` null)

@@ -20,4 +20,14 @@ When an arm exposes logits, `nll` is mean token NLL of the target word. The prom
 
 `schema/quant_comparison.schema.json` is a sibling of the SFT run report. Quant JSON has no `weight_change_claimed` field. NF4 cannot be a measured arm in this comparison. A 1.5B arm that cannot load on this VM is `unsupported` with the probed failure. A smaller-model rerun, if added, cannot occupy `runs/quant/comparison.json`.
 
-On this CPU VM the pinned 1.5B model loaded. fp32 and torch dynamic int8 finished the 129-item protocol, including the fixed-length decode pass. ONNX export wrote a 5.8 GB `model.onnx.data` then `quantize_dynamic` was SIGKILL 137, so that arm is `oom`. NF4 is `missing_cuda`. The README table is generated from those files. Do not type the scores by hand.
+On this CPU VM the pinned 1.5B model loaded. fp32 and torch dynamic int8 finished the 129-item protocol, including the fixed-length decode pass. ONNX export wrote a 5.8 GB `model.onnx.data` then `quantize_dynamic` was SIGKILL 137, so that arm is `oom`. NF4 is `missing_cuda` on this host. The README table is generated from those files. Do not type the scores by hand.
+
+## Quant GPU pairing and Kaggle kernels (2026-10-21)
+
+NF4 can be a measured arm when a Kaggle T4 kernel output is ingested. The same-hardware baseline is fp16 on that T4, not CPU fp32. `outcomes` owns two pairings: `int8-minus-fp32` on the CPU host, and `nf4-minus-fp16` on one `hardware.accelerator`. A GPU number is never subtracted from a CPU number. A cross-hardware view is `kind: not_paired` with reason `cross_hardware`.
+
+GPU measured arms require `hardware.accelerator`, `peak_gpu_bytes`, a kernel URL/version placeholder, and fp16 compute. NF4 also records BitsAndBytesConfig `load_in_4bit`, `bnb_4bit_quant_type=nf4`, double quant on, and fp16 compute.
+
+Local `python -m sft_loop.quant probe-nf4` stays unsupported on this CPU VM. The only measured GPU path is `python -m sft_loop.quant ingest`. A missing kernel directory is `unsupported` / `kernel_output_missing` with no metric keys.
+
+Kernels live at `kaggle/quant_nf4` (NvidiaTeslaT4, about 2 hours, budget 4) and `kaggle/quant_onnx_int8` (CPU only, about 4 hours, budget 8). They pin deps, download the public Hub revision, and write env, logs, progress, and per-arm items. Local verify cannot run them. Phase 2 commits downloaded outputs under `runs/quant/` and regenerates the table.

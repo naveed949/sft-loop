@@ -372,6 +372,8 @@ def test_surfaces_use_probe_errors(monkeypatch, tmp_path):
     assert by_id["train-cuda-unsloth"].status == "unsupported"
     assert by_id["cpu-trl-peft-smoke"].status == "supported"
     assert by_id["quant-comparison"].status == "unsupported"
+    assert by_id["kaggle-quant-kernels"].status == "unsupported"
+    assert "kaggle/quant_nf4" in by_id["kaggle-quant-kernels"].detail
 
 
 def test_surfaces_record_hardware_probe_errors():
@@ -401,3 +403,5 @@ def test_surfaces_record_hardware_probe_errors():
     assert "TimeoutExpired" in by_id["bitsandbytes"].detail
     assert by_id["cpu-trl-peft-smoke"].status == "unsupported"
     assert by_id["quant-comparison"].status == "unsupported"
+    assert by_id["kaggle-quant-kernels"].status == "unsupported"
+    assert "kaggle/quant_nf4" in by_id["kaggle-quant-kernels"].detail
