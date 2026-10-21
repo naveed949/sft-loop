@@ -1,0 +1,4 @@
+{
+  "reason": "optional DDP not launched via torchrun in this kernel",
+  "status": "unsupported"
+}

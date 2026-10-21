@@ -1,0 +1,993 @@
+{
+  "items": [
+    {
+      "completion": "420",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-APAC-2021",
+      "prediction": "550",
+      "question": "What was Pretax income (loss) from continuing operations for APAC at year-end 2021?"
+    },
+    {
+      "completion": "376",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-APAC-2022",
+      "prediction": "376",
+      "question": "What was Pretax income (loss) from continuing operations for APAC at year-end 2022?"
+    },
+    {
+      "completion": "10689",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-Consolidated-2021",
+      "prediction": "10689",
+      "question": "What was Pretax income (loss) from continuing operations for Consolidated at year-end 2021?"
+    },
+    {
+      "completion": "9585",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-Consolidated-2022",
+      "prediction": "9585",
+      "question": "What was Pretax income (loss) from continuing operations for Consolidated at year-end 2022?"
+    },
+    {
+      "completion": "460",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-EMEA-2021",
+      "prediction": "550",
+      "question": "What was Pretax income (loss) from continuing operations for EMEA at year-end 2021?"
+    },
+    {
+      "completion": "550",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-EMEA-2022",
+      "prediction": "550",
+      "question": "What was Pretax income (loss) from continuing operations for EMEA at year-end 2022?"
+    },
+    {
+      "completion": "494",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-LACC-2021",
+      "prediction": "460",
+      "question": "What was Pretax income (loss) from continuing operations for LACC at year-end 2021?"
+    },
+    {
+      "completion": "500",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-LACC-2022",
+      "prediction": "9585",
+      "question": "What was Pretax income (loss) from continuing operations for LACC at year-end 2022?"
+    },
+    {
+      "completion": "-2224",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-Other-Unallocated-202",
+      "prediction": "9585",
+      "question": "What was Pretax income (loss) from continuing operations for Other Unallocated at year-end 2022?"
+    },
+    {
+      "completion": "-1010",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-Other-Unallocated-202",
+      "prediction": "460",
+      "question": "What was Pretax income (loss) from continuing operations for Other Unallocated at year-end 2021?"
+    },
+    {
+      "completion": "10325",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-United-States-2021",
+      "prediction": "10325",
+      "question": "What was Pretax income (loss) from continuing operations for United States at year-end 2021?"
+    },
+    {
+      "completion": "10383",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Pretax-income-loss-from-continuing-operations-United-States-2022",
+      "prediction": "9585",
+      "question": "What was Pretax income (loss) from continuing operations for United States at year-end 2022?"
+    },
+    {
+      "completion": "3271",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-APAC-2020",
+      "prediction": "3271",
+      "question": "What was Total revenues net of interest expense for APAC at year-end 2020?"
+    },
+    {
+      "completion": "3418",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-APAC-2021",
+      "prediction": "3418",
+      "question": "What was Total revenues net of interest expense for APAC at year-end 2021?"
+    },
+    {
+      "completion": "3835",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-APAC-2022",
+      "prediction": "3835",
+      "question": "What was Total revenues net of interest expense for APAC at year-end 2022?"
+    },
+    {
+      "completion": "36087",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-Consolidated-2020",
+      "prediction": "36087",
+      "question": "What was Total revenues net of interest expense for Consolidated at year-end 2020?"
+    },
+    {
+      "completion": "42380",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-Consolidated-2021",
+      "prediction": "33103",
+      "question": "What was Total revenues net of interest expense for Consolidated at year-end 2021?"
+    },
+    {
+      "completion": "52862",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-Consolidated-2022",
+      "prediction": "41396",
+      "question": "What was Total revenues net of interest expense for Consolidated at year-end 2022?"
+    },
+    {
+      "completion": "3087",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-EMEA-2020",
+      "prediction": "36087",
+      "question": "What was Total revenues net of interest expense for EMEA at year-end 2020?"
+    },
+    {
+      "completion": "3643",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-EMEA-2021",
+      "prediction": "33103",
+      "question": "What was Total revenues net of interest expense for EMEA at year-end 2021?"
+    },
+    {
+      "completion": "4871",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-EMEA-2022",
+      "prediction": "4,871",
+      "question": "What was Total revenues net of interest expense for EMEA at year-end 2022?"
+    },
+    {
+      "completion": "2019",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-LACC-2020",
+      "prediction": "-553",
+      "question": "What was Total revenues net of interest expense for LACC at year-end 2020?"
+    },
+    {
+      "completion": "2238",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-LACC-2021",
+      "prediction": "3087",
+      "question": "What was Total revenues net of interest expense for LACC at year-end 2021?"
+    },
+    {
+      "completion": "2917",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-LACC-2022",
+      "prediction": "2917",
+      "question": "What was Total revenues net of interest expense for LACC at year-end 2022?"
+    },
+    {
+      "completion": "-553",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-Other-Unallocated-2020",
+      "prediction": "36087",
+      "question": "What was Total revenues net of interest expense for Other Unallocated at year-end 2020?"
+    },
+    {
+      "completion": "-22",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-Other-Unallocated-2021",
+      "prediction": "3",
+      "question": "What was Total revenues net of interest expense for Other Unallocated at year-end 2021?"
+    },
+    {
+      "completion": "-157",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-Other-Unallocated-2022",
+      "prediction": "-157",
+      "question": "What was Total revenues net of interest expense for Other Unallocated at year-end 2022?"
+    },
+    {
+      "completion": "28263",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 0,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-United-States-2020",
+      "prediction": "36087",
+      "question": "What was Total revenues net of interest expense for United States at year-end 2020?"
+    },
+    {
+      "completion": "33103",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-United-States-2021",
+      "prediction": "33103",
+      "question": "What was Total revenues net of interest expense for United States at year-end 2021?"
+    },
+    {
+      "completion": "41396",
+      "doc_id": "AMERICANEXPRESS_2022_10K",
+      "hit": 1,
+      "item_id": "col-AMERICANEXPRESS_2022_10K-Total-revenues-net-of-interest-expense-United-States-2022",
+      "prediction": "41396",
+      "question": "What was Total revenues net of interest expense for United States at year-end 2022?"
+    },
+    {
+      "completion": "14.6%",
+      "doc_id": "0001628280-26-008131",
+      "hit": 1,
+      "item_id": "golden-cc-h-025",
+      "prediction": "14.6%",
+      "question": "What was JPMorgan's Standardized CET1 capital ratio at year-end 2025?"
+    },
+    {
+      "completion": "14.1%",
+      "doc_id": "0001628280-26-008131",
+      "hit": 1,
+      "item_id": "golden-cc-h-026",
+      "prediction": "14.1%",
+      "question": "What was JPMorgan's Advanced CET1 capital ratio at year-end 2025?"
+    },
+    {
+      "completion": "5.8%",
+      "doc_id": "0001628280-26-008131",
+      "hit": 1,
+      "item_id": "golden-cc-h-028",
+      "prediction": "5.8%",
+      "question": "What was JPMorgan's SLR at year-end 2025?"
+    },
+    {
+      "completion": "107.56",
+      "doc_id": "0001628280-26-008131",
+      "hit": 1,
+      "item_id": "golden-cc-h-029",
+      "prediction": "107.56",
+      "question": "What was JPMorgan's tangible book value per share at year-end 2025?"
+    },
+    {
+      "completion": "11.5%",
+      "doc_id": "0001628280-26-008131",
+      "hit": 0,
+      "item_id": "golden-cc-h-034",
+      "prediction": "14.2%",
+      "question": "What Standardized CET1 ratio requirement including buffers did JPMorgan disclose as of December 31, 2025?"
+    },
+    {
+      "completion": "2.5%",
+      "doc_id": "0001628280-26-008131",
+      "hit": 1,
+      "item_id": "golden-cc-h-036",
+      "prediction": "2.5%",
+      "question": "What SCB requirement did JPMorgan disclose with the 2025 capital metrics?"
+    },
+    {
+      "completion": "13.4%",
+      "doc_id": "0000831001-24-000033",
+      "hit": 1,
+      "item_id": "golden-cc-h-044",
+      "prediction": "13.4%",
+      "question": "What was Citigroup's Basel III Standardized CET1 capital ratio at December 31, 2023?"
+    },
+    {
+      "completion": "13.6%",
+      "doc_id": "0000831001-25-000067",
+      "hit": 1,
+      "item_id": "golden-cc-h-046",
+      "prediction": "13.6%",
+      "question": "What was Citigroup's CET1 Capital ratio at December 31, 2024?"
+    },
+    {
+      "completion": "12.1%",
+      "doc_id": "0000831001-25-000067",
+      "hit": 0,
+      "item_id": "golden-cc-h-047",
+      "prediction": "13.6%",
+      "question": "What required regulatory CET1 Capital ratio did Citigroup disclose as of December 31, 2024?"
+    },
+    {
+      "completion": "37%",
+      "doc_id": "0000831001-25-000067",
+      "hit": 0,
+      "item_id": "golden-cc-h-048",
+      "prediction": "10%",
+      "question": "By what percent did Citigroup say 2024 net income increased versus the prior year?"
+    },
+    {
+      "completion": "13.2%",
+      "doc_id": "0000831001-26-000011",
+      "hit": 0,
+      "item_id": "golden-cc-h-049",
+      "prediction": "101.62",
+      "question": "What was Citigroup's CET1 Capital ratio at December 31, 2025?"
+    },
+    {
+      "completion": "10.61%",
+      "doc_id": "0000072971-26-000133",
+      "hit": 1,
+      "item_id": "golden-cc-h-063",
+      "prediction": "10.61%",
+      "question": "What CET1 ratio did Wells Fargo report under the Standardized Approach at year-end 2025?"
+    },
+    {
+      "completion": "119%",
+      "doc_id": "0000072971-26-000133",
+      "hit": 1,
+      "item_id": "golden-cc-h-064",
+      "prediction": "119%",
+      "question": "What liquidity coverage ratio did Wells Fargo report for 2025?"
+    },
+    {
+      "completion": "21338",
+      "doc_id": "0000072971-26-000133",
+      "hit": 1,
+      "item_id": "golden-cc-h-065",
+      "prediction": "21338",
+      "question": "What Wells Fargo net income (in millions) appears in the FY2025 income table?"
+    },
+    {
+      "completion": "11.43%",
+      "doc_id": "0000072971-24-000064",
+      "hit": 1,
+      "item_id": "golden-cc-h-066",
+      "prediction": "11.43%",
+      "question": "What CET1 ratio did Wells Fargo report under the Standardized Approach at year-end 2023?"
+    },
+    {
+      "completion": "11.07%",
+      "doc_id": "0000072971-25-000066",
+      "hit": 1,
+      "item_id": "golden-cc-h-068",
+      "prediction": "11.07%",
+      "question": "What CET1 ratio did Wells Fargo report under the Standardized Approach at year-end 2024?"
+    },
+    {
+      "completion": "-313",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Accounts-receivable-2016",
+      "prediction": "4",
+      "question": "What was Accounts receivable at year-end 2016?"
+    },
+    {
+      "completion": "-245",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Accounts-receivable-2017",
+      "prediction": "4,911",
+      "question": "What was Accounts receivable at year-end 2017?"
+    },
+    {
+      "completion": "-305",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Accounts-receivable-2018",
+      "prediction": "5020",
+      "question": "What was Accounts receivable at year-end 2018?"
+    },
+    {
+      "completion": "3053",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Cash-and-cash-equivalents-2017",
+      "prediction": "3053",
+      "question": "What was Cash and cash equivalents at year-end 2017?"
+    },
+    {
+      "completion": "2853",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Cash-and-cash-equivalents-2018",
+      "prediction": "2853",
+      "question": "What was Cash and cash equivalents at year-end 2018?"
+    },
+    {
+      "completion": "-383",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Company-pension-and-postretirement-contributions-2016",
+      "prediction": "-383",
+      "question": "What was Company pension and postretirement contributions at year-end 2016?"
+    },
+    {
+      "completion": "-967",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Company-pension-and-postretirement-contributions-2017",
+      "prediction": "-967",
+      "question": "What was Company pension and postretirement contributions at year-end 2017?"
+    },
+    {
+      "completion": "-370",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Company-pension-and-postretirement-contributions-2018",
+      "prediction": "-370",
+      "question": "What was Company pension and postretirement contributions at year-end 2018?"
+    },
+    {
+      "completion": "250",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Company-pension-and-postretirement-expense-2016",
+      "prediction": "250",
+      "question": "What was Company pension and postretirement expense at year-end 2016?"
+    },
+    {
+      "completion": "334",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Company-pension-and-postretirement-expense-2017",
+      "prediction": "334",
+      "question": "What was Company pension and postretirement expense at year-end 2017?"
+    },
+    {
+      "completion": "410",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Company-pension-and-postretirement-expense-2018",
+      "prediction": "410",
+      "question": "What was Company pension and postretirement expense at year-end 2018?"
+    },
+    {
+      "completion": "31",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Consolidated-Balance-Shee-t-2016",
+      "prediction": "14,277",
+      "question": "What was Consolidated Balance Shee t at year-end 2016?"
+    },
+    {
+      "completion": "31",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Consolidated-Balance-Shee-t-2017",
+      "prediction": "14,277",
+      "question": "What was Consolidated Balance Shee t at year-end 2017?"
+    },
+    {
+      "completion": "31",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Consolidated-Balance-Shee-t-2018",
+      "prediction": "13,709",
+      "question": "What was Consolidated Balance Shee t at year-end 2018?"
+    },
+    {
+      "completion": "1474",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Depreciation-and-amortization-2016",
+      "prediction": "1474",
+      "question": "What was Depreciation and amortization at year-end 2016?"
+    },
+    {
+      "completion": "1544",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Depreciation-and-amortization-2017",
+      "prediction": "1544",
+      "question": "What was Depreciation and amortization at year-end 2017?"
+    },
+    {
+      "completion": "1488",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Depreciation-and-amortization-2018",
+      "prediction": "1488",
+      "question": "What was Depreciation and amortization at year-end 2018?"
+    },
+    {
+      "completion": "1915",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Finished-goods-2017",
+      "prediction": "1915",
+      "question": "What was Finished goods at year-end 2017?"
+    },
+    {
+      "completion": "2120",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Finished-goods-2018",
+      "prediction": "2120",
+      "question": "What was Finished goods at year-end 2018?"
+    },
+    {
+      "completion": "-111",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Gain-on-sale-of-businesses-2016",
+      "prediction": "-111",
+      "question": "What was Gain on sale of businesses at year-end 2016?"
+    },
+    {
+      "completion": "-586",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Gain-on-sale-of-businesses-2017",
+      "prediction": "-586",
+      "question": "What was Gain on sale of businesses at year-end 2017?"
+    },
+    {
+      "completion": "-545",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Gain-on-sale-of-businesses-2018",
+      "prediction": "-545",
+      "question": "What was Gain on sale of businesses at year-end 2018?"
+    },
+    {
+      "completion": "10513",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Goodwill-2017",
+      "prediction": "10,513",
+      "question": "What was Goodwill at year-end 2017?"
+    },
+    {
+      "completion": "10051",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Goodwill-2018",
+      "prediction": "10051",
+      "question": "What was Goodwill at year-end 2018?"
+    },
+    {
+      "completion": "57",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Inventories-2016",
+      "prediction": "4034",
+      "question": "What was Inventories at year-end 2016?"
+    },
+    {
+      "completion": "-387",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Inventories-2017",
+      "prediction": "4,034",
+      "question": "What was Inventories at year-end 2017?"
+    },
+    {
+      "completion": "-509",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Inventories-2018",
+      "prediction": "4366",
+      "question": "What was Inventories at year-end 2018?"
+    },
+    {
+      "completion": "5058",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Net-income-including-noncontrolling-interest-2016",
+      "prediction": "5058",
+      "question": "What was Net income including noncontrolling interest at year-end 2016?"
+    },
+    {
+      "completion": "4869",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Net-income-including-noncontrolling-interest-2017",
+      "prediction": "4869",
+      "question": "What was Net income including noncontrolling interest at year-end 2017?"
+    },
+    {
+      "completion": "5363",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Net-income-including-noncontrolling-interest-2018",
+      "prediction": "5363",
+      "question": "What was Net income including noncontrolling interest at year-end 2018?"
+    },
+    {
+      "completion": "266",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Other-current-assets-2017",
+      "prediction": "266",
+      "question": "What was Other current assets at year-end 2017?"
+    },
+    {
+      "completion": "349",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Other-current-assets-2018",
+      "prediction": "349",
+      "question": "What was Other current assets at year-end 2018?"
+    },
+    {
+      "completion": "937",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Prepaids-2017",
+      "prediction": "741",
+      "question": "What was Prepaids at year-end 2017?"
+    },
+    {
+      "completion": "741",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Prepaids-2018",
+      "prediction": "741",
+      "question": "What was Prepaids at year-end 2018?"
+    },
+    {
+      "completion": "8866",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Property-plant-and-equipment-net-2017",
+      "prediction": "8866",
+      "question": "What was Property, plant and equipment net at year-end 2017?"
+    },
+    {
+      "completion": "8738",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Property-plant-and-equipment-net-2018",
+      "prediction": "8738",
+      "question": "What was Property, plant and equipment net at year-end 2018?"
+    },
+    {
+      "completion": "901",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Raw-materials-and-supplies-2017",
+      "prediction": "901",
+      "question": "What was Raw materials and supplies at year-end 2017?"
+    },
+    {
+      "completion": "954",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Raw-materials-and-supplies-2018",
+      "prediction": "954",
+      "question": "What was Raw materials and supplies at year-end 2018?"
+    },
+    {
+      "completion": "298",
+      "doc_id": "3M_2018_10K",
+      "hit": 0,
+      "item_id": "row-3M_2018_10K-Stock-based-compensation-expense-2016",
+      "prediction": "250",
+      "question": "What was Stock-based compensation expense at year-end 2016?"
+    },
+    {
+      "completion": "324",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Stock-based-compensation-expense-2017",
+      "prediction": "324",
+      "question": "What was Stock-based compensation expense at year-end 2017?"
+    },
+    {
+      "completion": "302",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Stock-based-compensation-expense-2018",
+      "prediction": "302",
+      "question": "What was Stock-based compensation expense at year-end 2018?"
+    },
+    {
+      "completion": "14277",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Total-current-assets-2017",
+      "prediction": "14277",
+      "question": "What was Total current assets at year-end 2017?"
+    },
+    {
+      "completion": "13709",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Total-current-assets-2018",
+      "prediction": "13,709",
+      "question": "What was Total current assets at year-end 2018?"
+    },
+    {
+      "completion": "4034",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Total-inventories-2017",
+      "prediction": "4034",
+      "question": "What was Total inventories at year-end 2017?"
+    },
+    {
+      "completion": "4366",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Total-inventories-2018",
+      "prediction": "4366",
+      "question": "What was Total inventories at year-end 2018?"
+    },
+    {
+      "completion": "1218",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Work-in-process-2017",
+      "prediction": "1218",
+      "question": "What was Work in process at year-end 2017?"
+    },
+    {
+      "completion": "1292",
+      "doc_id": "3M_2018_10K",
+      "hit": 1,
+      "item_id": "row-3M_2018_10K-Work-in-process-2018",
+      "prediction": "1292",
+      "question": "What was Work in process at year-end 2018?"
+    },
+    {
+      "completion": "12202",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Accounts-payable-2017",
+      "prediction": "12202",
+      "question": "What was Accounts payable at year-end 2017?"
+    },
+    {
+      "completion": "12916",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Accounts-payable-2018",
+      "prediction": "12916",
+      "question": "What was Accounts payable at year-end 2018?"
+    },
+    {
+      "completion": "2894",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Accounts-receivable-net-2017",
+      "prediction": "2894",
+      "question": "What was Accounts receivable, net at year-end 2017?"
+    },
+    {
+      "completion": "3879",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Accounts-receivable-net-2018",
+      "prediction": "3879",
+      "question": "What was Accounts receivable, net at year-end 2018?"
+    },
+    {
+      "completion": "2573",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Acquired-intangible-assets-net-2017",
+      "prediction": "2573",
+      "question": "What was Acquired intangible assets, net at year-end 2017?"
+    },
+    {
+      "completion": "3429",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Acquired-intangible-assets-net-2018",
+      "prediction": "3429",
+      "question": "What was Acquired intangible assets, net at year-end 2018?"
+    },
+    {
+      "completion": "8813",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Cash-and-cash-equivalents-2017",
+      "prediction": "8813",
+      "question": "What was Cash and cash equivalents at year-end 2017?"
+    },
+    {
+      "completion": "7637",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Cash-and-cash-equivalents-2018",
+      "prediction": "7637",
+      "question": "What was Cash and cash equivalents at year-end 2018?"
+    },
+    {
+      "completion": "309",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Current-portion-of-customer-financing-net-2017",
+      "prediction": "309",
+      "question": "What was Current portion of customer financing, net at year-end 2017?"
+    },
+    {
+      "completion": "460",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Current-portion-of-customer-financing-net-2018",
+      "prediction": "460",
+      "question": "What was Current portion of customer financing, net at year-end 2018?"
+    },
+    {
+      "completion": "2756",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Customer-financing-net-2017",
+      "prediction": "2756",
+      "question": "What was Customer financing, net at year-end 2017?"
+    },
+    {
+      "completion": "2418",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Customer-financing-net-2018",
+      "prediction": "2418",
+      "question": "What was Customer financing, net at year-end 2018?"
+    },
+    {
+      "completion": "321",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Deferred-income-taxes-2017",
+      "prediction": "321",
+      "question": "What was Deferred income taxes at year-end 2017?"
+    },
+    {
+      "completion": "284",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Deferred-income-taxes-2018",
+      "prediction": "284",
+      "question": "What was Deferred income taxes at year-end 2018?"
+    },
+    {
+      "completion": "5559",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Goodwill-2017",
+      "prediction": "5559",
+      "question": "What was Goodwill at year-end 2017?"
+    },
+    {
+      "completion": "7840",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Goodwill-2018",
+      "prediction": "7840",
+      "question": "What was Goodwill at year-end 2018?"
+    },
+    {
+      "completion": "61388",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Inventories-2017",
+      "prediction": "61388",
+      "question": "What was Inventories at year-end 2017?"
+    },
+    {
+      "completion": "62567",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Inventories-2018",
+      "prediction": "62567",
+      "question": "What was Inventories at year-end 2018?"
+    },
+    {
+      "completion": "2417",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 0,
+      "item_id": "row-BOEING_2018_10K-Other-current-assets-2017",
+      "prediction": "8194",
+      "question": "What was Other current assets at year-end 2017?"
+    },
+    {
+      "completion": "2335",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 0,
+      "item_id": "row-BOEING_2018_10K-Other-current-assets-2018",
+      "prediction": "10025",
+      "question": "What was Other current assets at year-end 2018?"
+    },
+    {
+      "completion": "12672",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Property-plant-and-equipment-net-2017",
+      "prediction": "12672",
+      "question": "What was Property, plant and equipment, net at year-end 2017?"
+    },
+    {
+      "completion": "12645",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Property-plant-and-equipment-net-2018",
+      "prediction": "12645",
+      "question": "What was Property, plant and equipment, net at year-end 2018?"
+    },
+    {
+      "completion": "1179",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Short-term-and-other-investments-2017",
+      "prediction": "1179",
+      "question": "What was Short-term and other investments at year-end 2017?"
+    },
+    {
+      "completion": "927",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Short-term-and-other-investments-2018",
+      "prediction": "927",
+      "question": "What was Short-term and other investments at year-end 2018?"
+    },
+    {
+      "completion": "112362",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Total-assets-2017",
+      "prediction": "112362",
+      "question": "What was Total assets at year-end 2017?"
+    },
+    {
+      "completion": "117359",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Total-assets-2018",
+      "prediction": "117359",
+      "question": "What was Total assets at year-end 2018?"
+    },
+    {
+      "completion": "85194",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Total-current-assets-2017",
+      "prediction": "85194",
+      "question": "What was Total current assets at year-end 2017?"
+    },
+    {
+      "completion": "87830",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Total-current-assets-2018",
+      "prediction": "87830",
+      "question": "What was Total current assets at year-end 2018?"
+    },
+    {
+      "completion": "8194",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Unbilled-receivables-net-2017",
+      "prediction": "8194",
+      "question": "What was Unbilled receivables, net at year-end 2017?"
+    },
+    {
+      "completion": "10025",
+      "doc_id": "BOEING_2018_10K",
+      "hit": 1,
+      "item_id": "row-BOEING_2018_10K-Unbilled-receivables-net-2018",
+      "prediction": "10,025",
+      "question": "What was Unbilled receivables, net at year-end 2018?"
+    }
+  ],
+  "metric_name": "exact_match",
+  "n": 123,
+  "seed": 0,
+  "task_id": "tenk-extract-v1",
+  "task_score": 0.7317073170731707
+}

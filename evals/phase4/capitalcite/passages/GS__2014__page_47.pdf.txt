@@ -1,0 +1,6 @@
+# GS/2014/page_47.pdf
+## page
+management 2019s discussion and analysis investing & lending investing & lending includes our investing activities and the origination of loans to provide financing to clients .
+these investments and loans are typically longer-term in nature .
+we make investments , some of which are consolidated , directly and indirectly through funds that we manage , in debt securities and loans , public and private equity securities , and real estate entities .
+[["$ in millions", "year ended december 2014", "year ended december 2013", "year ended december 2012"], ["equity securities", "$ 3813", "$ 3930", "$ 2800"], ["debt securities and loans", "2165", "1947", "1850"], ["other1", "847", "1141", "1241"], ["total net revenues", "6825", "7018", "5891"], ["operating expenses", "2819", "2686", "2668"]]

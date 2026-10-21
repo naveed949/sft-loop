@@ -1,0 +1,6 @@
+# GS/2014/page_134.pdf
+## page
+notes to consolidated financial statements derivatives with credit-related contingent features certain of the firm 2019s derivatives have been transacted under bilateral agreements with counterparties who may require the firm to post collateral or terminate the transactions based on changes in the firm 2019s credit ratings .
+the firm assesses the impact of these bilateral agreements by determining the collateral or termination payments that would occur assuming a downgrade by all rating agencies .
+a downgrade by any one rating agency , depending on the agency 2019s relative ratings of the firm at the time of the downgrade , may have an impact which is comparable to the impact of a downgrade by all rating agencies .
+[["$ in millions", "as of december 2014", "as of december 2013"], ["net derivative liabilities under bilateral agreements", "$ 35764", "$ 22176"], ["collateral posted", "30824", "18178"], ["additional collateral or termination payments for a one-notch downgrade", "1072", "911"], ["additional collateral or termination payments for a two-notch downgrade", "2815", "2989"]]

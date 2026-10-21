@@ -1,0 +1,6 @@
+# GS/2016/page_79.pdf
+## page
+the goldman sachs group , inc .
+and subsidiaries management 2019s discussion and analysis 2030 total aus net inflows/ ( outflows ) for 2014 includes $ 19 billion of fixed income asset inflows in connection with our acquisition of deutsche asset & wealth management 2019s stable value business and $ 6 billion of liquidity products inflows in connection with our acquisition of rbs asset management 2019s money market funds .
+the table below presents our average monthly assets under supervision by asset class .
+[["$ in billions", "average for theyear ended december 2016", "average for theyear ended december 2015", "average for theyear ended december 2014"], ["alternative investments", "$ 149", "$ 145", "$ 145"], ["equity", "256", "247", "225"], ["fixed income", "578", "530", "499"], ["total long-term assets under supervision", "983", "922", "869"], ["liquidity products", "326", "272", "248"]]

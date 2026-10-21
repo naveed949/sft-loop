@@ -1,0 +1,4 @@
+{
+  "reason": "Tesla T4 compute capability 7.5 has no bf16; fp16 only",
+  "status": "unsupported"
+}

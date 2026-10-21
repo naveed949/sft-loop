@@ -1,0 +1,6 @@
+# C/2010/page_272.pdf
+## page
+the significant changes from december 31 , 2008 to december 31 , 2009 in level 3 assets and liabilities are due to : a net decrease in trading securities of $ 10.8 billion that was driven by : 2022 net transfers of $ 6.5 billion , due mainly to the transfer of debt 2013 securities from level 3 to level 2 due to increased liquidity and pricing transparency ; and net settlements of $ 5.8 billion , due primarily to the liquidations of 2013 subprime securities of $ 4.1 billion .
+the change in net trading derivatives driven by : 2022 a net loss of $ 4.9 billion relating to complex derivative contracts , 2013 such as those linked to credit , equity and commodity exposures .
+these losses include both realized and unrealized losses during 2009 and are partially offset by gains recognized in instruments that have been classified in levels 1 and 2 ; and net increase in derivative assets of $ 4.3 billion , which includes cash 2013 settlements of derivative contracts in an unrealized loss position , notably those linked to subprime exposures .
+[["in billions of dollars", "aggregate cost", "fair value", "level 2", "level 3"], ["december 31 2010", "$ 3.1", "$ 2.5", "$ 0.7", "$ 1.8"], ["december 

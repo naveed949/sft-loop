@@ -1,0 +1,222 @@
+{
+  "adapter_written": true,
+  "after": {
+    "hits": 90,
+    "metric_name": "exact_match",
+    "n": 123,
+    "task_score": 0.7317073170731707
+  },
+  "backend": "manual-peft",
+  "before": {
+    "hits": 81,
+    "metric_name": "exact_match",
+    "n": 123,
+    "task_score": 0.6585365853658537
+  },
+  "bf16": "unsupported",
+  "cluster_ci": {
+    "grouping": "filing",
+    "high": 0.11214953271028037,
+    "low": 0.0,
+    "mean_delta": 0.07317073170731707,
+    "n": 123,
+    "n_clusters": 10,
+    "n_le_zero": 403,
+    "rounds": 10000,
+    "seed": 0,
+    "verdict": "no uplift"
+  },
+  "clustering_effect": {
+    "after": {
+      "icc": 0.17951443549408733,
+      "kish_n_eff": 40.613989466886466
+    },
+    "before": {
+      "icc": 0.20247794544213105,
+      "kish_n_eff": 37.40875020997287
+    },
+    "delta": {
+      "icc": -0.006157097732266388,
+      "kish_n_eff": 132.1976806490039
+    },
+    "grouping": "filing",
+    "mean_cluster_size": 12.3,
+    "n": 123,
+    "n_clusters": 10
+  },
+  "ddp": "unsupported",
+  "device": "cuda",
+  "document_kind": "phase4-tenk-lora",
+  "format_breakdown": {
+    "format_ci": {
+      "grouping": "item",
+      "high": 0.08130081300813008,
+      "low": 0.008130081300813009,
+      "mean_delta": 0.04065040650406504,
+      "n": 123,
+      "rounds": 10000,
+      "seed": 0,
+      "verdict": "uplift"
+    },
+    "format_gains": 5,
+    "losses": 6,
+    "net_substantive": 4,
+    "substantive_ci": {
+      "grouping": "item",
+      "high": 0.0975609756097561,
+      "low": -0.032520325203252036,
+      "mean_delta": 0.032520325203252036,
+      "n": 123,
+      "rounds": 10000,
+      "seed": 0,
+      "verdict": "no uplift"
+    },
+    "substantive_gains": 10
+  },
+  "hardware": {
+    "cuda": "12.8",
+    "gpu_count": 2,
+    "major": 7,
+    "minor": 5,
+    "mixed_precision": "fp32",
+    "name": "Tesla T4",
+    "torch": "2.11.0+cu128",
+    "total_memory": 15636037632,
+    "weight_dtype": "float32"
+  },
+  "jpm_sensitivity": {
+    "after_hits": 85,
+    "before_hits": 77,
+    "cluster_ci": {
+      "grouping": "filing",
+      "high": 0.1056338028169014,
+      "low": -0.05,
+      "mean_delta": 0.06837606837606838,
+      "n": 117,
+      "n_clusters": 9,
+      "n_le_zero": 738,
+      "rounds": 10000,
+      "seed": 0,
+      "verdict": "no uplift"
+    },
+    "excluded_family": "JPM",
+    "excluded_n": 6,
+    "item_ci": {
+      "grouping": "item",
+      "high": 0.1452991452991453,
+      "low": -0.008547008547008548,
+      "mean_delta": 0.06837606837606838,
+      "n": 117,
+      "rounds": 10000,
+      "seed": 0,
+      "verdict": "no uplift"
+    },
+    "n": 117
+  },
+  "leave_one_filing_out": [
+    {
+      "left_out": "0000072971-24-000064",
+      "mean_delta": 0.07377049180327869,
+      "n": 122
+    },
+    {
+      "left_out": "0000072971-25-000066",
+      "mean_delta": 0.07377049180327869,
+      "n": 122
+    },
+    {
+      "left_out": "0000072971-26-000133",
+      "mean_delta": 0.075,
+      "n": 120
+    },
+    {
+      "left_out": "0000831001-24-000033",
+      "mean_delta": 0.07377049180327869,
+      "n": 122
+    },
+    {
+      "left_out": "0000831001-25-000067",
+      "mean_delta": 0.075,
+      "n": 120
+    },
+    {
+      "left_out": "0000831001-26-000011",
+      "mean_delta": 0.08196721311475409,
+      "n": 122
+    },
+    {
+      "left_out": "0001628280-26-008131",
+      "mean_delta": 0.06837606837606838,
+      "n": 117
+    },
+    {
+      "left_out": "3M_2018_10K",
+      "mean_delta": 0.06578947368421052,
+      "n": 76
+    },
+    {
+      "left_out": "AMERICANEXPRESS_2022_10K",
+      "mean_delta": 0.053763440860215055,
+      "n": 93
+    },
+    {
+      "left_out": "BOEING_2018_10K",
+      "mean_delta": 0.08602150537634409,
+      "n": 93
+    }
+  ],
+  "metric_name": "exact_match",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "n": 123,
+  "paired_ci": {
+    "grouping": "item",
+    "high": 0.14634146341463414,
+    "low": 0.0,
+    "mean_delta": 0.07317073170731707,
+    "n": 123,
+    "rounds": 10000,
+    "seed": 0,
+    "verdict": "no uplift"
+  },
+  "schema_version": "phase4-1",
+  "seed": 0,
+  "status": "scored",
+  "stored_hit_mismatches": 2,
+  "task_id": "tenk-extract-v1",
+  "train_proof": {
+    "adapter_bytes": 8745704,
+    "adapter_sha256": {
+      "adapter_model.safetensors": "e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109"
+    },
+    "backend": "manual-peft",
+    "baseline_nll": {
+      "finite": true,
+      "n_rows": 1,
+      "nll": 0.6888449788093567,
+      "scope": "first_eval_row"
+    },
+    "ddp": {
+      "reason": "kernel is a single-process main() and never initializes a torch.distributed process group",
+      "status": "unsupported"
+    },
+    "eval_at_step": 200,
+    "first_overflow_module": "base_model.model.model.layers.0.self_attn.o_proj.base_layer",
+    "fp16": "unsupported",
+    "fp16_reason": "fp16_amp_overflow",
+    "global_step": 200,
+    "grad_scaler": false,
+    "kaggle_kernel": "inaveed101/phase4-tenk-lora",
+    "kaggle_version": 3,
+    "kernel_sha": "ee7f5c8511d42916c02147b68731e6c0a36cd317",
+    "mixed_precision": "fp32",
+    "nll_scope": "first_eval_row",
+    "overfitting_risk": "train loss interpolated by step 7; eval ran only at step 200",
+    "tarball_sha256": "421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507",
+    "train_loss_interpolated_by_step": 7,
+    "wall_s": 5087,
+    "weight_dtype": "float32"
+  },
+  "uplift": "no uplift",
+  "verdict_detail": "inconclusive / no uplift at the filing level, with a positive item-level estimate"
+}

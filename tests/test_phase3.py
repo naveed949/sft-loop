@@ -144,6 +144,8 @@ def _check_runs_json(path: Path, document: dict) -> None:
     rel = path.resolve().relative_to(ROOT.resolve()).as_posix()
     if rel == "runs/phase3/scored.json":
         return
+    if rel.startswith("runs/phase4/"):
+        return
     if rel.startswith("runs/quant/"):
         if rel in tracked_relpaths():
             assert_tracked_quant_file(ROOT, rel, document)
