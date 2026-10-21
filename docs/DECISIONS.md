@@ -24,7 +24,7 @@ On this CPU VM the pinned 1.5B model loaded. fp32 and torch dynamic int8 finishe
 
 ## Quant GPU pairing and Kaggle kernels (2026-10-21)
 
-NF4 can be a measured arm when a Kaggle T4 kernel output is ingested. The same-hardware baseline is fp16 on that T4, not CPU fp32. `outcomes` owns two pairings: `int8-minus-fp32` on the CPU host, and `nf4-minus-fp16` on one `hardware.accelerator`. A GPU number is never subtracted from a CPU number. A cross-hardware view is `kind: not_paired` with reason `cross_hardware`.
+NF4 can be a measured arm when a Kaggle T4 kernel output is ingested. The same-hardware baseline is fp32 on that T4, not CPU fp32 and not T4 fp16. `outcomes` owns `int8-minus-fp32` on the CPU host and `nf4-minus-t4-fp32` / `nf4-fp16-minus-t4-fp32` on one `hardware.accelerator`. A GPU number is never subtracted from a CPU number. A cross-hardware view is `kind: not_paired` with reason `cross_hardware`.
 
 GPU measured arms require `hardware.accelerator`, `peak_gpu_bytes`, a kernel URL/version placeholder, and fp16 compute. NF4 also records BitsAndBytesConfig `load_in_4bit`, `bnb_4bit_quant_type=nf4`, double quant on, and fp16 compute.
 
@@ -34,10 +34,12 @@ Kernels live at `kaggle/quant_nf4` (NvidiaTeslaT4) and `kaggle/quant_onnx_int8` 
 
 ## Quant T4 ingest and ONNX cp313 pin (2026-10-21)
 
-Kaggle kernel `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 1 ran both T4 arms. Wall time was about 27 minutes. Ingest wrote measured `fp16` and `nf4` rows. The pairing is `nf4-minus-fp16` on `NvidiaTeslaT4`.
+Kaggle kernel `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 1 is withdrawn. Both T4 arms scored 0/129, every item emitted 8 tokens, and NLL was non-finite. CPU fp32 on the same model, items, and grader scored 47/129. That is a harness or numerics bug, not a pairing. The v1 numbers stay under `runs/quant/kernel/quant_nf4/` as evidence. They are not a baseline.
 
-Trust the memory and decode-throughput numbers. Do not treat the exact-match of 0.0 as a quality result. Both GPU arms scored 0/129 and emitted 8 tokens on the scored pass (CPU fp32 mean generated tokens is 3.25). Kernel `nll` / `sequence_nll` were non-finite; ingest dropped those keys and stored `nll_delta` as null. The paired score delta is 0.0 with a degenerate CI because every item pair is 0 − 0, not because the task still works.
+The replacement kernel runs fp32-on-T4 first (`t4-fp32`, about 6.2 GB weights, fits a 15 GB T4). It fail-closes if that baseline scores 0 or has non-finite NLL. Ingest refuses the same state unless `finding` is `collapse`. fp16 stays its own arm. If it overflows, it is a measured `finding: overflow`, not a pairing baseline. NF4 compute dtype is float32; nf4-fp16 compute runs only if fp16 is healthy. Pairing is NF4 versus `t4-fp32`.
 
-Peak GPU bytes are 3122830336 (fp16) and 1189611520 (NF4). That matches 1.54B × 2 bytes plus a small activation tail versus 4-bit storage plus embeddings / quant state. NF4 decode is 17.860264 tok/s against fp16 24.543959 tok/s on the fixed-length pass. NF4 is slower. That is the expected T4 outcome: dequant to fp16 for GEMM, so the win is memory, not compute.
+The kernel pins `transformers==5.20.2` and `tokenizers==0.23.3` to match the CPU arm. It writes `prompt_hashes.json` and a two-item numerics probe (`fp32_eager`, `fp16_eager`, `fp16_sdpa`) with `torch.isfinite` on logits and per-layer hidden max abs.
 
-The ONNX kernel failed during pip. `onnx==1.17.0` has no cp313 wheel; the image is Python 3.13.15. `onnxruntime==1.20.1` and `onnxscript==0.2.0` already had cp313 / py3 wheels. The pin is now `onnx==1.18.0`, the oldest release with cp313 manylinux wheels. onnxscript requires `onnx>=1.16`. The ONNX arm stays `unsupported` / `probed_failure` until that kernel is rerun.
+Expected T4 wall is about 2 hours. Budget 2.5 hours. Stay under 3 GPU hours.
+
+The ONNX kernel failed during pip. `onnx==1.17.0` has no cp313 wheel; the image is Python 3.13.15. The pin is now `onnx==1.18.0`. That kernel is being rerun separately. The ONNX arm stays `unsupported` / `probed_failure` until those outputs land.

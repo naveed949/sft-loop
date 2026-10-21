@@ -1,0 +1,8 @@
+{
+  "probe": {
+    "cuda_available": null,
+    "exception_type": "KernelOutputMissing",
+    "message": "replacement T4 kernel has not been ingested"
+  },
+  "reason": "kernel_output_missing"
+}

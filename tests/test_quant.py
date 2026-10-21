@@ -97,19 +97,21 @@ def _gpu_hardware(accelerator: str = "NvidiaTeslaT4") -> dict:
 def _measured(precision: Precision, correct_prefix: int, latency: float = 10.0) -> dict:
     protocol = load_protocol()
     kwargs = {}
-    if precision in {Precision.NF4, Precision.FP16}:
+    if precision in {Precision.NF4, Precision.NF4_FP16, Precision.FP16, Precision.T4_FP32}:
+        from sft_loop.quant import GPU_COMPUTE_DTYPE, NF4_QUANT_CONFIGS
+
         kwargs = {
             "hardware": _gpu_hardware(),
             "peak_gpu_bytes": 2 * 1024 ** 3,
             "kernel": kernel_placeholder(KERNEL_DIR_NF4),
-            "compute_dtype": "float16",
+            "compute_dtype": GPU_COMPUTE_DTYPE[precision],
         }
-        if precision is Precision.NF4:
-            kwargs["quant_config"] = dict(NF4_QUANT_CONFIG)
+        if precision in NF4_QUANT_CONFIGS:
+            kwargs["quant_config"] = dict(NF4_QUANT_CONFIGS[precision])
             kwargs["libraries"] = {
                 "kind": "bitsandbytes",
                 "torch": "2.11.0+cu128",
-                "transformers": "4.56.1",
+                "transformers": "5.20.2",
                 "bitsandbytes": "0.50.2",
             }
     return measured_arm(
@@ -126,7 +128,7 @@ def _measured(precision: Precision, correct_prefix: int, latency: float = 10.0) 
 
 def _unsupported(precision: Precision, reason: UnsupportedReason) -> dict:
     kernel = None
-    if precision in {Precision.NF4, Precision.FP16, Precision.ONNX_INT8}:
+    if precision in {Precision.NF4, Precision.NF4_FP16, Precision.FP16, Precision.T4_FP32, Precision.ONNX_INT8}:
         kernel = kernel_placeholder(
             KERNEL_DIR_NF4 if precision is not Precision.ONNX_INT8 else "kaggle/quant_onnx_int8"
         )
@@ -148,8 +150,10 @@ def _arms(**overrides: dict) -> dict:
         "fp32": _measured(Precision.FP32, 64),
         "int8": _measured(Precision.INT8, 60, latency=8.0),
         "onnx-int8": _unsupported(Precision.ONNX_INT8, UnsupportedReason.OOM),
-        "nf4": _unsupported(Precision.NF4, UnsupportedReason.MISSING_CUDA),
+        "t4-fp32": _unsupported(Precision.T4_FP32, UnsupportedReason.KERNEL_OUTPUT_MISSING),
         "fp16": _unsupported(Precision.FP16, UnsupportedReason.KERNEL_OUTPUT_MISSING),
+        "nf4": _unsupported(Precision.NF4, UnsupportedReason.MISSING_CUDA),
+        "nf4-fp16": _unsupported(Precision.NF4_FP16, UnsupportedReason.KERNEL_OUTPUT_MISSING),
     }
     base.update(overrides)
     return base
@@ -193,7 +197,7 @@ def test_paired_difference_is_owned_by_the_comparison():
     assert cpu["baseline"] == "fp32"
     assert cpu["score_delta"] == pytest.approx((60 - 64) / n)
     assert cpu["n"] == n
-    assert comparison["outcomes"]["nf4-minus-fp16"]["kind"] == "unavailable"
+    assert comparison["outcomes"]["nf4-minus-t4-fp32"]["kind"] == "unavailable"
     assert "paired-item-mean" not in cpu or cpu["method"] == "paired-item-mean"
     assert "tokens_per_s_ratio" not in cpu
     table = render_table(comparison)
@@ -222,22 +226,22 @@ def test_nf4_measured_requires_accelerator():
         )
 
 
-def test_nf4_pairs_with_fp16_not_cpu_fp32():
+def test_nf4_pairs_with_t4_fp32_not_cpu_fp32():
     protocol = load_protocol()
     n = len(protocol["item_ids"])
     comparison = assemble_comparison(
         protocol,
         _arms(
             nf4=_measured(Precision.NF4, 50),
-            fp16=_measured(Precision.FP16, 60),
+            **{"t4-fp32": _measured(Precision.T4_FP32, 60)},
         ),
         _hardware(),
     )
-    gpu = comparison["outcomes"]["nf4-minus-fp16"]
+    gpu = comparison["outcomes"]["nf4-minus-t4-fp32"]
     cpu = comparison["outcomes"]["int8-minus-fp32"]
     assert gpu["kind"] == "paired"
     assert gpu["minus"] == "nf4"
-    assert gpu["baseline"] == "fp16"
+    assert gpu["baseline"] == "t4-fp32"
     assert gpu["score_delta"] == pytest.approx((50 - 60) / n)
     assert cpu["baseline"] == "fp32"
     assert gpu["score_delta"] != cpu["score_delta"]
@@ -254,13 +258,13 @@ def test_nf4_pairs_with_fp16_not_cpu_fp32():
 def test_accelerator_mismatch_is_not_paired():
     protocol = load_protocol()
     nf4 = _measured(Precision.NF4, 50)
-    fp16 = _measured(Precision.FP16, 60)
-    fp16["hardware"] = _gpu_hardware("NvidiaL4")
-    comparison = assemble_comparison(protocol, _arms(nf4=nf4, fp16=fp16), _hardware())
-    assert comparison["outcomes"]["nf4-minus-fp16"] == {
+    t4 = _measured(Precision.T4_FP32, 60)
+    t4["hardware"] = _gpu_hardware("NvidiaL4")
+    comparison = assemble_comparison(protocol, _arms(nf4=nf4, **{"t4-fp32": t4}), _hardware())
+    assert comparison["outcomes"]["nf4-minus-t4-fp32"] == {
         "kind": "not_paired",
         "minus": "nf4",
-        "baseline": "fp16",
+        "baseline": "t4-fp32",
         "reason": "accelerator_mismatch",
     }
 
@@ -390,10 +394,89 @@ def test_ingest_drops_non_finite_nll(tmp_path: Path):
         encoding="utf-8",
     )
     body = ingest_kernel_arm(tmp_path, Precision.FP16)
+    assert body["status"] == "unsupported"
+    assert body["reason"] == "probed_failure"
+    assert "task_score" not in body
+    assert REFUSAL_SENTENCE in body["detail"]
+
+
+def _write_gpu_kernel(tmp_path: Path, precision: Precision, items: list, extra: dict | None = None):
+    hardware = {
+        "accelerator": "NvidiaTeslaT4",
+        "gpu_name": "Tesla T4",
+        "gpu_count": 1,
+        "gpu_memory_bytes": 15 * 1024 ** 3,
+        "compute_capability": "7.5",
+        "driver": "580",
+        "cuda": True,
+        "mps": False,
+        "logical_cpus": 4,
+        "ram_bytes": 32 * 1024 ** 3,
+        "cpu_model": "x86_64",
+    }
+    tmp_path.joinpath("env.json").write_text(json.dumps({"hardware": hardware}), encoding="utf-8")
+    tmp_path.joinpath("log.txt").write_text("ok\n", encoding="utf-8")
+    tmp_path.joinpath("progress.json").write_text(
+        json.dumps({"status": "measured", "arms": {precision.value: {"status": "measured"}}}),
+        encoding="utf-8",
+    )
+    arm = tmp_path / precision.value
+    arm.mkdir(exist_ok=True)
+    arm.joinpath("items.json").write_text(json.dumps(items), encoding="utf-8")
+    from sft_loop.quant import GPU_COMPUTE_DTYPE, NF4_QUANT_CONFIGS
+
+    metrics = {
+        "on_disk_bytes": 1000,
+        "peak_rss_bytes": 2000,
+        "peak_gpu_bytes": 3000,
+        "compute_dtype": GPU_COMPUTE_DTYPE[precision],
+        "libraries": {"kind": "torch", "torch": "2.11.0", "transformers": "5.20.2"},
+        "limiter": {
+            "kind": "gpu",
+            "wall_s": 1.0,
+            "cpu_time_s": 1.0,
+            "peak_rss_bytes": 2000,
+            "available_ram_bytes_at_start": 10000,
+        },
+    }
+    if precision in NF4_QUANT_CONFIGS:
+        metrics["quant_config"] = dict(NF4_QUANT_CONFIGS[precision])
+        metrics["libraries"] = {
+            "kind": "bitsandbytes",
+            "torch": "2.11.0",
+            "transformers": "5.20.2",
+            "bitsandbytes": "0.50.2",
+        }
+    if extra:
+        metrics.update(extra)
+    arm.joinpath("metrics.json").write_text(json.dumps(metrics), encoding="utf-8")
+
+
+def test_ingest_refuses_zero_score_baseline_unless_collapse(tmp_path: Path):
+    items = _items(0)
+    _write_gpu_kernel(tmp_path, Precision.T4_FP32, items)
+    refused = ingest_kernel_arm(tmp_path, Precision.T4_FP32)
+    assert refused["status"] == "unsupported"
+    assert refused["reason"] == "probed_failure"
+    assert "task_score" not in refused
+    _write_gpu_kernel(tmp_path, Precision.T4_FP32, items, {"finding": "collapse"})
+    allowed = ingest_kernel_arm(tmp_path, Precision.T4_FP32)
+    assert allowed["status"] == "measured"
+    assert allowed["task_score"] == 0.0
+    assert allowed["finding"] == "collapse"
+
+
+def test_ingest_allows_fp16_overflow_finding(tmp_path: Path):
+    items = _items(0)
+    for row in items:
+        row["nll"] = float("nan")
+        row["sequence_nll"] = float("nan")
+    _write_gpu_kernel(tmp_path, Precision.FP16, items, {"finding": "overflow"})
+    body = ingest_kernel_arm(tmp_path, Precision.FP16)
     assert body["status"] == "measured"
+    assert body["finding"] == "overflow"
     assert body["task_score"] == 0.0
     assert "nll" not in body["items"][0]
-    assert "sequence_nll" not in body["items"][0]
 
 
 def test_ingest_export_stage_without_items_is_oom(tmp_path: Path):
@@ -547,8 +630,13 @@ def test_kernels_embed_the_heldout_split_and_metadata():
         if gpu:
             assert meta["machine_shape"] == "NvidiaTeslaT4"
             assert "bitsandbytes==0.50.2" in script
+            assert "transformers==5.20.2" in script
+            assert "tokenizers==0.23.3" in script
             assert "bnb_4bit_quant_type" in script
-            assert "float16" in script
+            assert "float32" in script
+            assert "t4-fp32" in script
+            assert "Fail closed" in script
+            assert "probe_numerics" in script
         else:
             assert meta.get("enable_gpu") is False
             assert "quantize_dynamic" in script

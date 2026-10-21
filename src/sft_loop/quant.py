@@ -71,8 +71,10 @@ class Precision(str, enum.Enum):
     FP32 = "fp32"
     INT8 = "int8"
     ONNX_INT8 = "onnx-int8"
-    NF4 = "nf4"
+    T4_FP32 = "t4-fp32"
     FP16 = "fp16"
+    NF4 = "nf4"
+    NF4_FP16 = "nf4-fp16"
 
 
 class UnsupportedReason(str, enum.Enum):
@@ -94,24 +96,43 @@ class PairingSpec:
 
 PAIRING_SPECS: tuple[PairingSpec, ...] = (
     PairingSpec("int8-minus-fp32", "int8", "fp32", "same_cpu_host"),
-    PairingSpec("nf4-minus-fp16", "nf4", "fp16", "same_accelerator"),
+    PairingSpec("nf4-minus-t4-fp32", "nf4", "t4-fp32", "same_accelerator"),
+    PairingSpec("nf4-fp16-minus-t4-fp32", "nf4-fp16", "t4-fp32", "same_accelerator"),
 )
 
-GPU_PRECISIONS = frozenset({Precision.NF4, Precision.FP16})
+GPU_PRECISIONS = frozenset({Precision.T4_FP32, Precision.FP16, Precision.NF4, Precision.NF4_FP16})
+BASELINE_PRECISIONS = frozenset({Precision.T4_FP32})
 KERNEL_DIR_NF4 = "kaggle/quant_nf4"
 KERNEL_DIR_ONNX = "kaggle/quant_onnx_int8"
 KERNEL_EVIDENCE_PREFIX = "runs/quant/kernel/"
 KERNEL_STUB_FILES = ("env.json", "progress.json", "log.txt")
 KERNEL_ARM_FILES = {
-    Precision.NF4: ("nf4/items.json", "nf4/metrics.json"),
+    Precision.T4_FP32: ("t4-fp32/items.json", "t4-fp32/metrics.json"),
     Precision.FP16: ("fp16/items.json", "fp16/metrics.json"),
+    Precision.NF4: ("nf4/items.json", "nf4/metrics.json"),
+    Precision.NF4_FP16: ("nf4-fp16/items.json", "nf4-fp16/metrics.json"),
     Precision.ONNX_INT8: ("onnx-int8/items.json", "onnx-int8/metrics.json"),
+}
+GPU_COMPUTE_DTYPE = {
+    Precision.T4_FP32: "float32",
+    Precision.FP16: "float16",
+    Precision.NF4: "float32",
+    Precision.NF4_FP16: "float16",
 }
 NF4_QUANT_CONFIG = {
     "load_in_4bit": True,
     "bnb_4bit_quant_type": "nf4",
     "bnb_4bit_use_double_quant": True,
-    "bnb_4bit_compute_dtype": "float16",
+    "bnb_4bit_compute_dtype": "float32",
+}
+NF4_QUANT_CONFIGS = {
+    Precision.NF4: NF4_QUANT_CONFIG,
+    Precision.NF4_FP16: {
+        "load_in_4bit": True,
+        "bnb_4bit_quant_type": "nf4",
+        "bnb_4bit_use_double_quant": True,
+        "bnb_4bit_compute_dtype": "float16",
+    },
 }
 KERNEL_MISSING_DETAIL = (
     "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. "
@@ -330,6 +351,7 @@ def measured_arm(
     kernel: dict[str, Any] | None = None,
     compute_dtype: str | None = None,
     quant_config: dict[str, Any] | None = None,
+    finding: str | None = None,
 ) -> dict[str, Any]:
     _check_item_alignment(protocol, items)
     summary = _summarize_items(items)
@@ -346,22 +368,27 @@ def measured_arm(
         **summary,
     }
     if precision in GPU_PRECISIONS:
+        expected_dtype = GPU_COMPUTE_DTYPE[precision]
         if hardware is None or not hardware.get("accelerator"):
             raise ValueError("gpu arm needs hardware.accelerator")
         if peak_gpu_bytes is None:
             raise ValueError("gpu arm needs peak_gpu_bytes")
         if kernel is None:
             raise ValueError("gpu arm needs kernel placeholder")
-        if compute_dtype != "float16":
-            raise ValueError("gpu arm compute_dtype must be float16")
+        if compute_dtype != expected_dtype:
+            raise ValueError(f"{precision.value} compute_dtype must be {expected_dtype}")
         body["hardware"] = hardware
         body["peak_gpu_bytes"] = int(peak_gpu_bytes)
         body["kernel"] = kernel
         body["compute_dtype"] = compute_dtype
-        if precision is Precision.NF4:
-            if quant_config != NF4_QUANT_CONFIG:
+        if precision in NF4_QUANT_CONFIGS:
+            if quant_config != NF4_QUANT_CONFIGS[precision]:
                 raise ValueError("nf4 quant_config must be the recorded BitsAndBytes NF4 settings")
             body["quant_config"] = quant_config
+        if finding is not None:
+            if finding not in {"overflow", "collapse"}:
+                raise ValueError("finding must be overflow or collapse")
+            body["finding"] = finding
     elif hardware is not None or peak_gpu_bytes is not None or kernel is not None:
         raise ValueError("cpu arm must not carry gpu fields")
     return body
@@ -517,7 +544,7 @@ def _check_arm_body(protocol: dict[str, Any], key: str, arm: dict[str, Any]) -> 
         for field, value in summary.items():
             if _round(float(arm[field])) != value:
                 raise ValueError(f"{key} {field} does not match items")
-        if key in {Precision.NF4.value, Precision.FP16.value}:
+        if key in {p.value for p in GPU_PRECISIONS}:
             if not _accelerator(arm):
                 raise ValueError(f"{key} measured arm needs hardware.accelerator")
             if "peak_gpu_bytes" not in arm:
@@ -552,7 +579,9 @@ def assemble_comparison(
 ) -> dict[str, Any]:
     expected = {p.value for p in Precision}
     if set(arms) != expected:
-        raise ValueError("arms must contain fp32, int8, onnx-int8, nf4, and fp16")
+        raise ValueError(
+            "arms must contain fp32, int8, onnx-int8, t4-fp32, fp16, nf4, and nf4-fp16"
+        )
     for key in expected:
         _check_arm_body(protocol, key, arms[key])
     outcomes = {spec.key: _outcome_for_spec(protocol, arms, spec) for spec in PAIRING_SPECS}
@@ -750,8 +779,9 @@ def render_table(comparison: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "Paired rows share one hardware class. NF4 is paired only with fp16 on the same T4. "
+            "Paired rows share one hardware class. NF4 is paired only with fp32 on the same T4. "
             "int8 is paired only with CPU fp32. GPU versus CPU is not paired. "
+            "T4 fp16 is not a pairing baseline. "
             "scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass.",
         ]
     )
@@ -866,16 +896,62 @@ def merge_ingested_arm(
 
 
 def kernel_dir_for(precision: Precision) -> Path:
-    if precision in {Precision.NF4, Precision.FP16}:
+    if precision in GPU_PRECISIONS:
         return repo_root() / KERNEL_DIR_NF4
     if precision is Precision.ONNX_INT8:
         return repo_root() / KERNEL_DIR_ONNX
     raise ValueError(f"{precision.value} is not a kernel arm")
 
 
+def _items_have_finite_nll(items: list[dict[str, Any]]) -> bool:
+    for row in items:
+        nll = row.get("nll")
+        sequence = row.get("sequence_nll")
+        if not isinstance(nll, (int, float)) or not math.isfinite(float(nll)):
+            return False
+        if not isinstance(sequence, (int, float)) or not math.isfinite(float(sequence)):
+            return False
+    return True
+
+
+def _allowed_broken_finding(precision: Precision, finding: object) -> bool:
+    if precision in BASELINE_PRECISIONS:
+        return finding == "collapse"
+    return finding in {"overflow", "collapse"}
+
+
+def _refuse_broken_kernel_arm(
+    precision: Precision,
+    items: list[dict[str, Any]],
+    finding: object,
+    kernel: dict[str, Any],
+) -> dict[str, Any] | None:
+    summary = _summarize_items(items)
+    broken = summary["task_score"] == 0.0 or not _items_have_finite_nll(items)
+    if not broken or _allowed_broken_finding(precision, finding):
+        return None
+    return unsupported_arm(
+        precision=precision,
+        reason=UnsupportedReason.PROBED_FAILURE,
+        detail=(
+            f"{precision.value} scored {summary['task_score']} with "
+            f"{'finite' if _items_have_finite_nll(items) else 'non-finite'} NLL. "
+            "A zero-score or non-finite baseline is a harness failure unless marked "
+            "as a collapse finding. No GPU pairing numbers were produced. "
+            + REFUSAL_SENTENCE
+        ),
+        probe={
+            "exception_type": "BrokenBaseline",
+            "message": f"{precision.value} score={summary['task_score']}",
+            "cuda_available": True,
+        },
+        kernel=kernel,
+    )
+
+
 def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
     kernel = kernel_placeholder(
-        KERNEL_DIR_NF4 if precision in {Precision.NF4, Precision.FP16} else KERNEL_DIR_ONNX
+        KERNEL_DIR_NF4 if precision in GPU_PRECISIONS else KERNEL_DIR_ONNX
     )
     if not source.is_dir():
         return unsupported_arm(
@@ -934,6 +1010,10 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
         "version": env.get("kernel_version"),
     }
     gpu = precision in GPU_PRECISIONS
+    finding = metrics.get("finding")
+    refused = _refuse_broken_kernel_arm(precision, items, finding, kernel_ref)
+    if refused is not None:
+        return refused
     return measured_arm(
         precision=precision,
         items=items,
@@ -946,7 +1026,8 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
         peak_gpu_bytes=metrics.get("peak_gpu_bytes") if gpu else None,
         kernel=kernel_ref if gpu else None,
         compute_dtype=metrics.get("compute_dtype") if gpu else None,
-        quant_config=metrics.get("quant_config") if precision is Precision.NF4 else None,
+        quant_config=metrics.get("quant_config") if precision in NF4_QUANT_CONFIGS else None,
+        finding=finding if finding in {"overflow", "collapse"} else None,
     )
 
 
@@ -1066,19 +1147,23 @@ def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = Tru
     protocol = load_protocol()
     hardware = probe_hardware()
     onnx = _reuse_arm(dest, Precision.ONNX_INT8) if reuse_unsupported else None
-    nf4 = _reuse_arm(dest, Precision.NF4)
-    fp16 = _reuse_arm(dest, Precision.FP16)
+
+    def gpu_arm(precision: Precision) -> dict[str, Any]:
+        reused = _reuse_arm(dest, precision)
+        if reused is not None:
+            return reused
+        if precision is Precision.NF4:
+            return probe_nf4()
+        return ingest_kernel_arm(repo_root() / KERNEL_DIR_NF4 / "output", precision)
+
     arms = {
         Precision.FP32.value: _run_child(Precision.FP32, protocol),
         Precision.INT8.value: _run_child(Precision.INT8, protocol),
         Precision.ONNX_INT8.value: onnx if onnx is not None else _run_child(Precision.ONNX_INT8, protocol),
-        Precision.NF4.value: nf4 if nf4 is not None else probe_nf4(),
-        Precision.FP16.value: fp16
-        if fp16 is not None
-        else ingest_kernel_arm(
-            repo_root() / KERNEL_DIR_NF4 / "output",
-            Precision.FP16,
-        ),
+        Precision.T4_FP32.value: gpu_arm(Precision.T4_FP32),
+        Precision.FP16.value: gpu_arm(Precision.FP16),
+        Precision.NF4.value: gpu_arm(Precision.NF4),
+        Precision.NF4_FP16.value: gpu_arm(Precision.NF4_FP16),
     }
     comparison = assemble_comparison(protocol, arms, hardware)
     _commit(dest, comparison)

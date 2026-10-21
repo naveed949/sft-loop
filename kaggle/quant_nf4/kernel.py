@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
-"""Kaggle T4 kernel. Measures fp16 and NF4 with the sft-loop quant protocol.
+"""Kaggle T4 kernel. fp32-on-T4 baseline, then fp16 and NF4.
 
-Accelerator: NvidiaTeslaT4. Expected wall time is about 2 hours. Budget 4 hours.
+Accelerator: NvidiaTeslaT4. Expected wall about 2 hours. Budget 2.5 hours.
+Must finish in one 12 hour session and stay under 3 GPU hours.
 No secrets. Downloads Qwen/Qwen2.5-1.5B-Instruct from the public Hub.
+Pins transformers 5.20.2 to match the CPU fp32 arm.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+import math
 import os
 import platform
 import random
@@ -156,7 +160,14 @@ WARMUP = 2
 REPEATS = 5
 THREADS = 1
 IGNORE_INDEX = -100
-NF4_QUANT_CONFIG = {
+PROBE_ITEMS = ("anchor", "beacon")
+NF4_QUANT_CONFIG_F32 = {
+    "load_in_4bit": True,
+    "bnb_4bit_quant_type": "nf4",
+    "bnb_4bit_use_double_quant": True,
+    "bnb_4bit_compute_dtype": "float32",
+}
+NF4_QUANT_CONFIG_F16 = {
     "load_in_4bit": True,
     "bnb_4bit_quant_type": "nf4",
     "bnb_4bit_use_double_quant": True,
@@ -189,7 +200,8 @@ def pip_install() -> None:
         "install",
         "--no-cache-dir",
         "bitsandbytes==0.50.2",
-        "transformers==4.56.2",
+        "transformers==5.20.2",
+        "tokenizers==0.23.3",
         "accelerate==1.4.0",
     ]
     log("pip " + " ".join(cmd[4:]))
@@ -249,12 +261,20 @@ def _round(value: float) -> float:
     return float(format(float(value), ".8g"))
 
 
+def render_prompt(tokenizer, prompt: str) -> str:
+    messages = [{"role": "user", "content": prompt}]
+    return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+
+def encode_prompt(torch, tokenizer, model, prompt: str):
+    text = render_prompt(tokenizer, prompt)
+    encoded = tokenizer(text, return_tensors="pt")
+    return {key: value.to(model.device) for key, value in encoded.items()}
+
+
 def generate_fn(torch, tokenizer, model, *, min_new_tokens: int | None = None):
     def generate(prompt: str):
-        messages = [{"role": "user", "content": prompt}]
-        text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        encoded = tokenizer(text, return_tensors="pt")
-        encoded = {key: value.to(model.device) for key, value in encoded.items()}
+        encoded = encode_prompt(torch, tokenizer, model, prompt)
         kwargs = {
             "max_new_tokens": DECODE_NEW_TOKENS,
             "do_sample": False,
@@ -275,8 +295,7 @@ def generate_fn(torch, tokenizer, model, *, min_new_tokens: int | None = None):
 
 def nll_fn(torch, tokenizer, model):
     def nll(prompt: str, target: str):
-        messages = [{"role": "user", "content": prompt}]
-        prefix = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        prefix = render_prompt(tokenizer, prompt)
         prefix_len = tokenizer(prefix, return_tensors="pt")["input_ids"].shape[1]
         encoded = tokenizer(prefix + target, return_tensors="pt")
         encoded = {key: value.to(model.device) for key, value in encoded.items()}
@@ -300,6 +319,84 @@ def nll_fn(torch, tokenizer, model):
         return float(target_loss.item()), float(sequence_loss.item())
 
     return nll
+
+
+def maybe_float(value: float) -> float | None:
+    number = float(value)
+    if not math.isfinite(number):
+        return None
+    return _round(number)
+
+
+def dump_prompt_hashes(tokenizer) -> None:
+    rows = []
+    for item_id in ITEM_IDS:
+        text = render_prompt(tokenizer, prompt_for(item_id))
+        rows.append(
+            {
+                "item_id": item_id,
+                "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                "n_chars": len(text),
+            }
+        )
+    write_json(OUT / "prompt_hashes.json", {"revision": REVISION, "items": rows})
+    log(f"prompt hash anchor={rows[0]['sha256']} beacon={rows[2]['sha256']}")
+
+
+def probe_numerics(torch, tokenizer) -> dict:
+    from transformers import AutoModelForCausalLM
+
+    report: dict = {"items": list(PROBE_ITEMS), "configs": {}}
+    configs = (
+        ("fp32_eager", torch.float32, "eager"),
+        ("fp16_eager", torch.float16, "eager"),
+        ("fp16_sdpa", torch.float16, "sdpa"),
+    )
+    for name, dtype, attn in configs:
+        log(f"numerics probe {name}")
+        try:
+            model = AutoModelForCausalLM.from_pretrained(
+                MODEL_ID,
+                revision=REVISION,
+                dtype=dtype,
+                device_map={"": 0},
+                attn_implementation=attn,
+            )
+            model.eval()
+            rows = []
+            for item_id in PROBE_ITEMS:
+                encoded = encode_prompt(torch, tokenizer, model, prompt_for(item_id))
+                with torch.no_grad():
+                    out = model(**encoded, output_hidden_states=True)
+                logits = out.logits.float()
+                hidden = [
+                    float(layer.detach().float().abs().max().item())
+                    for layer in out.hidden_states
+                ]
+                row = {
+                    "item_id": item_id,
+                    "logits_finite": bool(torch.isfinite(out.logits).all().item()),
+                    "logits_max_abs": maybe_float(float(logits.abs().max().item())),
+                    "hidden_max_abs": hidden,
+                    "hidden_finite": all(math.isfinite(value) for value in hidden),
+                }
+                rows.append(row)
+                log(
+                    f"numerics {name} {item_id} logits_finite={row['logits_finite']} "
+                    f"logits_max_abs={row['logits_max_abs']}"
+                )
+            report["configs"][name] = {"ok": True, "items": rows}
+            del model
+            torch.cuda.empty_cache()
+        except Exception as exc:
+            report["configs"][name] = {
+                "ok": False,
+                "exception_type": type(exc).__name__,
+                "message": str(exc)[:200],
+            }
+            log(f"numerics {name} failed: {type(exc).__name__}: {exc}")
+    write_json(OUT / "probe" / "numerics.json", report)
+    return report
 
 
 def repeat_generate(generate, prompt: str):
@@ -336,19 +433,22 @@ def measure(precision: str, torch, tokenizer, model, *, on_disk_bytes: int, libr
         prediction, tokens, latency_ms = repeat_generate(generate, prompt)
         _, decode_tokens, decode_latency_ms = repeat_generate(decode_generate, prompt)
         target_nll, sequence_nll = nll(prompt, item_id.upper())
-        items.append(
-            {
-                "item_id": item_id,
-                "correct": prediction_token(prediction) == item_id.upper(),
-                "latency_ms": latency_ms,
-                "generated_tokens": int(tokens),
-                "decode_latency_ms": decode_latency_ms,
-                "decode_generated_tokens": int(decode_tokens),
-                "nll": _round(target_nll),
-                "sequence_nll": _round(sequence_nll),
-            }
-        )
-        log(f"{precision} {item_id} correct={items[-1]['correct']} p50={latency_ms}")
+        row = {
+            "item_id": item_id,
+            "correct": prediction_token(prediction) == item_id.upper(),
+            "latency_ms": latency_ms,
+            "generated_tokens": int(tokens),
+            "decode_latency_ms": decode_latency_ms,
+            "decode_generated_tokens": int(decode_tokens),
+        }
+        target_out = maybe_float(target_nll)
+        sequence_out = maybe_float(sequence_nll)
+        if target_out is not None:
+            row["nll"] = target_out
+        if sequence_out is not None:
+            row["sequence_nll"] = sequence_out
+        items.append(row)
+        log(f"{precision} {item_id} correct={row['correct']} p50={latency_ms} nll={row.get('nll')}")
     wall = time.perf_counter() - start
     cpu = time.process_time() - cpu0
     rss = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) * 1024
@@ -365,12 +465,31 @@ def measure(precision: str, torch, tokenizer, model, *, on_disk_bytes: int, libr
             "peak_rss_bytes": max(rss, 1),
             "available_ram_bytes_at_start": start_ram,
         },
-        "compute_dtype": "float16",
         **extra,
     }
     write_json(OUT / precision / "items.json", items)
     write_json(OUT / precision / "metrics.json", metrics)
     return items, metrics
+
+
+def baseline_is_healthy(items: list) -> bool:
+    score = sum(1 for row in items if row["correct"])
+    finite = all("nll" in row and "sequence_nll" in row for row in items)
+    return score > 0 and finite
+
+
+def load_causal(torch, *, dtype, attn: str = "eager"):
+    from transformers import AutoModelForCausalLM
+
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_ID,
+        revision=REVISION,
+        dtype=dtype,
+        device_map={"": 0},
+        attn_implementation=attn,
+    )
+    model.eval()
+    return model
 
 
 def load_tokenizer():
@@ -391,58 +510,74 @@ def snapshot_bytes() -> int:
     return sum(file.stat().st_size for file in path.rglob("*") if file.is_file())
 
 
-def run_fp16(tokenizer):
-    import torch
+def library_versions(kind: str) -> dict:
     from importlib.metadata import version
-    from transformers import AutoModelForCausalLM
 
-    write_progress({"status": "running", "stage": "fp16", "arms": {}})
-    kwargs = {
-        "revision": REVISION,
-        "device_map": {"": 0},
-        "attn_implementation": "eager",
+    import torch
+
+    body = {
+        "kind": kind,
+        "torch": torch.__version__,
+        "transformers": version("transformers"),
+        "tokenizers": version("tokenizers"),
     }
-    try:
-        model = AutoModelForCausalLM.from_pretrained(MODEL_ID, dtype=torch.float16, **kwargs)
-    except TypeError:
-        model = AutoModelForCausalLM.from_pretrained(MODEL_ID, torch_dtype=torch.float16, **kwargs)
-    model.eval()
-    size = max(snapshot_bytes(), 1)
+    if kind == "bitsandbytes":
+        body["bitsandbytes"] = version("bitsandbytes")
+    return body
+
+
+def run_t4_fp32(torch, tokenizer):
+    write_progress({"status": "running", "stage": "t4-fp32", "arms": {}})
+    model = load_causal(torch, dtype=torch.float32, attn="eager")
     items, metrics = measure(
-        "fp16",
+        "t4-fp32",
         torch,
         tokenizer,
         model,
-        on_disk_bytes=size,
-        libraries={
-            "kind": "torch",
-            "torch": torch.__version__,
-            "transformers": version("transformers"),
-        },
-        extra={},
+        on_disk_bytes=max(snapshot_bytes(), 1),
+        libraries=library_versions("torch"),
+        extra={"compute_dtype": "float32", "attn_implementation": "eager"},
     )
     del model
     torch.cuda.empty_cache()
     return items, metrics
 
 
-def run_nf4(tokenizer):
-    import torch
-    from importlib.metadata import version
-    from transformers import AutoModelForCausalLM, BitsAndBytesConfig
-
+def run_fp16(torch, tokenizer, *, finding: str | None):
     write_progress(
         {
             "status": "running",
-            "stage": "nf4",
-            "arms": {"fp16": {"status": "measured"}},
+            "stage": "fp16",
+            "arms": {"t4-fp32": {"status": "measured"}},
         }
     )
+    model = load_causal(torch, dtype=torch.float16, attn="eager")
+    extra = {"compute_dtype": "float16", "attn_implementation": "eager"}
+    if finding:
+        extra["finding"] = finding
+    items, metrics = measure(
+        "fp16",
+        torch,
+        tokenizer,
+        model,
+        on_disk_bytes=max(snapshot_bytes(), 1),
+        libraries=library_versions("torch"),
+        extra=extra,
+    )
+    del model
+    torch.cuda.empty_cache()
+    return items, metrics
+
+
+def run_nf4(torch, tokenizer, *, precision: str, compute_dtype, quant_config: dict, arms: dict):
+    from transformers import AutoModelForCausalLM, BitsAndBytesConfig
+
+    write_progress({"status": "running", "stage": precision, "arms": arms})
     quant = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_compute_dtype=compute_dtype,
     )
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
@@ -452,27 +587,33 @@ def run_nf4(tokenizer):
         attn_implementation="eager",
     )
     model.eval()
-    work = OUT / "nf4-state.pt"
+    work = OUT / f"{precision}-state.pt"
     torch.save(model.state_dict(), work)
     size = max(work.stat().st_size, 1)
     work.unlink(missing_ok=True)
     items, metrics = measure(
-        "nf4",
+        precision,
         torch,
         tokenizer,
         model,
         on_disk_bytes=size,
-        libraries={
-            "kind": "bitsandbytes",
-            "torch": torch.__version__,
-            "transformers": version("transformers"),
-            "bitsandbytes": version("bitsandbytes"),
+        libraries=library_versions("bitsandbytes"),
+        extra={
+            "compute_dtype": "float32" if compute_dtype == torch.float32 else "float16",
+            "quant_config": dict(quant_config),
+            "attn_implementation": "eager",
         },
-        extra={"quant_config": dict(NF4_QUANT_CONFIG)},
     )
     del model
     torch.cuda.empty_cache()
     return items, metrics
+
+
+def fp16_overflow(report: dict) -> bool:
+    eager = report.get("configs", {}).get("fp16_eager", {})
+    if not eager.get("ok"):
+        return False
+    return any(not row.get("logits_finite", True) for row in eager.get("items", []))
 
 
 def main() -> int:
@@ -488,15 +629,48 @@ def main() -> int:
             raise RuntimeError("CUDA is not available in this kernel")
         dump_env()
         tokenizer = load_tokenizer()
-        run_fp16(tokenizer)
-        run_nf4(tokenizer)
-        write_progress(
-            {
-                "status": "measured",
-                "stage": "done",
-                "arms": {"fp16": {"status": "measured"}, "nf4": {"status": "measured"}},
-            }
+        dump_prompt_hashes(tokenizer)
+        numerics = probe_numerics(torch, tokenizer)
+        t4_items, _ = run_t4_fp32(torch, tokenizer)
+        if not baseline_is_healthy(t4_items):
+            score = sum(1 for row in t4_items if row["correct"])
+            raise RuntimeError(
+                f"t4-fp32 baseline scored {score}/129 or had non-finite NLL. "
+                "Fail closed before fp16/NF4 pairing."
+            )
+        overflow = fp16_overflow(numerics)
+        fp16_items, _ = run_fp16(torch, tokenizer, finding="overflow" if overflow else None)
+        fp16_ok = baseline_is_healthy(fp16_items) and not overflow
+        arms = {
+            "t4-fp32": {"status": "measured"},
+            "fp16": {"status": "measured"},
+        }
+        run_nf4(
+            torch,
+            tokenizer,
+            precision="nf4",
+            compute_dtype=torch.float32,
+            quant_config=NF4_QUANT_CONFIG_F32,
+            arms=arms,
         )
+        arms["nf4"] = {"status": "measured"}
+        if fp16_ok:
+            run_nf4(
+                torch,
+                tokenizer,
+                precision="nf4-fp16",
+                compute_dtype=torch.float16,
+                quant_config=NF4_QUANT_CONFIG_F16,
+                arms=arms,
+            )
+            arms["nf4-fp16"] = {"status": "measured"}
+        else:
+            arms["nf4-fp16"] = {
+                "status": "unsupported",
+                "reason": "probed_failure",
+                "detail": "fp16 is not a healthy compute dtype; skipped nf4-fp16",
+            }
+        write_progress({"status": "measured", "stage": "done", "arms": arms})
         log("done")
         return 0
     except Exception as exc:

@@ -1,14 +1,16 @@
 # Quant comparison
 
-CPU and GPU quantization arms on one pinned model share one seed, one held-out split, and one grader. The comparison document owns named pairings. NF4 is paired only with fp16 on the same T4. GPU rows are not paired with CPU rows. Local verify cannot run the Kaggle kernels.
+CPU and GPU quantization arms on one pinned model share one seed, one held-out split, and one grader. The comparison document owns named pairings. NF4 is paired only with fp32 on the same T4. T4 fp16 is not a pairing baseline. GPU rows are not paired with CPU rows. Local verify cannot run the Kaggle kernels.
 
 ## Sub-features
 
 - `quant-fp32` is the CPU float32 baseline for `Qwen/Qwen2.5-1.5B-Instruct`.
 - `quant-int8` is per-tensor symmetric dynamic PTQ (`default_dynamic_qconfig`) on every `nn.Linear`, including `lm_head`.
 - `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. The first Kaggle CPU retry is `unsupported` / `probed_failure`. A CPU retry lives at `kaggle/quant_onnx_int8`.
-- `quant-nf4` is bitsandbytes NF4. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output.
-- `quant-fp16` is the T4 fp16 baseline in that same kernel. Measured numbers come from the same ingested output.
+- `quant-t4-fp32` is the T4 fp32 same-hardware baseline. Ingest refuses a 0-score or non-finite-NLL baseline unless it is marked `finding: collapse`.
+- `quant-nf4` is bitsandbytes NF4 with float32 compute. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output.
+- `quant-nf4-fp16` is NF4 with fp16 compute. It runs only if T4 fp16 is healthy.
+- `quant-fp16` is T4 fp16. It is not a pairing baseline. Overflow is a measured finding, not a quality score.
 - `quant-table` is the README region generated from `runs/quant/comparison.json`.
 - `kaggle-quant-kernels` is a local-unsupported surface. The scripts live at `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`. Downloaded outputs live at `runs/quant/kernel/`. Local verify does not run those scripts.
 
@@ -42,7 +44,7 @@ Preconditions:
 - `python -m sft_loop.loop --device cpu` still exits 2. Quant has no `--device` flag.
 - A quant file is not a run report. `validate_report` must reject it.
 - NF4 numbers are never estimated on this VM. Missing CUDA is `unsupported`. Missing kernel output is `kernel_output_missing`.
-- Do not pair NF4 or T4 fp16 against CPU fp32. That view is `not_paired`.
+- Do not pair NF4 or T4 fp16 against CPU fp32. That view is `not_paired`. T4 fp16 is not the GPU baseline.
 - Torch 2.14 ONNX export needs `onnxscript`. A missing module is `dependency_missing`. Export that dies after `model.onnx.data` is written is `oom`.
 - Do not write quant output into `runs/phase3/`.
 - `verify quant` does not reload the 1.5B weights. That is `python -m sft_loop.quant run`.

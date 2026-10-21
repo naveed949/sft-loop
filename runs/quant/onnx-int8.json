@@ -15,7 +15,7 @@
     "reason": "probed_failure",
     "status": "unsupported"
   },
-  "comparison_sha256": "ac464ecf802293d4982b65cc971be6f9e7847906f468c5dcd8d11f1cec6a186f",
+  "comparison_sha256": "3eee38e7fcfa9df6124a84b3eda5a55666e7b5c3259985702b1081d9fac8eb9a",
   "document_kind": "quant-arm-projection",
   "precision": "onnx-int8",
   "protocol_sha256": "b5fe0ba1136866ad026fdf874d16ead047e506f65f2e6acab2c574e99a2dd32b",
