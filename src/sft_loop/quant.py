@@ -195,6 +195,31 @@ def _require_detail(text: str) -> str:
     return text
 
 
+def _detail_from_external(text: object) -> str:
+    cleaned = str(text).strip() if text is not None else ""
+    if not cleaned:
+        return KERNEL_MISSING_DETAIL
+    if REFUSAL_SENTENCE not in cleaned:
+        suffix = " " + REFUSAL_SENTENCE
+        room = 500 - len(suffix)
+        cleaned = cleaned[:room] + suffix
+    return _require_detail(cleaned)
+
+
+def _probe_from_external(probe: object, fallback: str) -> dict[str, Any]:
+    body = probe if isinstance(probe, dict) else {}
+    exception_type = str(body.get("exception_type") or "KernelProgress")[:80] or "KernelProgress"
+    message = str(body.get("message") or fallback)[:400] or "kernel probe"
+    cuda = body.get("cuda_available")
+    if cuda is not None:
+        cuda = bool(cuda)
+    return {
+        "exception_type": exception_type,
+        "message": message,
+        "cuda_available": cuda,
+    }
+
+
 def _round(value: float) -> float:
     return float(format(float(value), ".8g"))
 
@@ -792,18 +817,15 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
             reason = UnsupportedReason(reason_text)
         except ValueError:
             reason = UnsupportedReason.PROBED_FAILURE
-        probe = arm_state.get("probe") or progress.get("probe")
-        if not isinstance(probe, dict):
-            probe = {
-                "exception_type": "KernelProgress",
-                "message": str(arm_state.get("detail") or progress.get("detail") or reason_text)[:200],
-                "cuda_available": None,
-            }
+        raw_detail = arm_state.get("detail") or progress.get("detail")
         return unsupported_arm(
             precision=precision,
             reason=reason,
-            detail=str(arm_state.get("detail") or progress.get("detail") or KERNEL_MISSING_DETAIL),
-            probe=probe,
+            detail=_detail_from_external(raw_detail),
+            probe=_probe_from_external(
+                arm_state.get("probe") or progress.get("probe"),
+                str(raw_detail or reason_text),
+            ),
             kernel=kernel,
         )
     arm_missing = [name for name in KERNEL_ARM_FILES[precision] if not (source / name).is_file()]

@@ -273,6 +273,32 @@ def test_ingest_missing_kernel_output_is_unsupported(tmp_path: Path):
     assert REFUSAL_SENTENCE in body["detail"]
 
 
+def test_ingest_kernel_failure_without_refusal_stays_unsupported(tmp_path: Path):
+    tmp_path.joinpath("env.json").write_text("{}", encoding="utf-8")
+    tmp_path.joinpath("log.txt").write_text("killed\n", encoding="utf-8")
+    tmp_path.joinpath("progress.json").write_text(
+        json.dumps(
+            {
+                "status": "failed",
+                "reason": "oom",
+                "detail": "onnx-int8 hit MemoryError after export",
+                "probe": {
+                    "exception_type": "MemoryError",
+                    "message": "MemoryError",
+                    "cuda_available": False,
+                },
+                "arms": {"onnx-int8": {"status": "unsupported", "reason": "oom"}},
+            }
+        ),
+        encoding="utf-8",
+    )
+    body = ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
+    assert body["status"] == "unsupported"
+    assert body["reason"] == "oom"
+    assert REFUSAL_SENTENCE in body["detail"]
+    assert "task_score" not in body
+
+
 def test_ingest_export_stage_without_items_is_oom(tmp_path: Path):
     tmp_path.joinpath("env.json").write_text("{}", encoding="utf-8")
     tmp_path.joinpath("log.txt").write_text("export started\n", encoding="utf-8")
