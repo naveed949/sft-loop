@@ -1,0 +1,65 @@
+{
+  "adapter_written": true,
+  "after": {
+    "metric_name": "exact_match",
+    "n": 123,
+    "task_score": 0.7317073170731707
+  },
+  "backend": "trl-peft",
+  "before": {
+    "metric_name": "exact_match",
+    "n": 123,
+    "task_score": 0.6422764227642277
+  },
+  "bf16": "unsupported",
+  "ddp": "unsupported",
+  "device": "cuda",
+  "document_kind": "phase4-tenk-lora",
+  "hardware": {
+    "cuda": "12.8",
+    "gpu_count": 2,
+    "major": 7,
+    "minor": 5,
+    "mixed_precision": "fp32",
+    "name": "Tesla T4",
+    "torch": "2.11.0+cu128",
+    "total_memory": 15636037632,
+    "weight_dtype": "float32"
+  },
+  "metric_name": "exact_match",
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "n": 123,
+  "paired_ci": {
+    "high": 0.16260162601626016,
+    "low": 0.016260162601626018,
+    "mean_delta": 0.08943089430894309,
+    "n": 123,
+    "rounds": 10000,
+    "seed": 0,
+    "verdict": "uplift"
+  },
+  "schema_version": "phase4-1",
+  "seed": 0,
+  "status": "scored",
+  "task_id": "tenk-extract-v1",
+  "train_proof": {
+    "adapter_bytes": 8745704,
+    "adapter_sha256": {
+      "adapter_model.safetensors": "e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109"
+    },
+    "first_overflow_module": "base_model.model.model.layers.0.self_attn.o_proj.base_layer",
+    "fp16": "unsupported",
+    "fp16_reason": "fp16_amp_overflow",
+    "global_step": 200,
+    "grad_scaler": false,
+    "kaggle_kernel": "inaveed101/phase4-tenk-lora",
+    "kaggle_version": 3,
+    "kernel_sha": "ee7f5c8511d42916c02147b68731e6c0a36cd317",
+    "mixed_precision": "fp32",
+    "tarball_sha256": "421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507",
+    "wall_s": 5087,
+    "weight_dtype": "float32"
+  },
+  "uplift": "uplift"
+}

@@ -11,6 +11,8 @@ from pathlib import Path
 
 import pytest
 
+from jsonschema import Draft202012Validator
+
 from phase4.assemble import assemble, paired_bootstrap
 from phase4.build import build, build_default, sha256_file, vendor_root
 from phase4.constants import CAPITALCITE_COMMIT, MIN_EVAL, MODEL_REVISION, TASK_ID
@@ -22,6 +24,10 @@ from phase4.run import local_scaler_probe
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "kaggle" / "phase4_data"
 KERNEL = ROOT / "kaggle" / "phase4_train"
+PHASE4 = ROOT / "runs" / "phase4"
+TARBALL_SHA256 = "421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507"
+ADAPTER_SHA256 = "e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109"
+ADAPTER_BYTES = 8745704
 
 
 def test_uppercase_fixture_unchanged():
@@ -173,8 +179,23 @@ def test_assemble_refuses_ceiling_and_phase3(tmp_path):
         assemble(before, after, ROOT / "runs" / "phase3" / "scored.json")
 
 
-def test_phase4_has_no_invented_scored_report():
-    assert not (ROOT / "runs" / "phase4" / "scored.json").exists()
+def test_phase4_scored_report_is_assembled_from_raw(tmp_path):
+    scored_path = PHASE4 / "scored.json"
+    raw = PHASE4 / "raw"
+    assert scored_path.is_file()
+    scored = json.loads(scored_path.read_text(encoding="utf-8"))
+    rebuilt = assemble(raw / "eval_before.json", raw / "eval_after.json", tmp_path / "scored.json")
+    assert rebuilt["before"] == scored["before"]
+    assert rebuilt["after"] == scored["after"]
+    assert rebuilt["paired_ci"] == scored["paired_ci"]
+    assert rebuilt["n"] == 123
+    assert rebuilt["uplift"] == scored["uplift"]
+    schema = json.loads((ROOT / "schema" / "phase4_run.schema.json").read_text(encoding="utf-8"))
+    Draft202012Validator(schema).validate(scored)
+    assert scored["status"] == "scored"
+    assert "weight_change_claimed" not in scored
+    assert scored["train_proof"]["mixed_precision"] == "fp32"
+    assert scored["train_proof"]["fp16"] == "unsupported"
 
 
 def test_kernel_metadata_and_script_are_self_contained():
@@ -360,3 +381,43 @@ def test_worst_overflow_ranks_by_max_abs():
     worst = kernel.worst_overflow(probe)
     assert worst["name"] == "lm_head"
     assert worst["max_abs"] == 200000.0
+
+
+def test_ingest_hashes_and_baseline_are_sane():
+    kernel = _load_kernel()
+    raw = PHASE4 / "raw"
+    source = (raw / "SOURCE.txt").read_text(encoding="utf-8")
+    assert TARBALL_SHA256 in source
+    assert ADAPTER_SHA256 in source
+    assert str(ADAPTER_BYTES) in source
+    sha_line = (raw / "adapter.sha256").read_text(encoding="utf-8").strip()
+    assert sha_line.startswith(ADAPTER_SHA256)
+    assert sha_line.endswith("adapter_model.safetensors")
+    proof_sha = (PHASE4 / "proof" / "adapter.sha256").read_text(encoding="utf-8").strip()
+    assert proof_sha == sha_line
+    before = json.loads((raw / "eval_before.json").read_text(encoding="utf-8"))
+    after = json.loads((raw / "eval_after.json").read_text(encoding="utf-8"))
+    preds = [item["prediction"] for item in before["items"]]
+    sane, reason = kernel.generations_sane(preds)
+    assert sane is True, reason
+    assert before["baseline_nll"]["finite"] is True
+    assert before["n"] == after["n"] == 123
+    assert [item["item_id"] for item in before["items"]] == [item["item_id"] for item in after["items"]]
+    manifest = json.loads((raw / "split_manifest.json").read_text(encoding="utf-8"))
+    committed = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["split_hash"] == committed["split_hash"]
+    assert manifest["eval_sha256"] == committed["eval_sha256"]
+    assert manifest["train_sha256"] == committed["train_sha256"]
+    contamination = json.loads((DATA / "contamination.json").read_text(encoding="utf-8"))
+    assert contamination["ok"] is True
+    fp16 = json.loads((raw / "fp16.json").read_text(encoding="utf-8"))
+    env = json.loads((raw / "env.json").read_text(encoding="utf-8"))
+    assert fp16["status"] == "unsupported"
+    assert fp16["reason"] == "fp16_amp_overflow"
+    assert env["mixed_precision"] == "fp32"
+    assert env["weight_dtype"] == "float32"
+    assert env["grad_scaler"] is False
+    history = json.loads((raw / "trainer_history.json").read_text(encoding="utf-8"))
+    assert history["mixed_precision"] == "fp32"
+    assert history["global_step"] == 200
+    assert not (PHASE4 / "proof" / "adapter_model.safetensors").exists()

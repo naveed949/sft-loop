@@ -1,0 +1,10 @@
+kaggle_kernel: inaveed101/phase4-tenk-lora
+kaggle_version: 3
+kernel_sha: ee7f5c8511d42916c02147b68731e6c0a36cd317
+tarball: pr15-kaggle-outputs-run3.tar.gz
+tarball_sha256: 421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507
+adapter_model.safetensors_bytes: 8745704
+adapter_model.safetensors_sha256: e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109
+wall_s: 5087
+mixed_precision: fp32
+dataset_unchanged_since: ce57285e4aeb9ac814d46dcaf68a9a4a17a7ae63

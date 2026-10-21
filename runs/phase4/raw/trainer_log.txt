@@ -1,0 +1,12 @@
+trainer=phase4.manual_fp16_lora
+seed=0
+global_step=200
+train_loss=0.00013607566961582052
+max_steps=200
+lora_r=8
+device=cuda
+backend=trl-peft
+autocast=off
+grad_scaler=0
+weight_dtype=float32
+mixed_precision=fp32

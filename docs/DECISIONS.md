@@ -45,3 +45,17 @@ The kernel loaded `Qwen2.5-1.5B-Instruct` with `torch_dtype=float16` and then tr
 The same T4 image already showed this on PR #14: Qwen2.5-1.5B-Instruct in fp16 scored 0/129 with non-finite NLL; CPU fp32 scored 47/129.
 
 The kernel now loads fp32 masters (1.5B × 4 bytes ≈ 6.2 GB, fits a 15 GB T4 with LoRA and checkpointing), probes one batch under `torch.autocast(dtype=float16)` plus a hidden-state max-abs hook, and requires a sane baseline (decoded text, finite NLL) before any optimizer step. If the AMP probe overflows, `fp16.json` records `unsupported` with the overflowing modules. Training then continues in fp32 and is labeled `fp32`, not mixed precision. The ticket's fp16 requirement is that measured `unsupported` finding.
+
+## Phase 4 run 3 ingest (2026-10-21)
+
+Kaggle `inaveed101/phase4-tenk-lora` version 3 at `ee7f5c8511d42916c02147b68731e6c0a36cd317` finished in 5087 s on 2x T4. Tarball sha256 `421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507`. Adapter `adapter_model.safetensors` is 8,745,704 B, sha256 `e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109`. Weights stay gitignored. The digest is in `runs/phase4/raw/adapter.sha256` and `runs/phase4/proof/adapter.sha256`.
+
+`eval_before` is usable. n=123, seed 0, exact match 79/123 = 0.6422764227642277, baseline NLL 0.6888449788093567 finite, 102 distinct predictions, zero `!` collapses. The same item ids as `kaggle/phase4_data/eval.jsonl`. Split hash still `3a298f9e0d83b00c9d3cfac99f90a160ebef3ce28c94d926b3f5efa266c95e33`. Contamination report remains `ok`.
+
+`fp16.json` is `unsupported` / `fp16_amp_overflow`. The AMP probe loss is non-finite. 770 hooked modules overflowed. The first is `layers.0.self_attn.o_proj.base_layer` in float16 with non-finite max-abs. AMP greedy gens were four copies of `!!!!!!!!!!!!!!!!`. The fp32 probe on the same batch was finite (loss 10.357911109924316, zero overflow modules). Training used fp32 masters, autocast off, no GradScaler. `env.json` and `trainer_history.json` both say `mixed_precision=fp32`.
+
+`eval_after` is 90/123 = 0.7317073170731707 on the same items, seed, greedy decode, and T4. Paired bootstrap (10000 rounds, seed 0) mean delta 0.08943089430894309, 95% CI [0.016260162601626018, 0.16260162601626016], n=123. The interval does not cover 0. Verdict is `uplift`. Item flips were +17 / -6. This is one kernel run, not a five-trial repeat. Do not retune toward a larger number.
+
+Memory at batch 1, seq 1024. Checkpointing off peaked at 13,905,077,760 B. On peaked at 8,269,284,864 B. Saved 5,635,792,896 B. Both fit the 15,636,037,632 B T4. Profiler peak after train was 8,416,858,112 B. `aten::mm` was 76.23% of self CUDA time in the profiler table.
+
+bf16 remains `unsupported` (T4 cc 7.5). DDP remains `unsupported` (no torchrun process group). `phase4.assemble` wrote `runs/phase4/scored.json` from the raw per-item JSON.

@@ -1,0 +1,15 @@
+{
+  "adapter_sha256": {
+    "adapter_model.safetensors": "e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109"
+  },
+  "adapter_written": true,
+  "after_score": 0.7317073170731707,
+  "before_score": 0.6422764227642277,
+  "document_kind": "phase4-tenk-lora",
+  "global_step": 200,
+  "mixed_precision": "fp32",
+  "n": 123,
+  "schema_version": "phase4-1",
+  "status": "raw",
+  "weight_dtype": "float32"
+}
