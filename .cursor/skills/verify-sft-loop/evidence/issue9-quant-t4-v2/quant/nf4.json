@@ -1,0 +1,11 @@
+{
+  "detail": "NF4 needs CUDA. torch.cuda.is_available is false on this host. No NF4 numbers were produced. Soft-PASS is unused and is refused.",
+  "precision": "nf4",
+  "probe": {
+    "cuda_available": false,
+    "exception_type": "CUDAUnavailable",
+    "message": "torch.cuda.is_available() is False"
+  },
+  "reason": "missing_cuda",
+  "status": "unsupported"
+}
