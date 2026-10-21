@@ -161,13 +161,11 @@ def test_kernel_metadata_and_script_are_self_contained():
     assert meta["id"] == "KAGGLE_USER/phase4-tenk-lora"
     assert meta["dataset_sources"] == ["KAGGLE_USER/phase4-tenk-data"]
     assert data_meta["id"] == "KAGGLE_USER/phase4-tenk-data"
-    assert "import sft_loop" not in script
-    assert "import unsloth" not in script
+    assert fence_violations(KERNEL / "kernel.py") == []
     assert "GradScaler" in script
     assert "autocast" in script
     assert "global_step" in script
     assert "200" in script
-    assert fence_violations(KERNEL / "kernel.py") == []
 
 
 def test_vendor_records_capitalcite_pin():

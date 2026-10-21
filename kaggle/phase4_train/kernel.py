@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Self-contained Kaggle kernel for Phase 4 fp16 LoRA. Does not import sft_loop."""
+"""Self-contained Kaggle kernel for Phase 4 fp16 LoRA."""
 
 from __future__ import annotations
 
