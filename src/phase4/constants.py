@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 CAPITALCITE_COMMIT = "34b42ee0b387738725705a0af682dd3f030a9944"
 CAPITALCITE_REPO = "https://github.com/naveed949/capitalcite"
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
@@ -56,19 +58,27 @@ ISSUER_FAMILIES = {
     "0001628280": "JPM",
     "0000831001": "AMEX",
     "AMERICANEXPRESS": "AMEX",
-    "0000072971": "3M",
+    "0000072971": "WELLS",
+    "WELLS": "WELLS",
+    "WELLSFARGO": "WELLS",
     "3M": "3M",
     "BOEING": "BOEING",
     "GS": "GS",
 }
+ACCESSION_PREFIX = re.compile(r"^(\d{10})")
 
 
 def issuer_family(issuer: str, doc_id: str = "") -> str:
     if issuer in ISSUER_FAMILIES:
         return ISSUER_FAMILIES[issuer]
-    key = ""
-    if doc_id[:1].isdigit():
-        key = doc_id.split("-")[0]
-    elif doc_id:
-        key = doc_id.split("_")[0]
-    return ISSUER_FAMILIES.get(key, issuer or doc_id)
+    raw = (doc_id or "").replace("/", "__")
+    accession = ACCESSION_PREFIX.match(raw)
+    if accession:
+        key = accession.group(1)
+    elif raw:
+        key = re.split(r"[_\W]", raw, maxsplit=1)[0].upper()
+    else:
+        key = ""
+    if key in ISSUER_FAMILIES:
+        return ISSUER_FAMILIES[key]
+    return issuer or key or raw

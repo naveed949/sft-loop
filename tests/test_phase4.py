@@ -13,7 +13,7 @@ import pytest
 
 from jsonschema import Draft202012Validator
 
-from phase4.assemble import assemble, extra_from_raw, paired_bootstrap
+from phase4.assemble import assemble, extra_from_raw, oneway_icc, paired_bootstrap
 from phase4.build import build, build_default, contamination_report, sha256_file, vendor_root
 from phase4.constants import (
     BACKEND,
@@ -26,6 +26,7 @@ from phase4.constants import (
     MODEL_REVISION,
     TASK_ID,
     VERDICT_DETAIL_NO_FILING_UPLIFT,
+    issuer_family,
 )
 from phase4.fence import fence_violations, iter_fenced_files, product_imports_phase4
 from phase4.grade import canonicalize, format_equivalent, grade, prompt_template_static, render_prompt
@@ -39,6 +40,18 @@ PHASE4 = ROOT / "runs" / "phase4"
 TARBALL_SHA256 = "421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507"
 ADAPTER_SHA256 = "e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109"
 ADAPTER_BYTES = 8745704
+EVAL_DOC_FAMILIES = {
+    "3M_2018_10K": "3M",
+    "AMERICANEXPRESS_2022_10K": "AMEX",
+    "BOEING_2018_10K": "BOEING",
+    "0001628280-26-008131": "JPM",
+    "0000831001-24-000033": "AMEX",
+    "0000831001-25-000067": "AMEX",
+    "0000831001-26-000011": "AMEX",
+    "0000072971-24-000064": "WELLS",
+    "0000072971-25-000066": "WELLS",
+    "0000072971-26-000133": "WELLS",
+}
 
 
 def test_uppercase_fixture_unchanged():
@@ -225,6 +238,7 @@ def test_phase4_scored_report_is_assembled_from_raw(tmp_path):
     assert rebuilt["paired_ci"] == scored["paired_ci"]
     assert rebuilt["cluster_ci"] == scored["cluster_ci"]
     assert rebuilt["format_breakdown"] == scored["format_breakdown"]
+    assert rebuilt["clustering_effect"] == scored["clustering_effect"]
     assert rebuilt["jpm_sensitivity"] == scored["jpm_sensitivity"]
     assert rebuilt["n"] == 123
     assert rebuilt["uplift"] == scored["uplift"] == "no uplift"
@@ -240,6 +254,12 @@ def test_phase4_scored_report_is_assembled_from_raw(tmp_path):
     assert scored["format_breakdown"]["net_substantive"] == 4
     assert scored["jpm_sensitivity"]["excluded_n"] == 6
     assert scored["jpm_sensitivity"]["n"] == 117
+    assert scored["cluster_ci"]["n_le_zero"] == 403
+    assert scored["clustering_effect"]["delta"]["icc"] == pytest.approx(-0.00616, abs=5e-5)
+    assert scored["clustering_effect"]["delta"]["kish_n_eff"] == pytest.approx(132, abs=1)
+    assert scored["clustering_effect"]["before"]["icc"] == pytest.approx(0.20, abs=0.01)
+    assert scored["clustering_effect"]["before"]["kish_n_eff"] == pytest.approx(37, abs=1)
+    assert scored["clustering_effect"]["after"]["kish_n_eff"] == pytest.approx(41, abs=1)
     assert scored["stored_hit_mismatches"] == 2
     schema = json.loads((ROOT / "schema" / "phase4_run.schema.json").read_text(encoding="utf-8"))
     Draft202012Validator(schema).validate(scored)
@@ -450,6 +470,25 @@ def test_try_ddp_cannot_succeed():
     assert body == {"status": "unsupported", "reason": DDP_UNSUPPORTED_REASON}
     assert kernel.BACKEND == BACKEND
     assert kernel.DDP_UNSUPPORTED_REASON == DDP_UNSUPPORTED_REASON
+
+
+def test_oneway_icc_is_computed_not_quoted():
+    high = oneway_icc(["a", "a", "b", "b"], [1.0, 1.0, 0.0, 0.0])
+    assert high["icc"] == pytest.approx(1.0, abs=1e-12)
+    assert high["kish_n_eff"] == pytest.approx(2.0, abs=1e-12)
+    mixed = oneway_icc(["a", "a", "b", "b"], [1.0, 0.0, 1.0, 0.5])
+    expected = mixed["n"] / (1.0 + (mixed["mean_cluster_size"] - 1.0) * mixed["icc"])
+    assert mixed["kish_n_eff"] == pytest.approx(expected)
+
+
+def test_every_eval_doc_id_has_the_right_family():
+    eval_rows = [json.loads(line) for line in (DATA / "eval.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    seen = {row["doc_id"] for row in eval_rows}
+    assert seen == set(EVAL_DOC_FAMILIES)
+    for row in eval_rows:
+        expected = EVAL_DOC_FAMILIES[row["doc_id"]]
+        assert issuer_family(row["issuer"], row["doc_id"]) == expected, row["doc_id"]
+        assert issuer_family("", row["doc_id"]) == expected, row["doc_id"]
 
 
 def test_jpm_rows_stay_in_eval():

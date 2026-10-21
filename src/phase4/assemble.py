@@ -96,11 +96,48 @@ def cluster_bootstrap(
         "high": hi,
         "n": len(deltas),
         "n_clusters": len(keys),
+        "n_le_zero": sum(1 for sample in samples if sample <= 0.0),
         "rounds": rounds,
         "seed": seed,
         "verdict": _verdict(mean, lo, hi),
         "grouping": "filing",
     }
+
+
+def oneway_icc(labels: list[str], values: list[float]) -> dict[str, float | int]:
+    groups: dict[str, list[float]] = defaultdict(list)
+    for label, value in zip(labels, values):
+        groups[label].append(float(value))
+    n = len(values)
+    k = len(groups)
+    if n < 2 or k < 2 or n == k:
+        raise BuildStopped("one-way ICC needs at least two clusters with a within-cluster residual")
+    mean = sum(values) / n
+    ssb = 0.0
+    ssw = 0.0
+    for xs in groups.values():
+        mid = sum(xs) / len(xs)
+        ssb += len(xs) * (mid - mean) ** 2
+        ssw += sum((value - mid) ** 2 for value in xs)
+    msb = ssb / (k - 1)
+    msw = ssw / (n - k)
+    n0 = (n - sum(len(xs) ** 2 for xs in groups.values()) / n) / (k - 1)
+    icc = (msb - msw) / (msb + (n0 - 1) * msw)
+    mean_size = n / k
+    denom = 1.0 + (mean_size - 1.0) * icc
+    return {
+        "icc": icc,
+        "kish_n_eff": (n / denom) if denom != 0.0 else float("inf"),
+        "n": n,
+        "n_clusters": k,
+        "mean_cluster_size": mean_size,
+        "n0": n0,
+    }
+
+
+def _icc_slice(labels: list[str], values: list[float]) -> dict[str, float]:
+    body = oneway_icc(labels, values)
+    return {"icc": body["icc"], "kish_n_eff": body["kish_n_eff"]}
 
 
 def leave_one_filing_out(labels: list[str], deltas: list[int]) -> list[dict]:
@@ -246,6 +283,15 @@ def assemble(
         "cluster_ci": cluster_ci,
         "leave_one_filing_out": leave_one_filing_out(filings, deltas),
         "format_breakdown": _format_breakdown(before_items, after_items, before_hits, after_hits, seed),
+        "clustering_effect": {
+            "grouping": "filing",
+            "n": len(deltas),
+            "n_clusters": len(set(filings)),
+            "mean_cluster_size": len(deltas) / len(set(filings)),
+            "delta": _icc_slice(filings, [float(delta) for delta in deltas]),
+            "before": _icc_slice(filings, [float(hit) for hit in before_hits]),
+            "after": _icc_slice(filings, [float(hit) for hit in after_hits]),
+        },
         "jpm_sensitivity": sensitivity,
         "stored_hit_mismatches": stored_mismatches,
         "uplift": cluster_ci["verdict"],

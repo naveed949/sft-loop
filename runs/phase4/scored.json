@@ -21,9 +21,28 @@
     "mean_delta": 0.07317073170731707,
     "n": 123,
     "n_clusters": 10,
+    "n_le_zero": 403,
     "rounds": 10000,
     "seed": 0,
     "verdict": "no uplift"
+  },
+  "clustering_effect": {
+    "after": {
+      "icc": 0.17951443549408733,
+      "kish_n_eff": 40.613989466886466
+    },
+    "before": {
+      "icc": 0.20247794544213105,
+      "kish_n_eff": 37.40875020997287
+    },
+    "delta": {
+      "icc": -0.006157097732266388,
+      "kish_n_eff": 132.1976806490039
+    },
+    "grouping": "filing",
+    "mean_cluster_size": 12.3,
+    "n": 123,
+    "n_clusters": 10
   },
   "ddp": "unsupported",
   "device": "cuda",
@@ -75,6 +94,7 @@
       "mean_delta": 0.06837606837606838,
       "n": 117,
       "n_clusters": 9,
+      "n_le_zero": 738,
       "rounds": 10000,
       "seed": 0,
       "verdict": "no uplift"

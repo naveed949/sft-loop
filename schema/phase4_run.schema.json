@@ -32,6 +32,7 @@
       "items": { "$ref": "#/$defs/lofo_row" }
     },
     "format_breakdown": { "$ref": "#/$defs/format_breakdown" },
+    "clustering_effect": { "$ref": "#/$defs/clustering_effect" },
     "jpm_sensitivity": { "$ref": "#/$defs/jpm_sensitivity" },
     "stored_hit_mismatches": { "type": "integer", "minimum": 0 },
     "uplift": { "type": "string" },
@@ -73,6 +74,7 @@
         "high": { "type": "number" },
         "n": { "type": "integer", "minimum": 1 },
         "n_clusters": { "type": "integer", "minimum": 1 },
+        "n_le_zero": { "type": "integer", "minimum": 0 },
         "rounds": { "type": "integer", "minimum": 1 },
         "seed": { "type": "integer", "minimum": 0 },
         "verdict": { "type": "string" },
@@ -107,6 +109,29 @@
         "net_substantive": { "type": "integer" },
         "format_ci": { "$ref": "#/$defs/delta_ci" },
         "substantive_ci": { "$ref": "#/$defs/delta_ci" }
+      }
+    },
+    "icc_slice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["icc", "kish_n_eff"],
+      "properties": {
+        "icc": { "type": "number" },
+        "kish_n_eff": { "type": "number" }
+      }
+    },
+    "clustering_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grouping", "n", "n_clusters", "mean_cluster_size", "delta", "before", "after"],
+      "properties": {
+        "grouping": { "type": "string" },
+        "n": { "type": "integer", "minimum": 1 },
+        "n_clusters": { "type": "integer", "minimum": 1 },
+        "mean_cluster_size": { "type": "number" },
+        "delta": { "$ref": "#/$defs/icc_slice" },
+        "before": { "$ref": "#/$defs/icc_slice" },
+        "after": { "$ref": "#/$defs/icc_slice" }
       }
     },
     "jpm_sensitivity": {
