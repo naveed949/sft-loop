@@ -58,6 +58,10 @@ def test_builder_emits_eval_n_and_clean_contamination():
     assert manifest["chunks_jsonl"] == "absent"
     assert manifest["model_revision"] == MODEL_REVISION
     assert manifest["task_id"] == TASK_ID
+    assert manifest["split_hash"]
+    assert len(manifest["split_hash"]) == 64
+    assert [row["item_id"] for row in eval_rows] == sorted(row["item_id"] for row in eval_rows)
+    assert [row["item_id"] for row in train_rows] == sorted(row["item_id"] for row in train_rows)
     assert contamination["ok"] is True
     assert contamination["exact_chunk_overlap"] == 0
     assert contamination["near_duplicate_pairs"] == []
@@ -76,7 +80,26 @@ def test_builder_is_deterministic():
     assert first["train_sha256"] == second["train_sha256"]
     assert first["eval_sha256"] == second["eval_sha256"]
     assert first["split_issuers_sha256"] == second["split_issuers_sha256"]
+    assert first["split_hash"] == second["split_hash"]
     assert sha256_file(DATA / "grade.py") == sha256_file(ROOT / "src" / "phase4" / "grade.py")
+
+
+def test_builder_refuses_chunks_jsonl_and_leaves_dest(tmp_path):
+    source = tmp_path / "capitalcite"
+    passages = source / "passages"
+    passages.mkdir(parents=True)
+    passages.joinpath("doc.txt").write_text("placeholder 1,234 5,678 9,012\n", encoding="utf-8")
+    parsed = source / "data" / "parsed" / "x"
+    parsed.mkdir(parents=True)
+    parsed.joinpath("chunks.jsonl").write_text("{}\n", encoding="utf-8")
+    dest = tmp_path / "out"
+    dest.mkdir()
+    marker = dest / "keep.txt"
+    marker.write_text("stay", encoding="utf-8")
+    with pytest.raises(BuildStopped, match="chunks.jsonl"):
+        build(source, dest)
+    assert marker.read_text(encoding="utf-8") == "stay"
+    assert not (dest / "eval.jsonl").exists()
 
 
 def test_builder_leaves_dest_untouched_on_refuse(tmp_path):
@@ -95,6 +118,7 @@ def test_grader_is_canonical_exact_match():
     assert canonicalize("(157)") == "-157"
     assert canonicalize(" 15.0%.\nextra") == "15.0%"
     assert grade(["$3813", "nope"], ["3813", "2165"]) == 0.5
+    assert grade(["3813 is the answer"], ["3813"]) == 0.0
     with pytest.raises(ValueError):
         grade([], [])
     template = prompt_template_static()

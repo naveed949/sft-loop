@@ -8,6 +8,7 @@ import json
 import random
 import re
 import shutil
+import subprocess
 from collections import defaultdict
 from pathlib import Path
 
@@ -28,7 +29,7 @@ from phase4.constants import (
     SPLIT_SEED,
     TASK_ID,
 )
-from phase4.grade import canonicalize, prompt_template_static, render_prompt
+from phase4.grade import BARE_FIGURE, canonicalize, prompt_template_static, render_prompt
 from phase4.paths import BuildStopped, refuse_phase3
 
 NUM = re.compile(
@@ -61,7 +62,6 @@ SKIP_LABELS = {
     "page",
     "consolidated",
 }
-FIGURE_COMPLETION = re.compile(r"^-?\d+(?:\.\d+)?%?$")
 ACCESSION = re.compile(r"^(\d{10})")
 WRITTEN_NAMES = (
     "train.jsonl",
@@ -82,6 +82,41 @@ def sha256_file(path: Path) -> str:
 
 def vendor_root(repo_root: Path) -> Path:
     return repo_root / "evals" / "phase4" / "capitalcite"
+
+
+def refuse_if_chunks_jsonl(source: Path) -> None:
+    roots = [source, *list(source.parents)[:5]]
+    for root in roots:
+        parsed = root / "data" / "parsed"
+        if not parsed.is_dir():
+            continue
+        hits = sorted(parsed.rglob("chunks.jsonl"))
+        if hits:
+            raise BuildStopped(
+                f"chunks.jsonl present at {hits[0]}; refuse to hide a second label source"
+            )
+
+
+def assert_live_capitalcite_pin(source: Path) -> None:
+    for root in [source, *list(source.parents)[:5]]:
+        passages = root / "evals" / "golden" / "passages"
+        git_dir = root / ".git"
+        if passages.is_dir() and git_dir.exists():
+            sha = subprocess.check_output(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                text=True,
+            ).strip()
+            if sha != CAPITALCITE_COMMIT:
+                raise BuildStopped(
+                    f"capitalcite HEAD {sha} is not the pinned {CAPITALCITE_COMMIT}"
+                )
+            return
+
+
+def split_hash(eval_items: list[dict[str, str]], train_items: list[dict[str, str]]) -> str:
+    held = "\n".join(sorted(item["item_id"] for item in eval_items))
+    train = "\n".join(sorted(item["item_id"] for item in train_items))
+    return sha256_text(held + "\n---\n" + train)
 
 
 def load_passages(source: Path) -> dict[str, str]:
@@ -154,7 +189,7 @@ def _item(
     source: str,
 ) -> dict[str, str] | None:
     completion = canonicalize(value)
-    if not completion or not FIGURE_COMPLETION.fullmatch(completion):
+    if not completion or not BARE_FIGURE.fullmatch(completion):
         return None
     if distinct_nums(chunk) < MIN_DISTINCT_NUMS:
         return None
@@ -378,7 +413,7 @@ def split_by_issuer(
     by_issuer: dict[str, list[dict[str, str]]] = defaultdict(list)
     for item in items:
         by_issuer[item["issuer"]].append(item)
-    issuers = list(by_issuer)
+    issuers = sorted(by_issuer)
     rng = random.Random(seed)
     rng.shuffle(issuers)
     eval_issuers: list[str] = []
@@ -390,8 +425,14 @@ def split_by_issuer(
             eval_n += len(by_issuer[issuer])
         else:
             train_issuers.append(issuer)
-    eval_items = [item for issuer in eval_issuers for item in by_issuer[issuer]]
-    train_items = [item for issuer in train_issuers for item in by_issuer[issuer]]
+    eval_items = sorted(
+        [item for issuer in eval_issuers for item in by_issuer[issuer]],
+        key=lambda item: item["item_id"],
+    )
+    train_items = sorted(
+        [item for issuer in train_issuers for item in by_issuer[issuer]],
+        key=lambda item: item["item_id"],
+    )
     return train_items, eval_items, train_issuers, eval_issuers
 
 
@@ -461,6 +502,8 @@ def _jsonl(items: list[dict[str, str]], split: str) -> str:
 
 
 def collect_items(source: Path) -> list[dict[str, str]]:
+    refuse_if_chunks_jsonl(source)
+    assert_live_capitalcite_pin(source)
     passages = load_passages(source)
     if not passages:
         raise BuildStopped(f"no passages under {source}")
@@ -519,6 +562,7 @@ def write_dataset(payload: dict, dest: Path, source: Path) -> dict:
         "eval_sha256": sha256_text(eval_text),
         "grade_sha256": sha256_file(dest / "grade.py"),
         "split_issuers_sha256": sha256_text("\n".join(sorted(payload["eval_issuers"]))),
+        "split_hash": split_hash(payload["eval"], payload["train"]),
         "model_id": MODEL_ID,
         "model_revision": MODEL_REVISION,
         "ceiling": CEILING,

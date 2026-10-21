@@ -18,6 +18,7 @@ _PUNCT = re.compile(r"[.,;:]+$")
 _COMMA = re.compile(r",")
 _DOLLAR = re.compile(r"^\$")
 _PARENS = re.compile(r"^\((.*)\)$")
+BARE_FIGURE = re.compile(r"^-?\d+(?:\.\d+)?%?$")
 
 
 def canonicalize(text: str) -> str:
@@ -53,7 +54,13 @@ def prompt_template_static() -> str:
 
 
 def grade_one(prediction: str, target: str) -> int:
-    return int(canonicalize(prediction) == canonicalize(target) and canonicalize(target) != "")
+    left = canonicalize(prediction)
+    right = canonicalize(target)
+    if not left or not right:
+        return 0
+    if not BARE_FIGURE.fullmatch(left) or not BARE_FIGURE.fullmatch(right):
+        return 0
+    return int(left == right)
 
 
 def grade(predictions: list[str], completions: list[str]) -> float:
