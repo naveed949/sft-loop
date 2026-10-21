@@ -22,11 +22,20 @@
     "model_id": { "type": "string" },
     "model_revision": { "type": "string" },
     "device": { "const": "cuda" },
-    "backend": { "const": "trl-peft" },
+    "backend": { "enum": ["manual-peft", "trl-peft"] },
     "before": { "$ref": "#/$defs/eval_slice" },
     "after": { "$ref": "#/$defs/eval_slice" },
-    "paired_ci": { "$ref": "#/$defs/paired_ci" },
+    "paired_ci": { "$ref": "#/$defs/delta_ci" },
+    "cluster_ci": { "$ref": "#/$defs/delta_ci" },
+    "leave_one_filing_out": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/lofo_row" }
+    },
+    "format_breakdown": { "$ref": "#/$defs/format_breakdown" },
+    "jpm_sensitivity": { "$ref": "#/$defs/jpm_sensitivity" },
+    "stored_hit_mismatches": { "type": "integer", "minimum": 0 },
     "uplift": { "type": "string" },
+    "verdict_detail": { "type": "string" },
     "train_proof": { "type": "object", "additionalProperties": true },
     "hardware": { "type": "object", "additionalProperties": true },
     "unsupported": {
@@ -50,10 +59,11 @@
       "properties": {
         "metric_name": { "const": "exact_match" },
         "task_score": { "type": "number", "minimum": 0, "maximum": 1 },
-        "n": { "type": "integer", "minimum": 100 }
+        "n": { "type": "integer", "minimum": 100 },
+        "hits": { "type": "integer", "minimum": 0 }
       }
     },
-    "paired_ci": {
+    "delta_ci": {
       "type": "object",
       "additionalProperties": false,
       "required": ["mean_delta", "low", "high", "n", "rounds", "seed", "verdict"],
@@ -61,10 +71,64 @@
         "mean_delta": { "type": "number" },
         "low": { "type": "number" },
         "high": { "type": "number" },
-        "n": { "type": "integer", "minimum": 100 },
+        "n": { "type": "integer", "minimum": 1 },
+        "n_clusters": { "type": "integer", "minimum": 1 },
         "rounds": { "type": "integer", "minimum": 1 },
         "seed": { "type": "integer", "minimum": 0 },
-        "verdict": { "type": "string" }
+        "verdict": { "type": "string" },
+        "grouping": { "type": "string" }
+      }
+    },
+    "lofo_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["left_out", "n", "mean_delta"],
+      "properties": {
+        "left_out": { "type": "string" },
+        "n": { "type": "integer", "minimum": 0 },
+        "mean_delta": { "type": ["number", "null"] }
+      }
+    },
+    "format_breakdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format_gains",
+        "substantive_gains",
+        "losses",
+        "net_substantive",
+        "format_ci",
+        "substantive_ci"
+      ],
+      "properties": {
+        "format_gains": { "type": "integer", "minimum": 0 },
+        "substantive_gains": { "type": "integer", "minimum": 0 },
+        "losses": { "type": "integer", "minimum": 0 },
+        "net_substantive": { "type": "integer" },
+        "format_ci": { "$ref": "#/$defs/delta_ci" },
+        "substantive_ci": { "$ref": "#/$defs/delta_ci" }
+      }
+    },
+    "jpm_sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "excluded_family",
+        "excluded_n",
+        "n",
+        "before_hits",
+        "after_hits",
+        "item_ci",
+        "cluster_ci"
+      ],
+      "properties": {
+        "excluded_family": { "type": "string" },
+        "excluded_n": { "type": "integer", "minimum": 0 },
+        "n": { "type": "integer", "minimum": 0 },
+        "before_hits": { "type": "integer", "minimum": 0 },
+        "after_hits": { "type": "integer", "minimum": 0 },
+        "item_ci": { "$ref": "#/$defs/delta_ci" },
+        "cluster_ci": { "$ref": "#/$defs/delta_ci" }
       }
     }
   }

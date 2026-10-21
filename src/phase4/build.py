@@ -18,6 +18,9 @@ from phase4.constants import (
     CEILING,
     CHUNK_RADIUS,
     ISSUER_ALIASES,
+    LOCKED_EVAL_SHA256,
+    LOCKED_SPLIT_HASH,
+    LOCKED_TRAIN_SHA256,
     MAX_CHUNK_CHARS,
     MIN_DISTINCT_NUMS,
     MIN_EVAL,
@@ -28,6 +31,7 @@ from phase4.constants import (
     SHINGLE_N,
     SPLIT_SEED,
     TASK_ID,
+    issuer_family,
 )
 from phase4.grade import BARE_FIGURE, canonicalize, prompt_template_static, render_prompt
 from phase4.paths import BuildStopped, refuse_phase3
@@ -479,14 +483,40 @@ def contamination_report(train: list[dict[str, str]], eval_items: list[dict[str,
             leaked.append(item["item_id"])
         del prompt
     leaked = sorted(set(leaked))
-    ok = not exact and not near and not leaked
+    chunk_ok = not exact and not near and not leaked
+    family_train: dict[str, set[str]] = defaultdict(set)
+    family_eval: dict[str, set[str]] = defaultdict(set)
+    family_eval_docs: dict[str, set[str]] = defaultdict(set)
+    family_eval_n: dict[str, int] = defaultdict(int)
+    for item in train:
+        family_train[issuer_family(item["issuer"], item["doc_id"])].add(item["issuer"])
+    for item in eval_items:
+        family = issuer_family(item["issuer"], item["doc_id"])
+        family_eval[family].add(item["issuer"])
+        family_eval_docs[family].add(item["doc_id"])
+        family_eval_n[family] += 1
+    overlap = sorted(set(family_train) & set(family_eval))
+    issuer_overlap = [
+        {
+            "family": family,
+            "train_issuers": sorted(family_train[family]),
+            "eval_issuers": sorted(family_eval[family]),
+            "eval_doc_ids": sorted(family_eval_docs[family]),
+            "n_eval_rows": family_eval_n[family],
+        }
+        for family in overlap
+    ]
+    status = "same-issuer overlap" if overlap else ("ok" if chunk_ok else "chunk_or_prompt_overlap")
     return {
         "exact_chunk_overlap": len(exact),
         "exact_chunk_shas": [sha256_text(chunk) for chunk in exact],
         "near_duplicate_pairs": near,
         "near_duplicate_threshold": NEAR_DUP_THRESHOLD,
         "eval_in_prompt_template": leaked,
-        "ok": ok,
+        "issuer_overlap": issuer_overlap,
+        "status": status,
+        "chunk_ok": chunk_ok,
+        "ok": chunk_ok and not overlap,
     }
 
 
@@ -521,7 +551,7 @@ def materialize(source: Path, seed: int = SPLIT_SEED) -> dict:
     if len(train) < MIN_TRAIN:
         raise BuildStopped(f"train n {len(train)} is below {MIN_TRAIN}")
     report = contamination_report(train, ev)
-    if not report["ok"]:
+    if not report["chunk_ok"]:
         raise BuildStopped(f"contamination check failed: {json.dumps(report, sort_keys=True)}")
     return {
         "train": train,
@@ -587,6 +617,18 @@ def build(source: Path, dest: Path, seed: int = SPLIT_SEED) -> dict:
     tmp.mkdir(parents=True)
     try:
         manifest = write_dataset(payload, tmp, source)
+        existing = dest / "manifest.json"
+        if existing.is_file():
+            old = json.loads(existing.read_text(encoding="utf-8"))
+            if old.get("split_hash") == LOCKED_SPLIT_HASH and (
+                manifest["eval_sha256"] != LOCKED_EVAL_SHA256
+                or manifest["train_sha256"] != LOCKED_TRAIN_SHA256
+                or manifest["split_hash"] != LOCKED_SPLIT_HASH
+            ):
+                raise BuildStopped(
+                    "refusing to overwrite the locked tenk-extract-v1 split "
+                    f"{LOCKED_SPLIT_HASH}"
+                )
         for name in WRITTEN_NAMES:
             target = dest / name
             source_file = tmp / name

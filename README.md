@@ -163,15 +163,16 @@ python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device 
 
 ## Phase 4 (Kaggle GPU, two-phase)
 
-Phase 4 is a sibling of the uppercase fixture, not a new `sft_loop` task. The held-out task is `tenk-extract-v1`: open-book figure extraction from capitalcite passages at commit `34b42ee0b387738725705a0af682dd3f030a9944`. Eval n is 123. The grader is canonical-figure exact match. `runs/phase4/scored.json` is assembled from Kaggle kernel v3 at `ee7f5c8511d42916c02147b68731e6c0a36cd317` (tarball sha256 `421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507`).
+Phase 4 is a sibling of the uppercase fixture, not a new `sft_loop` task. The held-out task is `tenk-extract-v1`: open-book figure extraction from capitalcite passages at commit `34b42ee0b387738725705a0af682dd3f030a9944`. That pin is exact. Eval n is 123. The grader is canonical-figure exact match. `runs/phase4/scored.json` exists. It is assembled from Kaggle kernel v3 at `ee7f5c8511d42916c02147b68731e6c0a36cd317` (tarball sha256 `421df4ada47a4b8d98c22c8c0f606cc6eef038760bc62dfb15124ae4768cf507`) and regraded from the committed raw generations.
 
 | slice | exact_match | n | source |
 | --- | --- | --- | --- |
-| before | 0.6422764227642277 (79/123) | 123 | `runs/phase4/raw/eval_before.json` |
+| before | 0.6585365853658537 (81/123) | 123 | `runs/phase4/raw/eval_before.json`, reassembled after the `$(370)$` fix |
 | after | 0.7317073170731707 (90/123) | 123 | `runs/phase4/raw/eval_after.json` |
-| paired delta | 0.08943089430894309, 95% CI [0.016260162601626018, 0.16260162601626016] | 123 | `runs/phase4/scored.json` `paired_ci`, 10000 rounds, seed 0 |
+| cluster delta (primary) | 0.07317073170731707, 95% CI [0.0, 0.11214953271028037] | 123 rows, 10 filings | `runs/phase4/scored.json` `cluster_ci`, 10000 rounds, seed 0 |
+| item delta (secondary) | 0.07317073170731707, 95% CI [0.0, 0.14634146341463414] | 123 | `runs/phase4/scored.json` `paired_ci`, 10000 rounds, seed 0 |
 
-One T4 run. Same eval ids, split hash, seed 0, greedy decode, hardware. Baseline NLL 0.6888449788093567 is finite. 102 distinct before predictions. No `!` collapse. Trained in **fp32**. `fp16.json` is `unsupported` (`fp16_amp_overflow`: AMP loss non-finite, first overflow `layers.0.self_attn.o_proj.base_layer`). Adapter sha256 `e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109`, 8745704 B, gitignored.
+One T4 run. Same eval ids, split hash, seed 0, greedy decode, hardware. Baseline NLL 0.6888449788093567 is finite and is the first eval row only. 102 distinct before predictions. No `!` collapse. Trained in **fp32**. `fp16.json` is `unsupported` (`fp16_amp_overflow`: AMP loss non-finite, first overflow `layers.0.self_attn.o_proj.base_layer`). Adapter sha256 `e94fb237398a3e496552014b5ddb8dad6556a2ac56a669d480bbf6098f5e0109`, 8745704 B, gitignored. Contamination status is `same-issuer overlap` (JPM 2025 CIK `0001628280`, 6 eval rows kept). Format gains 5, substantive gains 10, losses 6, net new correct figures +4.
 
 ### What ran
 
@@ -181,9 +182,9 @@ Accelerator: 2x Tesla T4, 15,636,037,632 B each, compute capability 7.5. bf16 is
 
 ### Interview notes
 
-LoRA stores a low-rank update ΔW = BA. Rank r is 8. Alpha is 16, so the applied scale is alpha/r = 2. Target modules are the attention projections `q_proj`, `k_proj`, `v_proj`, `o_proj`: those matrices route which year-column figure to copy, and they fit a 15 GB T4 with sequence length 1024. IEEE fp16 max is 65504. `GradScaler` only protects small fp16 *gradients* and requires fp32 master weights; it does not fix an Inf activation in RMSNorm, attention, or `lm_head`. Run 2 loaded the 1.5B weights as float16, wrote a 0/123 `!!!!!!!!!!!!!!!!` baseline, then died on a non-finite loss at step 1. bf16 has a wider exponent and does not need that scaler, but T4 cannot run it. Gradient checkpointing trades extra forward compute for lower activation memory; the kernel measures both peaks at the same batch and sequence length. Effective batch is 8 (microbatch 1 times 8 accumulation steps). The LR schedule is cosine with 5% warmup so the first steps do not jump from a cold adapter. Eval n=8 cannot show uplift: SE of a Bernoulli rate is sqrt(p(1-p)/n) ≈ 0.18 at p=0.5, which swallows a typical LoRA delta. This task uses n >= 100 and a contamination check (exact and 5-gram Jaccard near-duplicates between train and eval, and eval figures against the static prompt template).
+LoRA stores a low-rank update ΔW = BA. Rank r is 8. Alpha is 16, so the applied scale is alpha/r = 2. Target modules are the attention projections `q_proj`, `k_proj`, `v_proj`, `o_proj`: those matrices route which year-column figure to copy, and they fit a 15 GB T4 with sequence length 1024. IEEE fp16 max is 65504. `GradScaler` only protects small fp16 *gradients* and requires fp32 master weights; it does not fix an Inf activation in RMSNorm, attention, or `lm_head`. Run 2 loaded the 1.5B weights as float16, wrote a 0/123 `!!!!!!!!!!!!!!!!` baseline, then died on a non-finite loss at step 1. bf16 has a wider exponent and does not need that scaler, but T4 cannot run it. Gradient checkpointing trades extra forward compute for lower activation memory; the kernel measures both peaks at the same batch and sequence length. Effective batch is 8 (microbatch 1 times 8 accumulation steps). The LR schedule is cosine with 5% warmup so the first steps do not jump from a cold adapter. Eval n=8 cannot show uplift: SE of a Bernoulli rate is sqrt(p(1-p)/n) ≈ 0.18 at p=0.5, which swallows a typical LoRA delta. This task uses n >= 100 and a contamination check (exact and 5-gram Jaccard near-duplicates between train and eval, eval figures against the static prompt template, and issuer-family overlap). The locked split has no shared issuer *string*. It still has JPM family overlap via CIK `0001628280`.
 
-The paired interval does not cover 0. Verdict is `uplift`. This is one kernel run. Do not retune it.
+The filing-cluster interval covers 0. Verdict is `no uplift`. The item-level mean is positive. The honest line is inconclusive / no uplift at the filing level, with a positive item-level estimate. Train loss interpolated by step 7. Eval ran only at step 200. That is an overfitting risk. This is one kernel run. Do not retune it.
 
 ## License
 

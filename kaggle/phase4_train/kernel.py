@@ -42,6 +42,10 @@ EXPECTED_SPLIT_HASH = "3a298f9e0d83b00c9d3cfac99f90a160ebef3ce28c94d926b3f5efa26
 EXPECTED_EVAL_SHA256 = "09a6e33011761caf02a5eb3f732d172f778c234ed29d434af1298360d3e6a459"
 EXPECTED_TRAIN_SHA256 = "c73756013ef53e615cc774e8bf5e354033346e0812a325d5c72ea1f262f06abc"
 EXPECTED_CAPITALCITE_COMMIT = "34b42ee0b387738725705a0af682dd3f030a9944"
+BACKEND = "manual-peft"
+DDP_UNSUPPORTED_REASON = (
+    "kernel is a single-process main() and never initializes a torch.distributed process group"
+)
 FP16_MAX = 65504
 PROBE_GEN_ITEMS = 4
 HOOK_NEEDLES = (
@@ -373,6 +377,9 @@ def finite_nll(model, tokenizer, row, torch, device) -> dict:
     return {
         "nll": float(loss.detach().float().cpu()) if finite else None,
         "finite": finite,
+        "scope": "first_eval_row",
+        "item_id": row.get("item_id"),
+        "n_rows": 1,
     }
 
 
@@ -429,12 +436,14 @@ def evaluate(model, tokenizer, rows, grade, device) -> dict:
                     "hit": hit,
                 }
             )
+    hits = sum(item["hit"] for item in items)
     score = grade.grade(predictions, [row["completion"] for row in rows])
     return {
         "task_id": TASK_ID,
         "metric_name": "exact_match",
         "task_score": score,
         "n": len(rows),
+        "hits": hits,
         "seed": SEED,
         "items": items,
     }
@@ -637,20 +646,7 @@ def checkpoint_compare(model, tokenizer, rows, torch, autocast, device, *, use_a
 
 
 def try_ddp(torch) -> dict:
-    if torch.cuda.device_count() < 2:
-        return {"status": "unsupported", "reason": "fewer than 2 visible CUDA devices"}
-    try:
-        import torch.distributed as dist
-        from torch.nn.parallel import DistributedDataParallel
-
-        if dist.is_available() and not dist.is_initialized():
-            return {
-                "status": "unsupported",
-                "reason": "optional DDP not launched via torchrun in this kernel",
-            }
-        return {"status": "unsupported", "reason": "DDP process group was not initialized"}
-    except Exception as exc:
-        return {"status": "unsupported", "reason": str(exc), "traceback": traceback.format_exc()}
+    return {"status": "unsupported", "reason": DDP_UNSUPPORTED_REASON}
 
 
 def write_unsupported(reason: str, detail: str, *, exit_code: int = 0) -> int:
@@ -712,12 +708,10 @@ def main() -> int:
                 "status": "unsupported",
                 "reason": "fp16_amp_overflow",
                 "detail": (
-                    "fp16 max is 65504. Run 2 loaded the 1.5B weights as float16 "
-                    "and GradScaler then saw a non-finite loss at step 1. "
-                    "eval_before was 0/123 with every decode '!!!!!!!!!!!!!!!!'. "
-                    "Masters are now fp32. This probe still found a non-finite "
-                    "fp16 autocast forward or garbage generations, so mixed "
-                    "precision is unsupported on this T4/Qwen pair."
+                    "fp16 max is 65504. GradScaler needs fp32 master weights. "
+                    "This probe found a non-finite fp16 autocast forward or "
+                    "punctuation-only generations, so mixed precision is "
+                    "unsupported on this T4/Qwen pair."
                 ),
                 "overflow_modules": probe["amp"].get("overflow_modules", []),
                 "worst_overflow": worst,
@@ -786,7 +780,7 @@ def main() -> int:
         f"max_steps={MAX_STEPS}",
         f"lora_r={LORA_R}",
         f"device=cuda",
-        f"backend=trl-peft",
+        f"backend={BACKEND}",
         f"autocast={'fp16' if train_result['mixed_precision'] == 'fp16_autocast' else 'off'}",
         f"grad_scaler={int(train_result['grad_scaler'])}",
         f"weight_dtype=float32",

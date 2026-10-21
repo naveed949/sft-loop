@@ -13,11 +13,22 @@ import pytest
 
 from jsonschema import Draft202012Validator
 
-from phase4.assemble import assemble, paired_bootstrap
-from phase4.build import build, build_default, sha256_file, vendor_root
-from phase4.constants import CAPITALCITE_COMMIT, MIN_EVAL, MODEL_REVISION, TASK_ID
+from phase4.assemble import assemble, extra_from_raw, paired_bootstrap
+from phase4.build import build, build_default, contamination_report, sha256_file, vendor_root
+from phase4.constants import (
+    BACKEND,
+    CAPITALCITE_COMMIT,
+    DDP_UNSUPPORTED_REASON,
+    LOCKED_EVAL_SHA256,
+    LOCKED_SPLIT_HASH,
+    LOCKED_TRAIN_SHA256,
+    MIN_EVAL,
+    MODEL_REVISION,
+    TASK_ID,
+    VERDICT_DETAIL_NO_FILING_UPLIFT,
+)
 from phase4.fence import fence_violations, iter_fenced_files, product_imports_phase4
-from phase4.grade import canonicalize, grade, prompt_template_static, render_prompt
+from phase4.grade import canonicalize, format_equivalent, grade, prompt_template_static, render_prompt
 from phase4.paths import BuildStopped, Phase3PathRefused, RefusedCeiling, refuse_phase3
 from phase4.run import local_scaler_probe
 
@@ -70,7 +81,12 @@ def test_builder_emits_eval_n_and_clean_contamination():
     assert len(manifest["split_hash"]) == 64
     assert [row["item_id"] for row in eval_rows] == sorted(row["item_id"] for row in eval_rows)
     assert [row["item_id"] for row in train_rows] == sorted(row["item_id"] for row in train_rows)
-    assert contamination["ok"] is True
+    assert contamination["chunk_ok"] is True
+    assert contamination["ok"] is False
+    assert contamination["status"] == "same-issuer overlap"
+    assert contamination["issuer_overlap"][0]["family"] == "JPM"
+    assert contamination["issuer_overlap"][0]["n_eval_rows"] == 6
+    assert contamination["issuer_overlap"][0]["eval_issuers"] == ["0001628280"]
     assert contamination["exact_chunk_overlap"] == 0
     assert contamination["near_duplicate_pairs"] == []
     assert contamination["eval_in_prompt_template"] == []
@@ -80,16 +96,25 @@ def test_builder_emits_eval_n_and_clean_contamination():
     train_issuers = {row["issuer"] for row in train_rows}
     eval_issuers = {row["issuer"] for row in eval_rows}
     assert train_issuers.isdisjoint(eval_issuers)
+    assert len(eval_rows) == 123
+    assert {row["item_id"] for row in eval_rows if row["issuer"] == "0001628280"}
 
 
-def test_builder_is_deterministic():
-    first = build_default(ROOT, dest=DATA)
-    second = build_default(ROOT, dest=DATA)
+def test_builder_is_deterministic(tmp_path):
+    dest = tmp_path / "data"
+    first = build_default(ROOT, dest=dest)
+    second = build_default(ROOT, dest=dest)
     assert first["train_sha256"] == second["train_sha256"]
     assert first["eval_sha256"] == second["eval_sha256"]
     assert first["split_issuers_sha256"] == second["split_issuers_sha256"]
     assert first["split_hash"] == second["split_hash"]
     assert sha256_file(DATA / "grade.py") == sha256_file(ROOT / "src" / "phase4" / "grade.py")
+    assert sha256_file(DATA / "eval.jsonl") == LOCKED_EVAL_SHA256
+    assert sha256_file(DATA / "train.jsonl") == LOCKED_TRAIN_SHA256
+    manifest = json.loads((DATA / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["split_hash"] == LOCKED_SPLIT_HASH
+    assert manifest["eval_sha256"] == LOCKED_EVAL_SHA256
+    assert manifest["train_sha256"] == LOCKED_TRAIN_SHA256
 
 
 def test_builder_refuses_chunks_jsonl_and_leaves_dest(tmp_path):
@@ -124,9 +149,14 @@ def test_builder_leaves_dest_untouched_on_refuse(tmp_path):
 def test_grader_is_canonical_exact_match():
     assert canonicalize("$ 3,813") == "3813"
     assert canonicalize("(157)") == "-157"
+    assert canonicalize("$(370)$") == "-370"
+    assert canonicalize("$(545)$") == "-545"
     assert canonicalize(" 15.0%.\nextra") == "15.0%"
+    assert grade(["$(370)$"], ["-370"]) == 1.0
     assert grade(["$3813", "nope"], ["3813", "2165"]) == 0.5
     assert grade(["3813 is the answer"], ["3813"]) == 0.0
+    assert format_equivalent("$410 million", "410") is True
+    assert format_equivalent("376", "420") is False
     with pytest.raises(ValueError):
         grade([], [])
     template = prompt_template_static()
@@ -184,18 +214,44 @@ def test_phase4_scored_report_is_assembled_from_raw(tmp_path):
     raw = PHASE4 / "raw"
     assert scored_path.is_file()
     scored = json.loads(scored_path.read_text(encoding="utf-8"))
-    rebuilt = assemble(raw / "eval_before.json", raw / "eval_after.json", tmp_path / "scored.json")
+    rebuilt = assemble(
+        raw / "eval_before.json",
+        raw / "eval_after.json",
+        tmp_path / "scored.json",
+        extra=extra_from_raw(raw),
+    )
     assert rebuilt["before"] == scored["before"]
     assert rebuilt["after"] == scored["after"]
     assert rebuilt["paired_ci"] == scored["paired_ci"]
+    assert rebuilt["cluster_ci"] == scored["cluster_ci"]
+    assert rebuilt["format_breakdown"] == scored["format_breakdown"]
+    assert rebuilt["jpm_sensitivity"] == scored["jpm_sensitivity"]
     assert rebuilt["n"] == 123
-    assert rebuilt["uplift"] == scored["uplift"]
+    assert rebuilt["uplift"] == scored["uplift"] == "no uplift"
+    assert rebuilt["verdict_detail"] == scored["verdict_detail"] == VERDICT_DETAIL_NO_FILING_UPLIFT
+    assert scored["before"]["hits"] == 81
+    assert scored["after"]["hits"] == 90
+    assert scored["cluster_ci"]["low"] <= 0.0 <= scored["cluster_ci"]["high"]
+    assert scored["paired_ci"]["grouping"] == "item"
+    assert scored["cluster_ci"]["grouping"] == "filing"
+    assert scored["format_breakdown"]["format_gains"] == 5
+    assert scored["format_breakdown"]["substantive_gains"] == 10
+    assert scored["format_breakdown"]["losses"] == 6
+    assert scored["format_breakdown"]["net_substantive"] == 4
+    assert scored["jpm_sensitivity"]["excluded_n"] == 6
+    assert scored["jpm_sensitivity"]["n"] == 117
+    assert scored["stored_hit_mismatches"] == 2
     schema = json.loads((ROOT / "schema" / "phase4_run.schema.json").read_text(encoding="utf-8"))
     Draft202012Validator(schema).validate(scored)
     assert scored["status"] == "scored"
     assert "weight_change_claimed" not in scored
+    assert scored["backend"] == BACKEND
     assert scored["train_proof"]["mixed_precision"] == "fp32"
     assert scored["train_proof"]["fp16"] == "unsupported"
+    assert scored["train_proof"]["backend"] == BACKEND
+    assert scored["train_proof"]["ddp"]["reason"] == DDP_UNSUPPORTED_REASON
+    assert scored["train_proof"]["nll_scope"] == "first_eval_row"
+    assert scored["train_proof"]["overfitting_risk"]
 
 
 def test_kernel_metadata_and_script_are_self_contained():
@@ -213,6 +269,11 @@ def test_kernel_metadata_and_script_are_self_contained():
     assert "autocast" in script
     assert "global_step" in script
     assert "200" in script
+    assert 'BACKEND = "manual-peft"' in script
+    assert "backend={BACKEND}" in script
+    assert "backend=trl-peft" not in script
+    assert "Run 2" not in script
+    assert DDP_UNSUPPORTED_REASON in script
 
 
 def test_vendor_records_capitalcite_pin():
@@ -383,6 +444,25 @@ def test_worst_overflow_ranks_by_max_abs():
     assert worst["max_abs"] == 200000.0
 
 
+def test_try_ddp_cannot_succeed():
+    kernel = _load_kernel()
+    body = kernel.try_ddp(None)
+    assert body == {"status": "unsupported", "reason": DDP_UNSUPPORTED_REASON}
+    assert kernel.BACKEND == BACKEND
+    assert kernel.DDP_UNSUPPORTED_REASON == DDP_UNSUPPORTED_REASON
+
+
+def test_jpm_rows_stay_in_eval():
+    eval_rows = [json.loads(line) for line in (DATA / "eval.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    jpm = [row for row in eval_rows if row["issuer"] == "0001628280"]
+    assert len(jpm) == 6
+    assert all(row["doc_id"] == "0001628280-26-008131" for row in jpm)
+    train_rows = [json.loads(line) for line in (DATA / "train.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    report = contamination_report(train_rows, eval_rows)
+    assert report["status"] == "same-issuer overlap"
+    assert len(eval_rows) == 123
+
+
 def test_ingest_hashes_and_baseline_are_sane():
     kernel = _load_kernel()
     raw = PHASE4 / "raw"
@@ -409,7 +489,9 @@ def test_ingest_hashes_and_baseline_are_sane():
     assert manifest["eval_sha256"] == committed["eval_sha256"]
     assert manifest["train_sha256"] == committed["train_sha256"]
     contamination = json.loads((DATA / "contamination.json").read_text(encoding="utf-8"))
-    assert contamination["ok"] is True
+    assert contamination["ok"] is False
+    assert contamination["status"] == "same-issuer overlap"
+    assert contamination["chunk_ok"] is True
     fp16 = json.loads((raw / "fp16.json").read_text(encoding="utf-8"))
     env = json.loads((raw / "env.json").read_text(encoding="utf-8"))
     assert fp16["status"] == "unsupported"

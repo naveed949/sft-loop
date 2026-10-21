@@ -35,6 +35,7 @@ def main(argv: list[str] | None = None) -> int:
     assemble_p.add_argument("--before", type=Path, required=True)
     assemble_p.add_argument("--after", type=Path, required=True)
     assemble_p.add_argument("--out", type=Path, required=True)
+    assemble_p.add_argument("--raw-dir", type=Path, default=None)
     args = parser.parse_args(argv)
     root = _repo_root()
     try:
@@ -56,9 +57,10 @@ def main(argv: list[str] | None = None) -> int:
             sys.stdout.write(json.dumps(body, indent=2, sort_keys=True) + "\n")
             return 0
         if args.cmd == "assemble":
-            from phase4.assemble import assemble
+            from phase4.assemble import assemble, extra_from_raw
 
-            report = assemble(args.before, args.after, args.out)
+            extra = extra_from_raw(args.raw_dir) if args.raw_dir else None
+            report = assemble(args.before, args.after, args.out, extra=extra)
             sys.stdout.write(json.dumps(report, indent=2, sort_keys=True) + "\n")
             return 0
     except (BuildStopped, Phase3PathRefused, Phase4Unsupported, RefusedCeiling) as exc:

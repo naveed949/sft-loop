@@ -34,8 +34,41 @@ LR_SCHEDULE = "cosine"
 CHUNK_RADIUS = 700
 MAX_CHUNK_CHARS = 2200
 BOOTSTRAP_ROUNDS = 10000
+LOCKED_SPLIT_HASH = "3a298f9e0d83b00c9d3cfac99f90a160ebef3ce28c94d926b3f5efa266c95e33"
+LOCKED_EVAL_SHA256 = "09a6e33011761caf02a5eb3f732d172f778c234ed29d434af1298360d3e6a459"
+LOCKED_TRAIN_SHA256 = "c73756013ef53e615cc774e8bf5e354033346e0812a325d5c72ea1f262f06abc"
+BACKEND = "manual-peft"
+DDP_UNSUPPORTED_REASON = (
+    "kernel is a single-process main() and never initializes a torch.distributed process group"
+)
+VERDICT_DETAIL_NO_FILING_UPLIFT = (
+    "inconclusive / no uplift at the filing level, with a positive item-level estimate"
+)
 ISSUER_ALIASES = {
     "0000019617": "JPM",
     "JPM": "JPM",
     "JPMORGAN": "JPM",
 }
+ISSUER_FAMILIES = {
+    "0000019617": "JPM",
+    "JPM": "JPM",
+    "JPMORGAN": "JPM",
+    "0001628280": "JPM",
+    "0000831001": "AMEX",
+    "AMERICANEXPRESS": "AMEX",
+    "0000072971": "3M",
+    "3M": "3M",
+    "BOEING": "BOEING",
+    "GS": "GS",
+}
+
+
+def issuer_family(issuer: str, doc_id: str = "") -> str:
+    if issuer in ISSUER_FAMILIES:
+        return ISSUER_FAMILIES[issuer]
+    key = ""
+    if doc_id[:1].isdigit():
+        key = doc_id.split("-")[0]
+    elif doc_id:
+        key = doc_id.split("_")[0]
+    return ISSUER_FAMILIES.get(key, issuer or doc_id)

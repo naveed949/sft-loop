@@ -4,7 +4,7 @@ A scored LoRA run on capitalcite 10-K extraction. The local CPU verify cannot st
 
 ## Sub-features
 
-- `phase4-dataset` is the issuer-split extraction set in `kaggle/phase4_data/` (`eval` n >= 100, contamination report `ok`).
+- `phase4-dataset` is the issuer-split extraction set in `kaggle/phase4_data/` (`eval` n >= 100, contamination status `same-issuer overlap`, chunk overlap empty).
 - `phase4-kernel` is the private GPU script in `kaggle/phase4_train/` (`enable_gpu` true, no secrets).
 - `phase4-local-unsupported` is the CPU probe: no CUDA `GradScaler` path, no adapter, no after-eval.
 - `phase4-scored-json` is the Phase 2 report `runs/phase4/scored.json`, assembled from `runs/phase4/raw/eval_before.json` and `eval_after.json`.
@@ -14,7 +14,7 @@ A scored LoRA run on capitalcite 10-K extraction. The local CPU verify cannot st
 - Inspect `kaggle/phase4_data/manifest.json` and `kaggle/phase4_data/contamination.json`.
 - Inspect `kaggle/phase4_train/kernel-metadata.json` and `kaggle/phase4_train/kernel.py`.
 - On this VM run `python -m phase4 probe --out /tmp/phase4-probe.json`. Expect `status` `unsupported`.
-- Read `runs/phase4/scored.json` and `runs/phase4/raw/SOURCE.txt`. Reassemble with `python -m phase4 assemble --before runs/phase4/raw/eval_before.json --after runs/phase4/raw/eval_after.json --out /tmp/phase4-scored.json`.
+- Read `runs/phase4/scored.json` and `runs/phase4/raw/SOURCE.txt`. That scored file exists. Reassemble with `python -m phase4 assemble --before runs/phase4/raw/eval_before.json --after runs/phase4/raw/eval_after.json --raw-dir runs/phase4/raw --out /tmp/phase4-scored.json`.
 
 ## Driving it with verify-sft-loop
 
@@ -25,7 +25,7 @@ Preconditions:
 - Do not run `kaggle kernels push` and do not execute `kaggle/phase4_train/kernel.py` here.
 
 - **Local map status.** Mark this feature `unsupported` with `gpu_or_train_deps_unavailable`. The CPU plumbing smoke is a different surface and still must pass.
-- **Dataset and fence.** Run `scripts/verify test`. `tests/test_phase4.py` requires eval n >= 100, a clean contamination report, an AST fence (no `sft_loop` or `unsloth` in Phase 4 files), and `runs/phase4/scored.json` to match a fresh `phase4.assemble` of the raw eval files.
+- **Dataset and fence.** Run `scripts/verify test`. `tests/test_phase4.py` requires eval n >= 100, a contamination report that flags JPM family overlap without dropping those rows, an AST fence (no `sft_loop` or `unsloth` in Phase 4 files), and `runs/phase4/scored.json` to match a fresh `phase4.assemble` of the raw eval files. The primary interval is `cluster_ci`. The verdict is the cluster rule.
 - **Kernel evidence (not local).** Raw T4 files are in `runs/phase4/raw/`. Do not start `kaggle/phase4_train/kernel.py` here. Do not invent new scores. Re-grade from the committed per-item JSON.
 - **Official SFT CLIs.** Leave `scripts/verify unsupported` and `scripts/verify smoke` on the uppercase fixture. Phase 4 must not change those reports.
 

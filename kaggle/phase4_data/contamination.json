@@ -1,8 +1,25 @@
 {
+  "chunk_ok": true,
   "eval_in_prompt_template": [],
   "exact_chunk_overlap": 0,
   "exact_chunk_shas": [],
+  "issuer_overlap": [
+    {
+      "eval_doc_ids": [
+        "0001628280-26-008131"
+      ],
+      "eval_issuers": [
+        "0001628280"
+      ],
+      "family": "JPM",
+      "n_eval_rows": 6,
+      "train_issuers": [
+        "JPM"
+      ]
+    }
+  ],
   "near_duplicate_pairs": [],
   "near_duplicate_threshold": 0.8,
-  "ok": true
+  "ok": false,
+  "status": "same-issuer overlap"
 }

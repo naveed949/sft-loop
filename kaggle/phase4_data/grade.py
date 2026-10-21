@@ -16,8 +16,9 @@ PROMPT_ANSWER = "Answer:"
 _WS = re.compile(r"\s+")
 _PUNCT = re.compile(r"[.,;:]+$")
 _COMMA = re.compile(r",")
-_DOLLAR = re.compile(r"^\$")
+_DOLLAR = re.compile(r"\$")
 _PARENS = re.compile(r"^\((.*)\)$")
+_FIGURE = re.compile(r"-?\d+(?:\.\d+)?%?")
 BARE_FIGURE = re.compile(r"^-?\d+(?:\.\d+)?%?$")
 
 
@@ -26,13 +27,22 @@ def canonicalize(text: str) -> str:
         return ""
     line = text.strip().splitlines()[0].strip() if text.strip() else ""
     line = _WS.sub("", line)
+    line = _DOLLAR.sub("", line)
     line = _PUNCT.sub("", line)
     parens = _PARENS.match(line)
     if parens:
         line = "-" + parens.group(1)
-    line = _DOLLAR.sub("", line)
     line = _COMMA.sub("", line)
     return line
+
+
+def figure_tokens(text: str) -> set[str]:
+    return set(_FIGURE.findall(canonicalize(text)))
+
+
+def format_equivalent(prediction: str, target: str) -> bool:
+    target_fig = canonicalize(target)
+    return bool(target_fig) and target_fig in figure_tokens(prediction)
 
 
 def render_prompt(chunk: str, question: str) -> str:
