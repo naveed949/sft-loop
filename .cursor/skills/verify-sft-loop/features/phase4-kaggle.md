@@ -26,12 +26,15 @@ Preconditions:
 
 - **Local map status.** Mark this feature `unsupported` with `gpu_or_train_deps_unavailable`. The CPU plumbing smoke is a different surface and still must pass.
 - **Dataset and fence.** Run `scripts/verify test`. `tests/test_phase4.py` requires eval n >= 100, a clean contamination report, an AST fence (no `sft_loop` or `unsloth` in Phase 4 files), and `runs/phase4/scored.json` absent.
-- **Kernel evidence (not local).** The script that will write per-item `eval_before.json` / `eval_after.json`, `trainer_log.txt`, `profiler_summary.json`, `memory_checkpoint.json`, `env.json`, and `adapter.sha256` is `kaggle/phase4_train/kernel.py`. Those files appear only after the T4 run. Link that directory as the kernel evidence path. Do not invent scores.
+- **Kernel evidence (not local).** The script that will write per-item `eval_before.json` / `eval_after.json`, `fp16_probe.json`, `trainer_log.txt`, `profiler_summary.json`, `memory_checkpoint.json`, `env.json`, and `adapter.sha256` is `kaggle/phase4_train/kernel.py`. Those files appear only after the T4 run. Link that directory as the kernel evidence path. Do not invent scores.
 - **Official SFT CLIs.** Leave `scripts/verify unsupported` and `scripts/verify smoke` on the uppercase fixture. Phase 4 must not change those reports.
 
 ## Gotchas
 
-- A T4 (compute capability 7.5) cannot run bf16. Record bf16 as `unsupported` with that reason. The kernel uses fp16 autocast and `GradScaler`.
+- A T4 (compute capability 7.5) cannot run bf16. Record bf16 as `unsupported` with that reason.
+- Do not load the 1.5B weights as `torch_dtype=float16` and then call `GradScaler`. Masters must be fp32. Autocast is the compute dtype. Run 2 at `ce57285` proved the wrong recipe: `eval_before` 0/123 of `!!!!!!!!!!!!!!!!`, then `non-finite loss at step 1`, no adapter.
+- The kernel writes `fp16_probe.json` first. If AMP overflows (hidden max-abs > 65504 or non-finite loss), `fp16.json` is `unsupported` and training continues in fp32, labeled `fp32`.
+- Refuse a garbage baseline: punctuation-only or non-finite NLL writes `unsupported.json` with `baseline_invalid` and does not train.
 - Do not write `runs/phase4/scored.json` on this VM. Phase 2 assembles it from the downloaded per-item JSON.
 - Do not point Phase 4 writers at `runs/phase3` or `adapters/phase3`.
 - If baseline exact match is at least 0.85, the kernel must stop and write `refused_ceiling` instead of an adapter.

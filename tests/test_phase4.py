@@ -303,3 +303,60 @@ def test_kernel_rejects_nested_dataset_with_wrong_hash(tmp_path, monkeypatch):
     )
     with pytest.raises(kernel.DatasetHashMismatch, match="split_hash"):
         kernel.find_data(tmp_path / "input")
+
+
+def test_generations_sane_rejects_run2_bang_collapse():
+    kernel = _load_kernel()
+    ok, reason = kernel.generations_sane(["!!!!!!!!!!!!!!!!"] * 123)
+    assert ok is False
+    assert "punctuation" in reason or "identical" in reason
+    ok_empty, reason_empty = kernel.generations_sane(["", "420"])
+    assert ok_empty is False
+    assert "empty" in reason_empty
+    ok_good, reason_good = kernel.generations_sane(["420", "376", "-157"])
+    assert ok_good is True
+    assert reason_good == "ok"
+
+
+def test_kernel_loads_fp32_masters_not_fp16_weights():
+    script = (KERNEL / "kernel.py").read_text(encoding="utf-8")
+    assert "torch_dtype=torch.float32" in script
+    assert "torch_dtype=torch.float16" not in script
+    assert "FP16_MAX = 65504" in script
+    assert "fp16_probe.json" in script
+    assert "hidden_maxabs_probe" in script
+    assert "baseline_invalid" in script
+    kernel = _load_kernel()
+    assert kernel.FP16_MAX == 65504
+
+
+def test_kernel_writes_baseline_invalid_json(tmp_path):
+    kernel = _load_kernel()
+    kernel.WORK = tmp_path / "work"
+    kernel.WORK.mkdir()
+    code = kernel.write_unsupported(
+        "baseline_invalid",
+        "eval_before generations are not a usable baseline: punctuation-only",
+        exit_code=1,
+    )
+    assert code == 1
+    body = json.loads((kernel.WORK / "unsupported.json").read_text(encoding="utf-8"))
+    assert body["status"] == "unsupported"
+    assert body["adapter_written"] is False
+    assert body["unsupported"]["reason"] == "baseline_invalid"
+    assert "before" not in body
+    assert "after" not in body
+
+
+def test_worst_overflow_ranks_by_max_abs():
+    kernel = _load_kernel()
+    probe = {
+        "overflow_modules": ["model.layers.0.mlp", "lm_head"],
+        "modules": {
+            "model.layers.0.mlp": {"max_abs": 1200.0, "finite": True, "dtype": "torch.float16"},
+            "lm_head": {"max_abs": 200000.0, "finite": False, "dtype": "torch.float16"},
+        },
+    }
+    worst = kernel.worst_overflow(probe)
+    assert worst["name"] == "lm_head"
+    assert worst["max_abs"] == 200000.0

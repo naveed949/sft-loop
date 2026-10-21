@@ -42,6 +42,16 @@ EXPECTED_SPLIT_HASH = "3a298f9e0d83b00c9d3cfac99f90a160ebef3ce28c94d926b3f5efa26
 EXPECTED_EVAL_SHA256 = "09a6e33011761caf02a5eb3f732d172f778c234ed29d434af1298360d3e6a459"
 EXPECTED_TRAIN_SHA256 = "c73756013ef53e615cc774e8bf5e354033346e0812a325d5c72ea1f262f06abc"
 EXPECTED_CAPITALCITE_COMMIT = "34b42ee0b387738725705a0af682dd3f030a9944"
+FP16_MAX = 65504
+PROBE_GEN_ITEMS = 4
+HOOK_NEEDLES = (
+    "mlp",
+    "self_attn",
+    "input_layernorm",
+    "post_attention_layernorm",
+    "model.norm",
+    "lm_head",
+)
 
 
 def write_json(path: Path, body: dict) -> None:
@@ -55,6 +65,14 @@ class DatasetNotFound(Exception):
 
 class DatasetHashMismatch(Exception):
     reason = "dataset_hash_mismatch"
+
+
+class BaselineInvalid(Exception):
+    reason = "baseline_invalid"
+
+
+class AmpOverflow(Exception):
+    reason = "fp16_amp_overflow"
 
 
 def refuse_phase3(path: Path) -> Path:
@@ -280,6 +298,106 @@ def cosine_lr(step: int, total: int) -> float:
     return LEARNING_RATE * 0.5 * (1.0 + math.cos(math.pi * progress))
 
 
+def generations_sane(predictions: list[str]) -> tuple[bool, str]:
+    if not predictions:
+        return False, "no generations"
+    stripped = [str(prediction).strip() for prediction in predictions]
+    if any(not text for text in stripped):
+        return False, "empty generation"
+    if all(text and set(text) <= set("!?.,#*;: ") for text in stripped):
+        return False, "generations are punctuation-only"
+    if len(stripped) >= 3 and len(set(stripped)) == 1:
+        return False, "all generations identical"
+    return True, "ok"
+
+
+def _hook_name(name: str) -> bool:
+    return any(needle in name for needle in HOOK_NEEDLES)
+
+
+def hidden_maxabs_probe(model, batch, torch, autocast, use_amp: bool) -> dict:
+    stats: dict[str, dict] = {}
+    overflow: list[str] = []
+
+    def hook(name: str):
+        def _fn(module, inputs, output):
+            tensor = output[0] if isinstance(output, tuple) else output
+            if not torch.is_tensor(tensor) or tensor.numel() == 0:
+                return
+            finite = bool(torch.isfinite(tensor).all().item())
+            max_abs = float(tensor.detach().float().abs().max().item())
+            stats[name] = {"max_abs": max_abs, "finite": finite, "dtype": str(tensor.dtype)}
+            if (not finite) or max_abs > FP16_MAX:
+                overflow.append(name)
+
+        return _fn
+
+    handles = []
+    for name, module in model.named_modules():
+        if _hook_name(name):
+            handles.append(module.register_forward_hook(hook(name)))
+    result = {
+        "loss": None,
+        "loss_finite": False,
+        "modules": stats,
+        "overflow_modules": overflow,
+        "fp16_max": FP16_MAX,
+        "amp": use_amp,
+    }
+    try:
+        if use_amp:
+            with autocast("cuda", dtype=torch.float16):
+                loss = model(**batch).loss
+        else:
+            loss = model(**batch).loss
+        finite = bool(torch.isfinite(loss).item())
+        result["loss_finite"] = finite
+        result["loss"] = float(loss.detach().float().cpu()) if finite else None
+    except Exception as exc:
+        result["error"] = f"{type(exc).__name__}: {exc}"
+        if not overflow:
+            overflow.append("<forward_exception>")
+    finally:
+        for handle in handles:
+            handle.remove()
+    return result
+
+
+def finite_nll(model, tokenizer, row, torch, device) -> dict:
+    prompt = row.get("prompt") or row["question"]
+    batch = tokenize_row(tokenizer, prompt, row["completion"], device)
+    model.eval()
+    with torch.no_grad():
+        loss = model(**batch).loss
+    finite = bool(torch.isfinite(loss).item())
+    return {
+        "nll": float(loss.detach().float().cpu()) if finite else None,
+        "finite": finite,
+    }
+
+
+def worst_overflow(probe: dict) -> dict | None:
+    modules = probe.get("modules") or {}
+    overflow = list(probe.get("overflow_modules") or [])
+    ranked = []
+    for name in overflow:
+        stat = modules.get(name) or {}
+        ranked.append(
+            {
+                "name": name,
+                "max_abs": stat.get("max_abs"),
+                "finite": stat.get("finite"),
+                "dtype": stat.get("dtype"),
+            }
+        )
+    ranked.sort(key=lambda row: float(row["max_abs"] or 0.0), reverse=True)
+    if ranked:
+        return ranked[0]
+    if probe.get("error"):
+        return {"name": "<forward_exception>", "error": probe["error"]}
+    return None
+
+
 def evaluate(model, tokenizer, rows, grade, device) -> dict:
     import torch
 
@@ -332,13 +450,15 @@ def load_base(torch, device):
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
         revision=MODEL_REVISION,
-        torch_dtype=torch.float16,
+        torch_dtype=torch.float32,
         attn_implementation="eager",
         low_cpu_mem_usage=True,
     )
     model.config.use_cache = False
     if hasattr(model, "enable_input_require_grads"):
         model.enable_input_require_grads()
+    if hasattr(model, "gradient_checkpointing_enable"):
+        model.gradient_checkpointing_enable()
     lora = LoraConfig(
         r=LORA_R,
         lora_alpha=LORA_ALPHA,
@@ -350,18 +470,66 @@ def load_base(torch, device):
     )
     model = get_peft_model(model, lora)
     model.to(device)
-    model.train()
+    dtypes = {str(param.dtype) for param in model.parameters()}
+    if "torch.float16" in dtypes or "torch.bfloat16" in dtypes:
+        raise RuntimeError(f"master weights must be fp32, found {sorted(dtypes)}")
     return model, tokenizer
 
 
-def train(model, tokenizer, rows, torch, scaler_cls, autocast, device) -> dict:
+def generate_one(model, tokenizer, prompt: str, device) -> str:
+    import torch
+
+    model.eval()
+    text = format_text(tokenizer, prompt, None)
+    encoded = tokenizer(text, return_tensors="pt").to(device)
+    with torch.no_grad():
+        output = model.generate(
+            **encoded,
+            max_new_tokens=MAX_NEW_TOKENS,
+            do_sample=False,
+            pad_token_id=tokenizer.pad_token_id,
+        )
+    new_tokens = output[0, encoded["input_ids"].shape[1] :]
+    return tokenizer.decode(new_tokens, skip_special_tokens=True)
+
+
+def probe_amp(model, tokenizer, rows, torch, autocast, device) -> dict:
+    row = rows[0]
+    prompt = row.get("prompt") or row["question"]
+    batch = tokenize_row(tokenizer, prompt, row["completion"], device)
+    model.train()
+    amp = hidden_maxabs_probe(model, batch, torch, autocast, True)
+    fp32 = hidden_maxabs_probe(model, batch, torch, autocast, False)
+    sample_rows = rows[:PROBE_GEN_ITEMS]
+    amp_preds = []
+    try:
+        with autocast("cuda", dtype=torch.float16):
+            for item in sample_rows:
+                amp_preds.append(
+                    generate_one(model, tokenizer, item.get("prompt") or item["question"], device)
+                )
+    except Exception as exc:
+        amp["generate_error"] = str(exc)
+        amp_preds = []
+    sane, reason = generations_sane(amp_preds)
+    amp["predictions"] = amp_preds
+    amp["generations_sane"] = sane
+    amp["generations_reason"] = reason
+    amp["ok"] = bool(amp["loss_finite"] and not amp["overflow_modules"] and sane)
+    fp32["ok"] = bool(fp32["loss_finite"] and not fp32["overflow_modules"])
+    return {"amp": amp, "fp32": fp32}
+
+
+def train(model, tokenizer, rows, torch, scaler_cls, autocast, device, *, use_amp: bool) -> dict:
     import torch as torch_mod
 
     opt = torch.optim.AdamW((param for param in model.parameters() if param.requires_grad), lr=LEARNING_RATE)
-    try:
-        scaler = scaler_cls("cuda")
-    except TypeError:
-        scaler = scaler_cls()
+    scaler = None
+    if use_amp:
+        try:
+            scaler = scaler_cls("cuda")
+        except TypeError:
+            scaler = scaler_cls()
     history = []
     global_step = 0
     cursor = 0
@@ -374,22 +542,35 @@ def train(model, tokenizer, rows, torch, scaler_cls, autocast, device) -> dict:
             cursor += 1
             prompt = row.get("prompt") or row["question"]
             batch = tokenize_row(tokenizer, prompt, row["completion"], device)
-            with autocast("cuda", dtype=torch.float16):
+            if use_amp:
+                with autocast("cuda", dtype=torch.float16):
+                    loss = model(**batch).loss / GRAD_ACCUM
+                scaler.scale(loss).backward()
+            else:
                 loss = model(**batch).loss / GRAD_ACCUM
-            scaler.scale(loss).backward()
-            step_loss += float(loss.detach().cpu())
+                loss.backward()
+            step_loss += float(loss.detach().float().cpu())
         for group in opt.param_groups:
             group["lr"] = cosine_lr(global_step, MAX_STEPS)
-        scaler.step(opt)
-        scaler.update()
+        if use_amp:
+            scaler.step(opt)
+            scaler.update()
+        else:
+            opt.step()
         global_step += 1
         history.append({"step": global_step, "loss": step_loss, "lr": opt.param_groups[0]["lr"]})
         if not torch_mod.isfinite(torch_mod.tensor(step_loss)):
             raise RuntimeError(f"non-finite loss at step {global_step}")
-    return {"global_step": global_step, "history": history, "train_loss": history[-1]["loss"] if history else None}
+    return {
+        "global_step": global_step,
+        "history": history,
+        "train_loss": history[-1]["loss"] if history else None,
+        "mixed_precision": "fp16_autocast" if use_amp else "fp32",
+        "grad_scaler": bool(use_amp),
+    }
 
 
-def profiler_summary(model, tokenizer, rows, torch, autocast, device) -> dict:
+def profiler_summary(model, tokenizer, rows, torch, autocast, device, *, use_amp: bool) -> dict:
     from torch.profiler import ProfilerActivity, profile
 
     batch = tokenize_row(tokenizer, rows[0].get("prompt") or rows[0]["question"], rows[0]["completion"], device)
@@ -399,12 +580,13 @@ def profiler_summary(model, tokenizer, rows, torch, autocast, device) -> dict:
         activities.append(ProfilerActivity.CUDA)
     with profile(activities=activities, profile_memory=True, record_shapes=True) as prof:
         for _ in range(3):
-            opt_state = None
-            with autocast("cuda", dtype=torch.float16):
+            if use_amp:
+                with autocast("cuda", dtype=torch.float16):
+                    loss = model(**batch).loss
+            else:
                 loss = model(**batch).loss
             loss.backward()
             model.zero_grad(set_to_none=True)
-            del opt_state
     table = prof.key_averages().table(sort_by="self_cuda_memory_usage", row_limit=20)
     rows_out = []
     for item in prof.key_averages():
@@ -421,7 +603,7 @@ def profiler_summary(model, tokenizer, rows, torch, autocast, device) -> dict:
     return {"top_ops": rows_out[:20], "table": table, "peak_memory_allocated": peak}
 
 
-def checkpoint_compare(model, tokenizer, rows, torch, autocast, device) -> dict:
+def checkpoint_compare(model, tokenizer, rows, torch, autocast, device, *, use_amp: bool) -> dict:
     batch = tokenize_row(tokenizer, rows[0].get("prompt") or rows[0]["question"], rows[0]["completion"], device)
 
     def peak_with(enabled: bool) -> int:
@@ -433,7 +615,10 @@ def checkpoint_compare(model, tokenizer, rows, torch, autocast, device) -> dict:
             model.gradient_checkpointing_disable()
         model.train()
         model.zero_grad(set_to_none=True)
-        with autocast("cuda", dtype=torch.float16):
+        if use_amp:
+            with autocast("cuda", dtype=torch.float16):
+                loss = model(**batch).loss
+        else:
             loss = model(**batch).loss
         loss.backward()
         model.zero_grad(set_to_none=True)
@@ -516,8 +701,58 @@ def main() -> int:
     torch.manual_seed(SEED)
     torch.cuda.manual_seed_all(SEED)
     model, tokenizer = load_base(torch, device)
+    probe = probe_amp(model, tokenizer, train_rows, torch, autocast, device)
+    write_json(WORK / "fp16_probe.json", probe)
+    use_amp = bool(probe["amp"]["ok"])
+    if not use_amp:
+        worst = worst_overflow(probe["amp"])
+        write_json(
+            WORK / "fp16.json",
+            {
+                "status": "unsupported",
+                "reason": "fp16_amp_overflow",
+                "detail": (
+                    "fp16 max is 65504. Run 2 loaded the 1.5B weights as float16 "
+                    "and GradScaler then saw a non-finite loss at step 1. "
+                    "eval_before was 0/123 with every decode '!!!!!!!!!!!!!!!!'. "
+                    "Masters are now fp32. This probe still found a non-finite "
+                    "fp16 autocast forward or garbage generations, so mixed "
+                    "precision is unsupported on this T4/Qwen pair."
+                ),
+                "overflow_modules": probe["amp"].get("overflow_modules", []),
+                "worst_overflow": worst,
+                "amp_loss_finite": probe["amp"].get("loss_finite"),
+                "generations_reason": probe["amp"].get("generations_reason"),
+                "fp16_max": FP16_MAX,
+            },
+        )
+        if not probe["fp32"]["ok"]:
+            return write_unsupported(
+                "baseline_invalid",
+                f"fp32 probe also non-finite: {probe['fp32']}",
+                exit_code=1,
+            )
+    env["mixed_precision"] = "fp16_autocast" if use_amp else "fp32"
+    env["weight_dtype"] = "float32"
+    env["grad_scaler"] = bool(use_amp)
+    write_json(WORK / "env.json", env)
     before = evaluate(model, tokenizer, eval_rows, grade, device)
+    nll = finite_nll(model, tokenizer, eval_rows[0], torch, device)
+    before["baseline_nll"] = nll
     write_json(WORK / "eval_before.json", before)
+    sane, reason = generations_sane([item["prediction"] for item in before["items"]])
+    if not sane:
+        return write_unsupported(
+            "baseline_invalid",
+            f"eval_before generations are not a usable baseline: {reason}",
+            exit_code=1,
+        )
+    if not nll["finite"]:
+        return write_unsupported(
+            "baseline_invalid",
+            "eval_before NLL is not finite",
+            exit_code=1,
+        )
     if before["task_score"] >= CEILING:
         write_json(
             WORK / "refused_ceiling.json",
@@ -530,7 +765,9 @@ def main() -> int:
             },
         )
         return 0
-    train_result = train(model, tokenizer, train_rows, torch, scaler_cls, autocast, device)
+    train_result = train(
+        model, tokenizer, train_rows, torch, scaler_cls, autocast, device, use_amp=use_amp
+    )
     adapter_dir = WORK / "adapter"
     adapter_dir.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(adapter_dir)
@@ -550,19 +787,27 @@ def main() -> int:
         f"lora_r={LORA_R}",
         f"device=cuda",
         f"backend=trl-peft",
-        f"autocast=fp16",
-        f"grad_scaler=1",
+        f"autocast={'fp16' if train_result['mixed_precision'] == 'fp16_autocast' else 'off'}",
+        f"grad_scaler={int(train_result['grad_scaler'])}",
+        f"weight_dtype=float32",
+        f"mixed_precision={train_result['mixed_precision']}",
     ]
     (WORK / "trainer_log.txt").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
     write_json(WORK / "trainer_history.json", train_result)
     after = evaluate(model, tokenizer, eval_rows, grade, device)
     write_json(WORK / "eval_after.json", after)
     try:
-        write_json(WORK / "profiler_summary.json", profiler_summary(model, tokenizer, train_rows, torch, autocast, device))
+        write_json(
+            WORK / "profiler_summary.json",
+            profiler_summary(model, tokenizer, train_rows, torch, autocast, device, use_amp=use_amp),
+        )
     except Exception as exc:
         write_json(WORK / "profiler_summary.json", {"status": "unsupported", "reason": str(exc)})
     try:
-        write_json(WORK / "memory_checkpoint.json", checkpoint_compare(model, tokenizer, train_rows, torch, autocast, device))
+        write_json(
+            WORK / "memory_checkpoint.json",
+            checkpoint_compare(model, tokenizer, train_rows, torch, autocast, device, use_amp=use_amp),
+        )
     except Exception as exc:
         write_json(WORK / "memory_checkpoint.json", {"status": "unsupported", "reason": str(exc)})
     write_json(
@@ -577,6 +822,8 @@ def main() -> int:
             "n": after["n"],
             "adapter_sha256": hashes,
             "adapter_written": True,
+            "mixed_precision": train_result["mixed_precision"],
+            "weight_dtype": "float32",
         },
     )
     return 0
@@ -589,7 +836,7 @@ def _work_dir() -> Path:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (DatasetNotFound, DatasetHashMismatch) as exc:
+    except (DatasetNotFound, DatasetHashMismatch, BaselineInvalid, AmpOverflow) as exc:
         write_unsupported(exc.reason, str(exc), exit_code=1)
         raise SystemExit(1)
     except Exception:
