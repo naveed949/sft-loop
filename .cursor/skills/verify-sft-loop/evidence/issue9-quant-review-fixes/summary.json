@@ -1,0 +1,41 @@
+{
+  "run_id": "issue9-quant-review-fixes",
+  "elapsed_s": 38.307,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 0
+    },
+    {
+      "step": "unsupported",
+      "exit": 0
+    },
+    {
+      "step": "smoke",
+      "exit": 0
+    },
+    {
+      "step": "quant",
+      "exit": 0
+    },
+    {
+      "step": "cleanup",
+      "exit": 0
+    }
+  ],
+  "failed_step": null,
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-review-fixes/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-review-fixes",
+  "exit": 0,
+  "pinned_model": false,
+  "smoke_model_id": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+  "smoke_model_revision": "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda"
+}

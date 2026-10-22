@@ -1,0 +1,12 @@
+trainer=trl.SFTTrainer
+model_id=trl-internal-testing/tiny-Qwen2ForCausalLM-2.5
+seed=0
+global_step=2
+train_loss=11.931159
+max_steps=2
+lora_r=8
+lora_b_max_abs=0.00030013471
+lora_b_nonzero=8
+device=cpu
+backend=trl-peft
+log_history=[{"entropy":11.932004928588867,"epoch":0.0625,"grad_norm":0.03124685399234295,"learning_rate":0.0002,"loss":11.932347297668457,"mean_token_accuracy":0.0,"num_tokens":42.0,"step":1},{"entropy":11.932003021240234,"epoch":0.125,"grad_norm":0.027112720534205437,"learning_rate":0.0001,"loss":11.929970741271973,"mean_token_accuracy":0.0,"num_tokens":84.0,"step":2},{"epoch":0.125,"step":2,"total_flos":614577600.0,"train_loss":11.931159019470215,"train_runtime":0.0976,"train_samples_per_second":20.499,"train_steps_per_second":20.499}]
