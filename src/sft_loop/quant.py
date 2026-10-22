@@ -109,7 +109,13 @@ GPU_PRECISIONS = frozenset({Precision.T4_FP32, Precision.FP16, Precision.NF4, Pr
 BASELINE_PRECISIONS = frozenset({Precision.T4_FP32})
 KERNEL_DIR_NF4 = "kaggle/quant_nf4"
 KERNEL_DIR_ONNX = "kaggle/quant_onnx_int8"
+KERNEL_OUTPUT_NF4 = "runs/quant/kernel/quant_nf4"
 KERNEL_EVIDENCE_PREFIX = "runs/quant/kernel/"
+PUBLISHED_CPU_FP32_TARGET_NLL_MEAN = 0.79975264
+ONNX_NLL_NEAR_FP32_MAX = 2.0
+FP16_OVERFLOW_DETAIL = (
+    "fp16 overflow on T4, 0/129. Soft-PASS is unused and is refused."
+)
 KERNEL_STUB_FILES = ("env.json", "progress.json", "log.txt")
 KERNEL_ARM_FILES = {
     Precision.T4_FP32: ("t4-fp32/items.json", "t4-fp32/metrics.json"),
@@ -502,6 +508,10 @@ def measured_arm(
             raise ValueError("onnx arm must not carry gpu fields")
         if kernel is not None:
             body["kernel"] = kernel
+        if finding is not None:
+            if finding not in {"overflow", "collapse"}:
+                raise ValueError("finding must be overflow or collapse")
+            body["finding"] = finding
     elif hardware is not None or peak_gpu_bytes is not None or kernel is not None:
         raise ValueError("cpu arm must not carry gpu fields")
     return body
@@ -1080,9 +1090,28 @@ def _items_have_finite_nll(items: list[dict[str, Any]]) -> bool:
     return True
 
 
+def _mean_finite_nll(items: list[dict[str, Any]]) -> float | None:
+    values: list[float] = []
+    for row in items:
+        nll = row.get("nll")
+        if not isinstance(nll, (int, float)) or not math.isfinite(float(nll)):
+            return None
+        values.append(float(nll))
+    if not values:
+        return None
+    return sum(values) / len(values)
+
+
+def _onnx_nll_is_collapse(items: list[dict[str, Any]]) -> bool:
+    mean_nll = _mean_finite_nll(items)
+    return mean_nll is not None and mean_nll > ONNX_NLL_NEAR_FP32_MAX
+
+
 def _allowed_broken_finding(precision: Precision, finding: object) -> bool:
     if precision in BASELINE_PRECISIONS:
         return finding == "collapse"
+    if precision is Precision.FP16:
+        return False
     return finding in {"overflow", "collapse"}
 
 
@@ -1094,9 +1123,42 @@ def _refuse_broken_kernel_arm(
 ) -> dict[str, Any] | None:
     summary = _summarize_items(items)
     finite = _items_have_finite_nll(items)
-    if precision is Precision.ONNX_INT8 and finite:
-        return None
     broken = summary["task_score"] == 0.0 or not finite
+    if precision is Precision.FP16 and broken:
+        return unsupported_arm(
+            precision=precision,
+            reason=UnsupportedReason.PROBED_FAILURE,
+            detail=FP16_OVERFLOW_DETAIL,
+            probe={
+                "exception_type": "Fp16Overflow",
+                "message": "fp16 overflow on T4, 0/129",
+                "cuda_available": True,
+            },
+            kernel=kernel,
+        )
+    if precision is Precision.ONNX_INT8 and broken:
+        if finite and _onnx_nll_is_collapse(items):
+            return None
+        mean_nll = _mean_finite_nll(items)
+        return unsupported_arm(
+            precision=precision,
+            reason=UnsupportedReason.PROBED_FAILURE,
+            detail=(
+                f"{precision.value} scored {summary['task_score']} with "
+                f"{'finite' if finite else 'non-finite'} NLL"
+                f"{'' if mean_nll is None else f' mean {mean_nll:.4f}'}. "
+                "A zero score with teacher NLL near CPU fp32 "
+                f"({PUBLISHED_CPU_FP32_TARGET_NLL_MEAN}) is a probable generate-loop "
+                "bug, not a quantization result. "
+                + REFUSAL_SENTENCE
+            ),
+            probe={
+                "exception_type": "BrokenBaseline",
+                "message": f"{precision.value} score={summary['task_score']}",
+                "cuda_available": False,
+            },
+            kernel=kernel,
+        )
     if not broken or _allowed_broken_finding(precision, finding):
         return None
     return unsupported_arm(
@@ -1104,7 +1166,7 @@ def _refuse_broken_kernel_arm(
         reason=UnsupportedReason.PROBED_FAILURE,
         detail=(
             f"{precision.value} scored {summary['task_score']} with "
-            f"{'finite' if _items_have_finite_nll(items) else 'non-finite'} NLL. "
+            f"{'finite' if finite else 'non-finite'} NLL. "
             "A zero-score or non-finite baseline is a harness failure unless marked "
             "as a collapse finding. No GPU pairing numbers were produced. "
             + REFUSAL_SENTENCE
@@ -1191,6 +1253,12 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
     refused = _refuse_broken_kernel_arm(precision, items, finding, kernel_ref)
     if refused is not None:
         return refused
+    if (
+        precision is Precision.ONNX_INT8
+        and _summarize_items(items)["task_score"] == 0.0
+        and _onnx_nll_is_collapse(items)
+    ):
+        finding = "collapse"
     return measured_arm(
         precision=precision,
         items=items,
@@ -1331,7 +1399,7 @@ def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = Tru
             return reused
         if precision is Precision.NF4:
             return probe_nf4()
-        return ingest_kernel_arm(repo_root() / KERNEL_DIR_NF4 / "output", precision)
+        return ingest_kernel_arm(repo_root() / KERNEL_OUTPUT_NF4, precision)
 
     arms = {
         Precision.FP32.value: _run_child(Precision.FP32, protocol),

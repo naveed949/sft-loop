@@ -261,7 +261,8 @@
         "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "grader_case_sensitive": { "const": true },
         "case_folded_match": { "type": "number", "minimum": 0, "maximum": 1 },
-        "kernel": { "$ref": "#/$defs/kernel_ref" }
+        "kernel": { "$ref": "#/$defs/kernel_ref" },
+        "finding": { "enum": ["overflow", "collapse"] }
       }
     },
     "measured_gpu_arm": {

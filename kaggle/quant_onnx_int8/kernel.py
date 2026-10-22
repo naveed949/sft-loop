@@ -374,7 +374,17 @@ def export_and_quantize(torch, tokenizer, model):
     gc.collect()
     write_progress({"status": "running", "stage": "quantize", "arms": {}})
     quantize_dynamic(str(fp_path), str(int8_path), weight_type=QuantType.QInt8)
+    import shutil
+
     fp_path.unlink(missing_ok=True)
+    data_path.unlink(missing_ok=True)
+    for leftover in list(work.iterdir()):
+        if leftover.resolve() == int8_path.resolve():
+            continue
+        if leftover.is_dir():
+            shutil.rmtree(leftover)
+        else:
+            leftover.unlink()
     record_export_mem(
         "quantize_done",
         int8_onnx_bytes=int8_path.stat().st_size if int8_path.is_file() else 0,

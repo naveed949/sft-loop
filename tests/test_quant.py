@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -508,17 +509,18 @@ def test_ingest_refuses_zero_score_baseline_unless_collapse(tmp_path: Path):
     assert allowed["finding"] == "collapse"
 
 
-def test_ingest_allows_fp16_overflow_finding(tmp_path: Path):
+def test_ingest_records_fp16_overflow_as_unsupported(tmp_path: Path):
     items = _items(0)
     for row in items:
         row["nll"] = float("nan")
         row["sequence_nll"] = float("nan")
     _write_gpu_kernel(tmp_path, Precision.FP16, items, {"finding": "overflow"})
     body = ingest_kernel_arm(tmp_path, Precision.FP16)
-    assert body["status"] == "measured"
-    assert body["finding"] == "overflow"
-    assert body["task_score"] == 0.0
-    assert "nll" not in body["items"][0]
+    assert body["status"] == "unsupported"
+    assert body["reason"] == "probed_failure"
+    assert "fp16 overflow on T4, 0/129" in body["detail"]
+    assert "task_score" not in body
+    assert "items" not in body
 
 
 def test_ingest_export_stage_without_items_is_oom(tmp_path: Path):
@@ -679,6 +681,8 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "t4-fp32" in script
             assert "Fail closed" in script
             assert "probe_numerics" in script
+            assert 'row.get("logits_finite", True)' not in script
+            assert "row.get(\"logits_finite\") is not True" in script
             assert "exact_match" in script
             assert "grader_case_sensitive" in script
             assert "generation_config.json" in script
@@ -696,6 +700,7 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "exact_match" in script
             assert "grader_case_sensitive" in script
             assert "predictions.json" in script
+            assert "shutil.rmtree" in script
         for item_id in heldout:
             assert f'"{item_id}"' in script
         assert script.count("ITEM_IDS") >= 1
@@ -931,12 +936,27 @@ def _write_onnx_kernel(tmp_path: Path, items: list, extra: dict | None = None):
     arm.joinpath("metrics.json").write_text(json.dumps(metrics), encoding="utf-8")
 
 
-def test_ingest_onnx_zero_score_with_finite_nll_is_measured(tmp_path: Path):
+def test_ingest_onnx_zero_score_with_near_fp32_nll_is_refused(tmp_path: Path):
     items = _items(0)
+    assert items[0]["nll"] == 0.5
+    _write_onnx_kernel(tmp_path, items)
+    body = ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
+    assert body["status"] == "unsupported"
+    assert body["reason"] == "probed_failure"
+    assert "generate-loop" in body["detail"]
+    assert "task_score" not in body
+
+
+def test_ingest_onnx_zero_score_with_collapsed_nll_is_measured(tmp_path: Path):
+    items = _items(0)
+    for row in items:
+        row["nll"] = 7.24983
+        row["sequence_nll"] = 6.85203
     _write_onnx_kernel(tmp_path, items)
     body = ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
     assert body["status"] == "measured"
     assert body["task_score"] == 0.0
+    assert body["finding"] == "collapse"
     assert body["grader_case_sensitive"] is True
     assert "case_folded_match" not in body
 
@@ -950,3 +970,47 @@ def test_ingest_onnx_refuses_undeclared_grader_case_sensitivity(tmp_path: Path):
     metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
     with pytest.raises(ValueError, match="grader_case_sensitive"):
         ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
+
+
+def test_fp16_overflow_missing_probe_fails_closed():
+    namespace: dict = {}
+    exec((ROOT / "kaggle/quant_nf4/kernel.py").read_text(encoding="utf-8"), namespace)
+    overflow = namespace["fp16_overflow"]
+    assert overflow({}) is True
+    assert overflow({"configs": {}}) is True
+    assert overflow({"configs": {"fp16_eager": {"ok": False}}}) is True
+    assert overflow({"configs": {"fp16_eager": {"ok": True, "items": []}}}) is True
+    assert overflow({"configs": {"fp16_eager": {"ok": True, "items": [{}]}}}) is True
+    assert overflow(
+        {"configs": {"fp16_eager": {"ok": True, "items": [{"logits_finite": True}]}}}
+    ) is False
+    assert overflow(
+        {"configs": {"fp16_eager": {"ok": True, "items": [{"logits_finite": False}]}}}
+    ) is True
+
+
+def test_gitignore_blocks_onnx_and_external_tensors_under_kernel():
+    cases = (
+        "runs/quant/kernel/quant_onnx_int8/work/model.int8.onnx",
+        "runs/quant/kernel/quant_onnx_int8/work/model.onnx.data",
+        "runs/quant/kernel/quant_onnx_int8/work/inner.model.embed_tokens.weight",
+        "runs/quant/kernel/quant_onnx_int8/work/onnx__MatMul_8793",
+    )
+    for rel in cases:
+        checked = subprocess.run(
+            ["git", "check-ignore", "-v", rel],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert checked.returncode == 0, rel
+        assert "runs/quant/kernel/" in checked.stdout
+
+
+def test_quant_run_points_at_committed_kernel_output():
+    text = (ROOT / "src/sft_loop/quant.py").read_text(encoding="utf-8")
+    assert 'KERNEL_DIR_NF4 / "output"' not in text
+    assert 'kaggle/quant_nf4/output' not in text
+    assert "KERNEL_OUTPUT_NF4" in text
+    assert 'runs/quant/kernel/quant_nf4' in text

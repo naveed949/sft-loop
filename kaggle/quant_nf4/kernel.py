@@ -641,10 +641,16 @@ def run_nf4(torch, tokenizer, *, precision: str, compute_dtype, quant_config: di
 
 
 def fp16_overflow(report: dict) -> bool:
-    eager = report.get("configs", {}).get("fp16_eager", {})
-    if not eager.get("ok"):
-        return False
-    return any(not row.get("logits_finite", True) for row in eager.get("items", []))
+    configs = report.get("configs") if isinstance(report, dict) else None
+    if not isinstance(configs, dict):
+        return True
+    eager = configs.get("fp16_eager")
+    if not isinstance(eager, dict) or not eager.get("ok"):
+        return True
+    items = eager.get("items")
+    if not isinstance(items, list) or not items:
+        return True
+    return any(row.get("logits_finite") is not True for row in items)
 
 
 def main() -> int:
