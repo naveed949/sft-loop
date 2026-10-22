@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from sft_loop.report import MODEL_ID, REFUSAL_SENTENCE
-from sft_loop.task import prompt_for, target_for
+from sft_loop.task import prediction_token, prompt_for, target_for
 
 PINNED_REVISION = "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
 SPLIT_ID = "quant-heldout-v1"
@@ -179,6 +179,7 @@ ITEM_ROW_KEYS = frozenset(
         "decode_generated_tokens",
         "nll",
         "sequence_nll",
+        "case_folded",
     }
 )
 
@@ -199,6 +200,33 @@ def _sanitize_kernel_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 del item[key]
         cleaned.append(item)
     return cleaned
+
+
+def _require_grader_case_sensitive(metrics: dict[str, Any]) -> None:
+    if metrics.get("grader_case_sensitive") is not True:
+        raise ValueError(
+            "kernel metrics must declare grader_case_sensitive=true; "
+            "the first-token grader compares prediction_token to item_id.upper()"
+        )
+
+
+def _attach_case_folded(
+    items: list[dict[str, Any]],
+    predictions: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    by_id = {str(row.get("item_id")): row for row in predictions}
+    attached: list[dict[str, Any]] = []
+    for item in items:
+        pred = by_id.get(item["item_id"])
+        if pred is None:
+            raise ValueError(f"predictions.json is missing {item['item_id']}")
+        token = pred.get("prediction_token")
+        if not isinstance(token, str):
+            token = prediction_token(str(pred.get("prediction") or ""))
+        row = dict(item)
+        row["case_folded"] = token.casefold() == item["item_id"].casefold()
+        attached.append(row)
+    return attached
 
 
 def assert_prompt_and_generation_parity(left: dict[str, Any], right: dict[str, Any]) -> None:
@@ -284,6 +312,7 @@ def load_protocol(*, revision: str = PINNED_REVISION, seed: int = 0) -> dict[str
         "split_sha256": sha256_text(heldout_path().read_text(encoding="utf-8")),
         "item_ids": list(item_ids),
         "grader": "exact_match",
+        "grader_case_sensitive": True,
         "decode": {"do_sample": False, "max_new_tokens": DECODE_NEW_TOKENS},
         "throughput_decode": {
             "do_sample": False,
@@ -390,7 +419,7 @@ def _summarize_items(items: list[dict[str, Any]]) -> dict[str, float]:
     scored_tokens = [float(row["generated_tokens"]) for row in items]
     decode_tokens = sum(int(row["decode_generated_tokens"]) for row in items)
     decode_seconds = sum(float(row["decode_latency_ms"]) for row in items) / 1000.0
-    return {
+    summary = {
         "task_score": _round(_mean(correct)),
         "task_score_se": _round(_se(correct)),
         "latency_p50_ms": _round(_percentile_nearest(latencies, 0.5)),
@@ -398,6 +427,10 @@ def _summarize_items(items: list[dict[str, Any]]) -> dict[str, float]:
         "mean_generated_tokens": _round(_mean(scored_tokens)),
         "decode_tokens_per_s": _round(decode_tokens / decode_seconds if decode_seconds else 0.0),
     }
+    if items and all("case_folded" in row for row in items):
+        folded = [1.0 if row["case_folded"] else 0.0 for row in items]
+        summary["case_folded_match"] = _round(_mean(folded))
+    return summary
 
 
 def _check_item_alignment(protocol: dict[str, Any], items: list[dict[str, Any]]) -> None:
@@ -439,6 +472,7 @@ def measured_arm(
         "limiter": limiter,
         "items": items,
         "raw_sha256": sha256_text(raw),
+        "grader_case_sensitive": True,
         **summary,
     }
     if precision in GPU_PRECISIONS:
@@ -520,8 +554,10 @@ def paired_difference(
     latency_vals = []
     nll_vals = []
     sequence_nll_vals = []
+    folded_vals = []
     have_nll = True
     have_sequence = True
+    have_folded = True
     for left, right in zip(baseline_arm["items"], minus_arm["items"]):
         if left["item_id"] != right["item_id"]:
             raise ValueError("paired item ids drifted")
@@ -535,7 +571,12 @@ def paired_difference(
             have_sequence = False
         else:
             sequence_nll_vals.append(float(right["sequence_nll"]) - float(left["sequence_nll"]))
+        if "case_folded" not in left or "case_folded" not in right:
+            have_folded = False
+        else:
+            folded_vals.append(float(right["case_folded"]) - float(left["case_folded"]))
     low, high = _bootstrap_ci(score_vals, int(protocol["seed"]))
+    folded_low, folded_high = _bootstrap_ci(folded_vals, int(protocol["seed"])) if have_folded else (None, None)
     return {
         "kind": "paired",
         "minus": minus,
@@ -551,6 +592,10 @@ def paired_difference(
         "nll_delta_se": _round(_se(nll_vals)) if have_nll else None,
         "sequence_nll_delta": _round(_mean(sequence_nll_vals)) if have_sequence else None,
         "sequence_nll_delta_se": _round(_se(sequence_nll_vals)) if have_sequence else None,
+        "case_folded_delta": _round(_mean(folded_vals)) if have_folded else None,
+        "case_folded_delta_se": _round(_se(folded_vals)) if have_folded else None,
+        "case_folded_delta_ci95_low": folded_low,
+        "case_folded_delta_ci95_high": folded_high,
         "bootstrap_draws": BOOTSTRAP_DRAWS,
         "bootstrap_seed": int(protocol["seed"]),
         "method": "paired-item-mean",
@@ -618,6 +663,8 @@ def _check_arm_body(protocol: dict[str, Any], key: str, arm: dict[str, Any]) -> 
         for field, value in summary.items():
             if _round(float(arm[field])) != value:
                 raise ValueError(f"{key} {field} does not match items")
+        if arm.get("grader_case_sensitive") is not True:
+            raise ValueError(f"{key} measured arm must declare grader_case_sensitive")
         if key in {p.value for p in GPU_PRECISIONS}:
             if not _accelerator(arm):
                 raise ValueError(f"{key} measured arm needs hardware.accelerator")
@@ -646,6 +693,21 @@ def _check_arm_body(protocol: dict[str, Any], key: str, arm: dict[str, Any]) -> 
     raise ValueError(f"{key} has unknown status")
 
 
+def _declare_grader_case_sensitive(
+    protocol: dict[str, Any],
+    arms: dict[str, dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    proto = dict(protocol)
+    proto["grader_case_sensitive"] = True
+    stamped: dict[str, dict[str, Any]] = {}
+    for key, arm in arms.items():
+        body = dict(arm)
+        if body.get("status") == "measured":
+            body["grader_case_sensitive"] = True
+        stamped[key] = body
+    return proto, stamped
+
+
 def assemble_comparison(
     protocol: dict[str, Any],
     arms: dict[str, dict[str, Any]],
@@ -656,6 +718,7 @@ def assemble_comparison(
         raise ValueError(
             "arms must contain fp32, int8, onnx-int8, t4-fp32, fp16, nf4, and nf4-fp16"
         )
+    protocol, arms = _declare_grader_case_sensitive(protocol, arms)
     for key in expected:
         _check_arm_body(protocol, key, arms[key])
     outcomes = {spec.key: _outcome_for_spec(protocol, arms, spec) for spec in PAIRING_SPECS}
@@ -794,24 +857,36 @@ def _arm_table_row(precision: Precision, arm: dict[str, Any]) -> str:
         return (
             f"| {precision.value} | unsupported | unsupported | unsupported | unsupported | "
             f"unsupported | unsupported | unsupported | unsupported | unsupported | "
-            f"unsupported | unsupported | {arm['reason']} |"
+            f"unsupported | unsupported | unsupported | {arm['reason']} |"
         )
     gpu = arm.get("peak_gpu_bytes", "n/a")
     accelerator = "n/a"
     hardware = arm.get("hardware")
     if isinstance(hardware, dict) and hardware.get("accelerator"):
         accelerator = hardware["accelerator"]
+    folded = arm.get("case_folded_match", "n/a")
     return (
         f"| {precision.value} | measured | {arm['on_disk_bytes']} | {arm['peak_rss_bytes']} | "
         f"{gpu} | {arm['latency_p50_ms']} | {arm['latency_p95_ms']} | "
         f"{arm['mean_generated_tokens']} | {arm['decode_tokens_per_s']} | {arm['task_score']} | "
-        f"{len(arm['items'])} | {accelerator} | {arm['limiter']['kind']} |"
+        f"{folded} | {len(arm['items'])} | {accelerator} | {arm['limiter']['kind']} |"
     )
 
 
-def _outcome_table_row(spec: PairingSpec, outcome: dict[str, Any]) -> str:
+def _outcome_table_row(spec: PairingSpec, outcome: dict[str, Any], *, folded: bool = False) -> str:
     label = f"{spec.minus} minus {spec.baseline}"
     if outcome["kind"] == "paired":
+        if folded:
+            if outcome.get("case_folded_delta") is None:
+                return (
+                    f"| {label} | paired | n/a | n/a | n/a | n/a | {outcome['n']} |"
+                )
+            return (
+                f"| {label} | paired | {outcome['case_folded_delta']} | "
+                f"{outcome['case_folded_delta_se']} | "
+                f"{outcome['case_folded_delta_ci95_low']} | "
+                f"{outcome['case_folded_delta_ci95_high']} | {outcome['n']} |"
+            )
         return (
             f"| {label} | paired | {outcome['score_delta']} | {outcome['score_delta_se']} | "
             f"{outcome['score_delta_ci95_low']} | {outcome['score_delta_ci95_high']} | "
@@ -835,8 +910,8 @@ def render_table(comparison: dict[str, Any]) -> str:
         f"throughput decode `min_new_tokens={protocol['throughput_decode']['min_new_tokens']}` "
         f"`max_new_tokens={protocol['throughput_decode']['max_new_tokens']}`.",
         "",
-        "| precision | status | on-disk bytes | peak rss bytes | peak gpu bytes | scored p50 ms | scored p95 ms | mean generated tokens | decode tokens/s (min=max=8) | exact match | n | accelerator | limiter |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| precision | status | on-disk bytes | peak rss bytes | peak gpu bytes | scored p50 ms | scored p95 ms | mean generated tokens | decode tokens/s (min=max=8) | exact match | case-folded match | n | accelerator | limiter |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for precision in Precision:
         lines.append(_arm_table_row(precision, comparison["arms"][precision.value]))
@@ -853,10 +928,22 @@ def render_table(comparison: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
+            "| case-folded comparison | status | mean item delta | standard error | bootstrap low | bootstrap high | n |",
+            "| --- | --- | --- | --- | --- | --- | --- |",
+        ]
+    )
+    for spec in PAIRING_SPECS:
+        lines.append(_outcome_table_row(spec, outcomes[spec.key], folded=True))
+    lines.extend(
+        [
+            "",
             "Paired rows share one hardware class. NF4 is paired only with fp32 on the same T4. "
             "int8 is paired only with CPU fp32. GPU versus CPU is not paired. "
             "T4 fp16 is not a pairing baseline. "
-            "scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass.",
+            "scored p50/p95 allow EOS. decode tokens/s is a separate fixed-length pass. "
+            "Exact match is case-sensitive first-token equality with `item_id.upper()`. "
+            "Case-folded match is first-token equality after `str.casefold()`. "
+            "n/a means the arm has no raw generations to rescore.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -1077,6 +1164,13 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
         json.loads((source / precision.value / "items.json").read_text(encoding="utf-8"))
     )
     metrics = json.loads((source / precision.value / "metrics.json").read_text(encoding="utf-8"))
+    _require_grader_case_sensitive(metrics)
+    predictions_path = source / precision.value / "predictions.json"
+    if predictions_path.is_file():
+        items = _attach_case_folded(
+            items,
+            json.loads(predictions_path.read_text(encoding="utf-8")),
+        )
     env = json.loads((source / "env.json").read_text(encoding="utf-8"))
     protocol = load_protocol()
     kernel_ref = {

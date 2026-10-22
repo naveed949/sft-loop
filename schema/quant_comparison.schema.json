@@ -38,6 +38,7 @@
         "split_sha256",
         "item_ids",
         "grader",
+        "grader_case_sensitive",
         "decode",
         "throughput_decode",
         "threads",
@@ -59,6 +60,7 @@
           "items": { "type": "string", "pattern": "^[a-z]+$" }
         },
         "grader": { "const": "exact_match" },
+        "grader_case_sensitive": { "const": true },
         "decode": {
           "type": "object",
           "additionalProperties": false,
@@ -178,7 +180,8 @@
         "decode_latency_ms": { "type": "number", "minimum": 0 },
         "decode_generated_tokens": { "type": "integer", "minimum": 0 },
         "nll": { "type": "number" },
-        "sequence_nll": { "type": "number" }
+        "sequence_nll": { "type": "number" },
+        "case_folded": { "type": "boolean" }
       }
     },
     "probe": {
@@ -234,7 +237,8 @@
         "latency_p95_ms",
         "mean_generated_tokens",
         "decode_tokens_per_s",
-        "raw_sha256"
+        "raw_sha256",
+        "grader_case_sensitive"
       ],
       "properties": {
         "status": { "const": "measured" },
@@ -254,7 +258,9 @@
         "latency_p95_ms": { "type": "number", "minimum": 0 },
         "mean_generated_tokens": { "type": "number", "minimum": 0 },
         "decode_tokens_per_s": { "type": "number", "minimum": 0 },
-        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "grader_case_sensitive": { "const": true },
+        "case_folded_match": { "type": "number", "minimum": 0, "maximum": 1 }
       }
     },
     "measured_gpu_arm": {
@@ -278,7 +284,8 @@
         "latency_p95_ms",
         "mean_generated_tokens",
         "decode_tokens_per_s",
-        "raw_sha256"
+        "raw_sha256",
+        "grader_case_sensitive"
       ],
       "properties": {
         "status": { "const": "measured" },
@@ -304,7 +311,9 @@
         "latency_p95_ms": { "type": "number", "minimum": 0 },
         "mean_generated_tokens": { "type": "number", "minimum": 0 },
         "decode_tokens_per_s": { "type": "number", "minimum": 0 },
-        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "grader_case_sensitive": { "const": true },
+        "case_folded_match": { "type": "number", "minimum": 0, "maximum": 1 }
       },
       "allOf": [
         {
@@ -425,6 +434,10 @@
         "nll_delta_se",
         "sequence_nll_delta",
         "sequence_nll_delta_se",
+        "case_folded_delta",
+        "case_folded_delta_se",
+        "case_folded_delta_ci95_low",
+        "case_folded_delta_ci95_high",
         "bootstrap_draws",
         "bootstrap_seed",
         "method"
@@ -444,6 +457,10 @@
         "nll_delta_se": { "type": ["number", "null"] },
         "sequence_nll_delta": { "type": ["number", "null"] },
         "sequence_nll_delta_se": { "type": ["number", "null"] },
+        "case_folded_delta": { "type": ["number", "null"] },
+        "case_folded_delta_se": { "type": ["number", "null"] },
+        "case_folded_delta_ci95_low": { "type": ["number", "null"] },
+        "case_folded_delta_ci95_high": { "type": ["number", "null"] },
         "bootstrap_draws": { "const": 1000 },
         "bootstrap_seed": { "type": "integer", "minimum": 0 },
         "method": { "const": "paired-item-mean" }

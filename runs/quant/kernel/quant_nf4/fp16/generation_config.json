@@ -3,10 +3,10 @@
   "attn_implementation": "eager",
   "chat_template": "tokenizer.apply_chat_template",
   "do_sample": false,
-  "eos_token_id": null,
+  "eos_token_id": 151645,
   "max_new_tokens": 8,
   "min_new_tokens": null,
-  "pad_token_id": null,
+  "pad_token_id": 151643,
   "stop_criteria": "eos_or_max_new_tokens",
   "temperature": null
 }

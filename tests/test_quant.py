@@ -421,6 +421,7 @@ def test_ingest_drops_non_finite_nll(tmp_path: Path):
                 "peak_rss_bytes": 2000,
                 "peak_gpu_bytes": 3000,
                 "compute_dtype": "float16",
+                "grader_case_sensitive": True,
                 "libraries": {"kind": "torch", "torch": "2.11.0", "transformers": "4.56.2"},
                 "limiter": {
                     "kind": "gpu",
@@ -470,6 +471,7 @@ def _write_gpu_kernel(tmp_path: Path, precision: Precision, items: list, extra: 
         "peak_rss_bytes": 2000,
         "peak_gpu_bytes": 3000,
         "compute_dtype": GPU_COMPUTE_DTYPE[precision],
+        "grader_case_sensitive": True,
         "libraries": {"kind": "torch", "torch": "2.11.0", "transformers": "5.20.2"},
         "limiter": {
             "kind": "gpu",
@@ -678,6 +680,7 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "Fail closed" in script
             assert "probe_numerics" in script
             assert "exact_match" in script
+            assert "grader_case_sensitive" in script
             assert "generation_config.json" in script
             assert "predictions.json" in script
             assert "min_new_tokens" in script
@@ -783,3 +786,106 @@ def test_committed_nf4_and_t4_fp32_share_prompt_and_generation_config():
     from sft_loop.quant import assert_kernel_arm_parity
 
     assert_kernel_arm_parity(ROOT / "runs/quant/kernel/quant_nf4", "nf4", "t4-fp32")
+
+
+def test_ingest_refuses_undeclared_grader_case_sensitivity(tmp_path: Path):
+    items = _items(47)
+    _write_gpu_kernel(tmp_path, Precision.T4_FP32, items)
+    metrics_path = tmp_path / "t4-fp32" / "metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    del metrics["grader_case_sensitive"]
+    metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+    with pytest.raises(ValueError, match="grader_case_sensitive"):
+        ingest_kernel_arm(tmp_path, Precision.T4_FP32)
+    metrics["grader_case_sensitive"] = False
+    metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+    with pytest.raises(ValueError, match="grader_case_sensitive"):
+        ingest_kernel_arm(tmp_path, Precision.T4_FP32)
+
+
+def test_ingest_attaches_case_folded_from_predictions(tmp_path: Path):
+    items = _items(47)
+    _write_gpu_kernel(tmp_path, Precision.T4_FP32, items)
+    predictions = []
+    for index, item_id in enumerate(load_item_ids()):
+        token = item_id.title() if index >= 47 else item_id.upper()
+        predictions.append(
+            {
+                "item_id": item_id,
+                "prediction": token,
+                "prediction_token": token,
+            }
+        )
+    (tmp_path / "t4-fp32" / "predictions.json").write_text(
+        json.dumps(predictions), encoding="utf-8"
+    )
+    body = ingest_kernel_arm(tmp_path, Precision.T4_FP32)
+    assert body["status"] == "measured"
+    assert body["grader_case_sensitive"] is True
+    assert body["task_score"] == pytest.approx(47 / 129)
+    assert body["case_folded_match"] == 1.0
+    assert body["items"][0]["case_folded"] is True
+    assert load_protocol()["grader_case_sensitive"] is True
+
+
+def test_case_folded_pairing_is_zero_when_both_arms_recall_the_word():
+    protocol = load_protocol()
+    ids = protocol["item_ids"]
+    fp32_items = _items(47)
+    nf4_items = _items(79)
+    for index, row in enumerate(fp32_items):
+        row["case_folded"] = index != ids.index("zebra") if "zebra" in ids else True
+    for index, row in enumerate(nf4_items):
+        row["case_folded"] = index != ids.index("zebra") if "zebra" in ids else True
+    comparison = assemble_comparison(
+        protocol,
+        _arms(
+            fp32=_measured(Precision.FP32, 47),
+            int8=_measured(Precision.INT8, 0),
+            **{
+                "t4-fp32": measured_arm(
+                    precision=Precision.T4_FP32,
+                    items=fp32_items,
+                    on_disk_bytes=2048,
+                    peak_rss_bytes=4096,
+                    libraries=_libraries(),
+                    limiter=_limiter(),
+                    protocol=protocol,
+                    hardware=_gpu_hardware(),
+                    peak_gpu_bytes=2 * 1024 ** 3,
+                    kernel=kernel_placeholder(KERNEL_DIR_NF4),
+                    compute_dtype="float32",
+                ),
+                "nf4": measured_arm(
+                    precision=Precision.NF4,
+                    items=nf4_items,
+                    on_disk_bytes=2048,
+                    peak_rss_bytes=4096,
+                    libraries={
+                        "kind": "bitsandbytes",
+                        "torch": "2.11.0+cu128",
+                        "transformers": "5.20.2",
+                        "bitsandbytes": "0.50.2",
+                    },
+                    limiter=_limiter(),
+                    protocol=protocol,
+                    hardware=_gpu_hardware(),
+                    peak_gpu_bytes=2 * 1024 ** 3,
+                    kernel=kernel_placeholder(KERNEL_DIR_NF4),
+                    compute_dtype="float32",
+                    quant_config=dict(NF4_QUANT_CONFIG),
+                ),
+            },
+        ),
+        _hardware(),
+    )
+    paired = comparison["outcomes"]["nf4-minus-t4-fp32"]
+    assert paired["kind"] == "paired"
+    assert paired["score_delta"] == pytest.approx((79 - 47) / 129)
+    assert paired["case_folded_delta"] == 0.0
+    assert paired["case_folded_delta_ci95_low"] == 0.0
+    assert paired["case_folded_delta_ci95_high"] == 0.0
+    table = render_table(comparison)
+    assert "case-folded match" in table
+    assert "case-folded comparison" in table
+    assert "grader_case_sensitive" in json.dumps(comparison["protocol"])

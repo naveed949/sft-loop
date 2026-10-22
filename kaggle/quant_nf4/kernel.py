@@ -486,6 +486,7 @@ def measure(precision: str, torch, tokenizer, model, *, on_disk_bytes: int, libr
         "peak_rss_bytes": max(rss, 1),
         "peak_gpu_bytes": max(peak_gpu, 1),
         "exact_match": _round(exact_match),
+        "grader_case_sensitive": True,
         "libraries": libraries,
         "limiter": {
             "kind": "gpu",

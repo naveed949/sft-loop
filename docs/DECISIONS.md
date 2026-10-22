@@ -14,7 +14,7 @@ Naveed picks the budget. Do not change the map or the budget unless Naveed asks.
 
 The comparison uses `Qwen/Qwen2.5-1.5B-Instruct` at revision `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`. That is the same model id the SFT loop already pins. A revision SHA is required so every arm loads the same bytes.
 
-The task score is first-token exact match on `evals/quant-heldout-v1.txt`, 129 lowercase words disjoint from `TRAIN_WORDS` and `EVAL_WORDS`. n is 129, which meets the n >= 100 bar. The grader is `sft_loop.task.prediction_token`. The scored pass is greedy, `max_new_tokens` 8, EOS allowed, seed 0. A second pass measures decode tokens/s with `min_new_tokens == max_new_tokens == 8`. Warmup is 2 iterations. Repeats per item are 5. Thread count is 1, set before torch imports.
+The task score is case-sensitive first-token exact match on `evals/quant-heldout-v1.txt`, 129 lowercase words disjoint from `TRAIN_WORDS` and `EVAL_WORDS`. n is 129, which meets the n >= 100 bar. The grader is `sft_loop.task.prediction_token` compared to `item_id.upper()`. The scored pass is greedy, `max_new_tokens` 8, EOS allowed, seed 0. A second pass measures decode tokens/s with `min_new_tokens == max_new_tokens == 8`. Warmup is 2 iterations. Repeats per item are 5. Thread count is 1, set before torch imports.
 
 When an arm exposes logits, `nll` is mean token NLL of the target word. The prompt tokens are masked with `labels[:, :prefix_len] = -100`. `sequence_nll` is full-sequence CE including the chat template. `evals/quant-perplexity-v1.txt` is the reserved Alice extract. An arm without logits omits both NLL fields. The paired difference is int8 minus fp32 on the same item ids. Parse recomputes it and rejects a stored block that disagrees. The published int8 arm is `default_dynamic_qconfig` (per-tensor symmetric) on every `nn.Linear`, including `lm_head`.
 
@@ -155,8 +155,66 @@ Disproven as the same measurement. PR #15 eval_before is 79/123 (`0.64227642`) o
 
 ### Mechanism
 
-Not a prompt mismatch. Not `min_new_tokens=8` on the scored path. Not a leading-space or case artifact that one arm hits and the other does not. The first-token grader and teacher-forced target NLL move together on the 34 gains. NF4 mean target NLL is 0.51175 versus 0.79975. Sequence NLL rose on all 129 items (4.789 versus 4.636). That is the sign lossy quant predicts. The sequence mean is dominated by the shared chat template, so a better gold-word NLL does not pull it down. Exact match is a different functional. The 1.5B instruct model often emits a short chatty prefix under fp32 (2–3 tokens, first token ≠ gold). NF4 more often emits the uppercase word and EOS. That can raise first-token exact match while making the full chat-template sequence less likely.
+Not a prompt mismatch. Not `min_new_tokens=8` on the scored path. The first-token grader and teacher-forced target NLL move together on the 34 gains. NF4 mean target NLL is 0.51175 versus 0.79975. Sequence NLL rose on all 129 items (4.789 versus 4.636). That is the sign lossy quant predicts. The sequence mean is dominated by the shared chat template, so a better gold-word NLL does not pull it down. Exact match is a different functional. Retracted. The chatty-prefix mechanism was wrong. The later run-4 entry shows 33 of the 34 gains are title-case versus ALL-CAPS.
 
-The table keeps 79/129 and 47/129. Do not read the score delta as a general quality claim. Sequence NLL is the closer stand-in for perplexity, and it got worse.
+The table keeps 79/129 and 47/129 as the task-as-defined score. Do not read the score delta as a general quality claim. Sequence NLL is the closer stand-in for perplexity, and it got worse.
 
-`assert_prompt_and_generation_parity` now fails ingest when two GPU arms in one kernel dir differ in prompt hashes or scored generation config. The next NF4 kernel writes per-arm `generation_config.json`, copies `prompt_hashes.json`, and writes `predictions.json` so a later rescore does not need a GPU rerun. Run-3 `generation_config.json` files are a backfill from `kernel.py`. pad and eos ids were not recorded, so those fields are null.
+`assert_prompt_and_generation_parity` now fails ingest when two GPU arms in one kernel dir differ in prompt hashes or scored generation config. The NF4 kernel writes per-arm `generation_config.json`, copies `prompt_hashes.json`, and writes `predictions.json` so a later rescore does not need a GPU rerun.
+
+## NF4 79/129 is casing, not a chatty prefix (2026-10-22)
+
+Kaggle `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 4 ran the kernel at `d0f7517428cb8f23ef74ad49a625f663cd640721`. Status COMPLETE. Tarball sha256 `db52542b02f0aae1d22ddf8666bb34962eb0921ed90abfdbed6607ef19278aef`. The tarball includes `predictions.json`. A token grep of that file found 0. Run 4 is the canonical NF4 evidence.
+
+Run 4 matches run 3 on all 129 items per arm for `correct`, `generated_tokens`, target NLL, and sequence NLL. Latency and tok/s differ because this is a new wall-clock.
+
+### Both metrics
+
+The prompt is `Uppercase the word: {word}`. The grader is `prediction_token == item_id.upper()` and is case-sensitive. Case-folded match is `prediction_token.casefold() == item_id.casefold()`. CPU #13 fp32 and int8 have no raw generations, so case-folded is n/a.
+
+| arm | strict | case-folded | n | raw text |
+| --- | --- | --- | --- | --- |
+| CPU fp32 (#13) | 47 | n/a | 129 | no |
+| CPU int8 (#13) | 0 | n/a | 129 | no |
+| t4-fp32 (run 4) | 47 | 126 | 129 | yes |
+| nf4 (run 4) | 79 | 126 | 129 | yes |
+| fp16 (run 4) | 0 | 0 | 129 | yes (`!!!!!!!!`) |
+
+Paired NF4 minus t4-fp32, n=129, bootstrap 1000, seed 0:
+
+- strict exact match 79/129 versus 47/129. Score delta +0.24806202, se 0.041224898, CI 0.17054264 to 0.3255814.
+- case-folded match 126/129 versus 126/129. Delta 0.0, se 0.01556432, CI -0.031007752 to 0.031007752.
+- target NLL mean 0.51175187 versus 0.79975481. NLL delta -0.28800294.
+- sequence NLL mean 4.7892442 versus 4.6356639. Sequence NLL delta +0.15358034. Sequence NLL rose on all 129 items.
+
+int8 minus CPU fp32 stays -47/129 strict. Case-folded cannot be computed. Sequence NLL rose to 8.068833.
+
+### Flip table, split
+
+| class | n | of which case-only | other |
+| --- | --- | --- | --- |
+| both right | 45 |  |  |
+| both wrong | 48 |  |  |
+| fp32 wrong, nf4 right | 34 | 33 | 1 (`otter`) |
+| fp32 right, nf4 wrong | 2 | 2 (`canyon`, `wizard`) | 0 |
+
+Case-only means the first tokens differ only by case. fp32 emits `Anchor`, `Blanket`, `Carpet`. NF4 emits `ANCHOR`, `BLANKET`, `CARPET`. The gold is `ANCHOR`. The reverse canyon and wizard flips are `CANYON` to `Canyon` and `WIZARD` to `Wizard`.
+
+The one non-case gain is `otter`. fp32 emitted `The uppercase version of "otter"`. NF4 emitted `OTTER`. That is a real chatty prefix on one item. It is not the 33-item pattern.
+
+Case-folded misses. t4-fp32: `drawer` and `otter` start with `The`, `zebra` is `ZEBRAS`. NF4: `helmet` is `Helmets`, `pocket` is `Pockets`, `zebra` is `ZEBRAS`. Shared miss is `zebra` only.
+
+### Retract the chatty-prefix claim
+
+The earlier mechanism said fp32 often emits a short chatty prefix and NF4 more often emits the uppercase word. That is false for 33 of 34 gains. Both arms usually emit the word. They disagree on title case versus ALL-CAPS.
+
+### Why quantization can flip `Anchor` versus `ANCHOR`
+
+Qwen2.5 tokenizes `Anchor` and `ANCHOR` as different first tokens. After the chat template, the model is close to a tie between those two logits. Greedy decode takes the argmax. NF4 replaces each 64-wide block with a 4-bit codebook index plus a double-quantized scale, about 4.125 bits per parameter. That weight noise moves the two logits by a small amount. On a near-tie, a small move flips the winner. The gold is the ALL-CAPS token, so the case-sensitive grader records a win when the flip goes that way. Teacher-forced target NLL still uses the gold token, so it can fall even when greedy decode used to pick the title-case sibling.
+
+This is a real, narrow instruction-following difference on one synthetic uppercase task. It is not a quality gain.
+
+### The eval is too easy for quantization quality
+
+Case-folded match is 126/129 on both T4 arms. Both models know the word. A 126/129 ceiling leaves almost no room to measure whether 4-bit storage hurt recall. First-token exact match then mostly measures a casing near-tie. Target NLL and sequence NLL still move. Sequence NLL rose on every item under NF4. That is the sign lossy quant predicts, and it is the number to keep in front.
+
+Ingest now requires `metrics.grader_case_sensitive` to be true. Protocol and measured arms declare the same field. When `predictions.json` exists, ingest attaches per-item `case_folded` and summarizes `case_folded_match`. Pairing reports a case-folded delta and CI when both arms have that field. The NF4 kernel writes the declaration. ONNX run 4 is still in flight. That kernel is unchanged.

@@ -7,10 +7,10 @@ CPU and GPU quantization arms on one pinned model share one seed, one held-out s
 - `quant-fp32` is the CPU float32 baseline for `Qwen/Qwen2.5-1.5B-Instruct`.
 - `quant-int8` is per-tensor symmetric dynamic PTQ (`default_dynamic_qconfig`) on every `nn.Linear`, including `lm_head`.
 - `quant-onnx-int8` is ONNX export plus onnxruntime dynamic int8. The local 16 GB attempt is `unsupported` / `oom`. Kaggle v1 failed to pip `onnx==1.17.0`. Kaggle v2 died on `onnx_ir`. Kaggle v3 died in TorchScript on `create_causal_mask` vmap (`unordered_map::at`). The kernel now passes `dynamo=False` and a 4D additive causal mask. A CPU retry lives at `kaggle/quant_onnx_int8`.
-- `quant-t4-fp32` is the T4 fp32 same-hardware baseline. Kernel v2 scored 47/129, matching CPU fp32. Ingest refuses a 0-score or non-finite-NLL baseline unless it is marked `finding: collapse`.
-- `quant-nf4` is bitsandbytes NF4 with float32 compute. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output. The 79/129 exact-match headline is first-token exact match, not a quality win. Sequence NLL rose. Run-3 items omit raw generations, so they cannot be rescored. The next kernel writes `predictions.json` and per-arm `generation_config.json`. Ingest refuses a pairing when those hashes or configs drift.
-- `quant-nf4-fp16` is NF4 with fp16 compute. It runs only if T4 fp16 is healthy. Kernel v2 skipped it.
-- `quant-fp16` is T4 fp16. It is not a pairing baseline. Kernel v2 is `finding: overflow`.
+- `quant-t4-fp32` is the T4 fp32 same-hardware baseline. Kernel v4 scored 47/129 strict and 126/129 case-folded, matching run 3 on `correct`. Ingest refuses a 0-score or non-finite-NLL baseline unless it is marked `finding: collapse`.
+- `quant-nf4` is bitsandbytes NF4 with float32 compute. Local `probe-nf4` stays `unsupported`. Measured numbers come only from ingested `kaggle/quant_nf4` output. Kernel v4 is canonical. Strict exact match is 79/129. Case-folded match is 126/129, same as t4-fp32. The +32 strict gap is almost all title-case versus ALL-CAPS. Sequence NLL rose. Ingest requires `metrics.grader_case_sensitive`. Ingest refuses a pairing when prompt hashes or generation configs drift.
+- `quant-nf4-fp16` is NF4 with fp16 compute. It runs only if T4 fp16 is healthy. Kernel v4 skipped it.
+- `quant-fp16` is T4 fp16. It is not a pairing baseline. Kernel v4 is `finding: overflow`.
 - `quant-table` is the README region generated from `runs/quant/comparison.json`.
 - `kaggle-quant-kernels` is a local-unsupported surface. The scripts live at `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`. Downloaded outputs live at `runs/quant/kernel/`. Local verify does not run those scripts.
 
