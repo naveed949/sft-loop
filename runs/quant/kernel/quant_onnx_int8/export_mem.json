@@ -1,7 +1,8 @@
 {
-  "fraction_of_host": 0.3037,
-  "host_ram_bytes": 33658318848,
+  "fraction_of_host": 0.8614,
+  "host_ram_bytes": 33658314752,
   "host_ram_gb": 33.658,
-  "peak_rss_bytes": 10222952448,
-  "stage": "export_start"
+  "int8_onnx_bytes": 1779618939,
+  "peak_rss_bytes": 28993339392,
+  "stage": "quantize_done"
 }

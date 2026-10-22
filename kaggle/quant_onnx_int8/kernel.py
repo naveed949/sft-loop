@@ -453,15 +453,17 @@ def score(np, sess, tokenizer, size, torch, onnx, ort):
     decode_generate = make_generate(np, sess, tokenizer, stop_on_eos=False)
     nll = nll_fn(np, sess, tokenizer)
     items = []
+    predictions = []
     for item_id in ITEM_IDS:
         prompt = prompt_for(item_id)
         prediction, tokens, latency_ms = repeat_generate(generate, prompt)
         _, decode_tokens, decode_latency_ms = repeat_generate(decode_generate, prompt)
         target_nll, sequence_nll = nll(prompt, item_id.upper())
+        token = prediction_token(prediction)
         items.append(
             {
                 "item_id": item_id,
-                "correct": prediction_token(prediction) == item_id.upper(),
+                "correct": token == item_id.upper(),
                 "latency_ms": latency_ms,
                 "generated_tokens": int(tokens),
                 "decode_latency_ms": decode_latency_ms,
@@ -470,13 +472,23 @@ def score(np, sess, tokenizer, size, torch, onnx, ort):
                 "sequence_nll": _round(sequence_nll),
             }
         )
+        predictions.append(
+            {
+                "item_id": item_id,
+                "prediction": prediction,
+                "prediction_token": token,
+            }
+        )
         log(f"onnx-int8 {item_id} correct={items[-1]['correct']} p50={latency_ms}")
     wall = time.perf_counter() - start
     cpu = time.process_time() - cpu0
     rss = int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) * 1024
+    exact_match = sum(1 for row in items if row["correct"]) / max(len(items), 1)
     metrics = {
         "on_disk_bytes": int(size),
         "peak_rss_bytes": max(rss, 1),
+        "exact_match": _round(exact_match),
+        "grader_case_sensitive": True,
         "libraries": {
             "kind": "onnx",
             "torch": torch.__version__,
@@ -494,6 +506,7 @@ def score(np, sess, tokenizer, size, torch, onnx, ort):
     }
     write_json(OUT / "onnx-int8" / "items.json", items)
     write_json(OUT / "onnx-int8" / "metrics.json", metrics)
+    write_json(OUT / "onnx-int8" / "predictions.json", predictions)
     write_progress(
         {
             "status": "measured",

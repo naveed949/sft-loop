@@ -1,388 +1,219 @@
-[{"stream_name":"stdout","time":1.396716606,"data":"pip --no-cache-dir onnx==1.18.0 onnxruntime==1.20.1 onnxscript==0.2.0 transformers==4.56.2\n"}
-,{"stream_name":"stdout","time":7.232919977,"data":"Collecting onnx==1.18.0\n"}
-,{"stream_name":"stdout","time":7.281263888,"data":"  Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.9 kB)\n"}
-,{"stream_name":"stdout","time":7.494483164,"data":"Collecting onnxruntime==1.20.1\n"}
-,{"stream_name":"stdout","time":7.5084358479999995,"data":"  Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.5 kB)\n"}
-,{"stream_name":"stdout","time":7.895616508,"data":"Collecting onnxscript==0.2.0\n"}
-,{"stream_name":"stdout","time":7.910636924,"data":"  Downloading onnxscript-0.2.0-py3-none-any.whl.metadata (15 kB)\n"}
-,{"stream_name":"stdout","time":8.070036744,"data":"Collecting transformers==4.56.2\n"}
-,{"stream_name":"stdout","time":8.084096569,"data":"  Downloading transformers-4.56.2-py3-none-any.whl.metadata (40 kB)\n"}
-,{"stream_name":"stdout","time":8.088704251,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 120.7 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":8.238378224,"data":"Requirement already satisfied: numpy\u003e=1.22 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (2.1.3)\n"}
-,{"stream_name":"stdout","time":8.239856081,"data":"Requirement already satisfied: protobuf\u003e=4.25.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (5.29.5)\n"}
-,{"stream_name":"stdout","time":8.241388801,"data":"Requirement already satisfied: typing_extensions\u003e=4.7.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (4.16.0)\n"}
-,{"stream_name":"stdout","time":8.287564409,"data":"Collecting coloredlogs (from onnxruntime==1.20.1)\n"}
-,{"stream_name":"stdout","time":8.299363615,"data":"  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)\n"}
-,{"stream_name":"stdout","time":8.304285433,"data":"Requirement already satisfied: flatbuffers in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (25.12.19)\n"}
-,{"stream_name":"stdout","time":8.310001134,"data":"Requirement already satisfied: packaging in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (26.3)\n"}
-,{"stream_name":"stdout","time":8.312449179,"data":"Requirement already satisfied: sympy in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (1.14.0)\n"}
-,{"stream_name":"stdout","time":8.323618994,"data":"Requirement already satisfied: ml_dtypes in /usr/local/lib/python3.13/dist-packages (from onnxscript==0.2.0) (0.6.0)\n"}
-,{"stream_name":"stdout","time":8.376511619,"data":"Requirement already satisfied: filelock in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (3.32.5)\n"}
-,{"stream_name":"stdout","time":8.577041534,"data":"Collecting huggingface-hub\u003c1.0,\u003e=0.34.0 (from transformers==4.56.2)\n"}
-,{"stream_name":"stdout","time":8.588925954,"data":"  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)\n"}
-,{"stream_name":"stdout","time":8.636739988,"data":"Requirement already satisfied: pyyaml\u003e=5.1 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (6.0.3)\n"}
-,{"stream_name":"stdout","time":8.639695483,"data":"Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2025.11.3)\n"}
-,{"stream_name":"stdout","time":8.641275328999999,"data":"Requirement already satisfied: requests in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2.34.2)\n"}
-,{"stream_name":"stdout","time":9.091803885,"data":"Collecting tokenizers\u003c=0.23.0,\u003e=0.22.0 (from transformers==4.56.2)\n"}
-,{"stream_name":"stdout","time":9.104036622,"data":"  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)\n"}
-,{"stream_name":"stdout","time":9.110091004,"data":"Requirement already satisfied: safetensors\u003e=0.4.3 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (0.8.0)\n"}
-,{"stream_name":"stdout","time":9.114701139,"data":"Requirement already satisfied: tqdm\u003e=4.27 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (4.67.3)\n"}
-,{"stream_name":"stdout","time":9.133640018,"data":"Requirement already satisfied: fsspec\u003e=2023.5.0 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (2025.12.0)\n"}
-,{"stream_name":"stdout","time":9.135595047,"data":"Requirement already satisfied: hf-xet\u003c2.0.0,\u003e=1.1.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (1.6.0)\n"}
-,{"stream_name":"stdout","time":9.268710317,"data":"Collecting humanfriendly\u003e=9.1 (from coloredlogs-\u003eonnxruntime==1.20.1)\n"}
-,{"stream_name":"stdout","time":9.279866173,"data":"  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)\n"}
-,{"stream_name":"stdout","time":9.303906457,"data":"Requirement already satisfied: charset_normalizer\u003c4,\u003e=2 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.4.9)\n"}
-,{"stream_name":"stdout","time":9.305874453,"data":"Requirement already satisfied: idna\u003c4,\u003e=2.5 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.19)\n"}
-,{"stream_name":"stdout","time":9.307662823,"data":"Requirement already satisfied: urllib3\u003c3,\u003e=1.26 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2.8.0)\n"}
-,{"stream_name":"stdout","time":9.309082815,"data":"Requirement already satisfied: certifi\u003e=2023.5.7 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2026.7.22)\n"}
-,{"stream_name":"stdout","time":9.313313035,"data":"Requirement already satisfied: mpmath\u003c1.4,\u003e=1.1.0 in /usr/local/lib/python3.13/dist-packages (from sympy-\u003eonnxruntime==1.20.1) (1.3.0)\n"}
-,{"stream_name":"stdout","time":9.361853908,"data":"Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.6 MB)\n"}
-,{"stream_name":"stdout","time":9.571652744,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.6/17.6 MB 90.8 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.583260619,"data":"Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (13.3 MB)\n"}
-,{"stream_name":"stdout","time":9.669297781000001,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 145.2 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.686541339,"data":"Downloading onnxscript-0.2.0-py3-none-any.whl (691 kB)\n"}
-,{"stream_name":"stdout","time":9.692762902,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 691.6/691.6 kB 273.7 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.707256733,"data":"Downloading transformers-4.56.2-py3-none-any.whl (11.6 MB)\n"}
-,{"stream_name":"stdout","time":9.804905033,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 116.6 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.816964884,"data":"Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)\n"}
-,{"stream_name":"stdout","time":9.822146174,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 294.9 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.833692289,"data":"Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)\n"}
-,{"stream_name":"stdout","time":9.850766473,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 236.1 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.862588512,"data":"Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)\n"}
-,{"stream_name":"stdout","time":9.865830437,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 144.7 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":9.878379621,"data":"Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)\n"}
-,{"stream_name":"stdout","time":9.88282474,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 152.8 MB/s eta 0:00:00\n"}
-,{"stream_name":"stdout","time":13.207110584,"data":"Installing collected packages: onnx, humanfriendly, onnxscript, huggingface-hub, coloredlogs, tokenizers, onnxruntime, transformers\n"}
-,{"stream_name":"stdout","time":13.207438162,"data":"  Attempting uninstall: onnx\n"}
-,{"stream_name":"stdout","time":13.269896322,"data":"    Found existing installation: onnx 1.22.0\n"}
-,{"stream_name":"stdout","time":17.945135062,"data":"    Uninstalling onnx-1.22.0:\n"}
-,{"stream_name":"stdout","time":30.326436242,"data":"      Successfully uninstalled onnx-1.22.0\n"}
-,{"stream_name":"stdout","time":34.611646793,"data":"  Attempting uninstall: huggingface-hub\n"}
-,{"stream_name":"stdout","time":35.043848825,"data":"    Found existing installation: huggingface_hub 1.29.0\n"}
-,{"stream_name":"stdout","time":35.079143371,"data":"    Uninstalling huggingface_hub-1.29.0:\n"}
-,{"stream_name":"stdout","time":35.351279584,"data":"      Successfully uninstalled huggingface_hub-1.29.0\n"}
-,{"stream_name":"stdout","time":35.900261087,"data":"  Attempting uninstall: tokenizers\n"}
-,{"stream_name":"stdout","time":36.301895304,"data":"    Found existing installation: tokenizers 0.23.1\n"}
-,{"stream_name":"stdout","time":36.318299464,"data":"    Uninstalling tokenizers-0.23.1:\n"}
-,{"stream_name":"stdout","time":36.438364265,"data":"      Successfully uninstalled tokenizers-0.23.1\n"}
-,{"stream_name":"stdout","time":37.818080092,"data":"  Attempting uninstall: transformers\n"}
-,{"stream_name":"stdout","time":38.075692213,"data":"    Found existing installation: transformers 5.16.1\n"}
-,{"stream_name":"stdout","time":38.917395439,"data":"    Uninstalling transformers-5.16.1:\n"}
-,{"stream_name":"stdout","time":42.734960795,"data":"      Successfully uninstalled transformers-5.16.1\n"}
-,{"stream_name":"stderr","time":53.813907533,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
-,{"stream_name":"stderr","time":53.813947864,"data":"gradio 6.26.0 requires huggingface-hub\u003c2.0,\u003e=1.16.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
-,{"stream_name":"stderr","time":53.813956537,"data":"diffusers 0.40.0 requires huggingface-hub\u003c2.0,\u003e=1.23.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
-,{"stream_name":"stdout","time":53.814179196,"data":"Successfully installed coloredlogs-15.0.1 huggingface-hub-0.36.2 humanfriendly-10.0 onnx-1.18.0 onnxruntime-1.20.1 onnxscript-0.2.0 tokenizers-0.22.2 transformers-4.56.2\n"}
-,{"stream_name":"stderr","time":107.014739575,"data":"WARNING:torchao.kernel.intmm:Warning: Detected no triton, on systems without Triton certain kernels will not work\n"}
-,{"stream_name":"stdout","time":144.491653558,"data":"export_mem stage=export_start peak_rss_bytes=10222952448 host_ram_bytes=33658318848 fraction=0.3037\n"}
-,{"stream_name":"stderr","time":144.49350677,"data":"/kaggle/src/script.py:337: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html\n"}
-,{"stream_name":"stderr","time":144.493541503,"data":"  torch.onnx.export(\n"}
-,{"stream_name":"stderr","time":144.712274001,"data":"/usr/local/lib/python3.13/dist-packages/transformers/masking_utils.py:207: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!\n"}
-,{"stream_name":"stderr","time":144.712307689,"data":"  if (padding_length := kv_length + kv_offset - attention_mask.shape[-1]) \u003e 0:\n"}
-,{"stream_name":"stdout","time":144.941296692,"data":"Traceback (most recent call last):\n"}
-,{"stream_name":"stdout","time":144.941328618,"data":"  File \"/kaggle/src/script.py\", line 499, in main\n"}
-,{"stream_name":"stdout","time":144.941336067,"data":"    np, sess, size, onnx, ort = export_and_quantize(torch, tokenizer, model)\n"}
-,{"stream_name":"stdout","time":144.941342105,"data":"                                ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.94134806,"data":"  File \"/kaggle/src/script.py\", line 337, in export_and_quantize\n"}
-,{"stream_name":"stdout","time":144.941354948,"data":"    torch.onnx.export(\n"}
-,{"stream_name":"stdout","time":144.941360463,"data":"    ~~~~~~~~~~~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941365913,"data":"        wrapper,\n"}
-,{"stream_name":"stdout","time":144.941371102,"data":"        ^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941376406,"data":"    ...\u003c11 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.941383112,"data":"        dynamo=False,\n"}
-,{"stream_name":"stdout","time":144.941388513,"data":"        ^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941393815,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.941399333,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.941404382,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/__init__.py\", line 334, in export\n"}
-,{"stream_name":"stdout","time":144.94140972,"data":"    export(\n"}
-,{"stream_name":"stdout","time":144.941445445,"data":"    ~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941451647,"data":"        model,\n"}
-,{"stream_name":"stdout","time":144.941457062,"data":"        ^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941462151,"data":"    ...\u003c15 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.941468153,"data":"        autograd_inlining=autograd_inlining,\n"}
-,{"stream_name":"stdout","time":144.941473333,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941478505,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.941518737,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.94152394,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 552, in export\n"}
-,{"stream_name":"stdout","time":144.941529245,"data":"    _export(\n"}
-,{"stream_name":"stdout","time":144.941533406,"data":"    ~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941537527,"data":"        model,\n"}
-,{"stream_name":"stdout","time":144.94154134,"data":"        ^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941544973,"data":"    ...\u003c14 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.941548725,"data":"        autograd_inlining=autograd_inlining,\n"}
-,{"stream_name":"stdout","time":144.941552553,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941556605,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.941560345,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.941564805,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 1515, in _export\n"}
-,{"stream_name":"stdout","time":144.941569725,"data":"    graph, params_dict, torch_out = _model_to_graph(\n"}
-,{"stream_name":"stdout","time":144.941574502,"data":"                                    ~~~~~~~~~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941579097,"data":"        model,\n"}
-,{"stream_name":"stdout","time":144.94158343,"data":"        ^^^^^^\n"}
-,{"stream_name":"stdout","time":144.9415878,"data":"    ...\u003c8 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.94159205,"data":"        dynamic_axes=dynamic_axes,\n"}
-,{"stream_name":"stdout","time":144.941596212,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941600697,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.941604655,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.941608689,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 1113, in _model_to_graph\n"}
-,{"stream_name":"stdout","time":144.941613985,"data":"    graph, params, torch_out, module = _create_jit_graph(model, args)\n"}
-,{"stream_name":"stdout","time":144.941618384,"data":"                                       ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941623164,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 997, in _create_jit_graph\n"}
-,{"stream_name":"stdout","time":144.941627753,"data":"    graph, torch_out = _trace_and_get_graph_from_model(model, args)\n"}
-,{"stream_name":"stdout","time":144.941631907,"data":"                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941640853,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/onnx/_internal/torchscript_exporter/utils.py\", line 903, in _trace_and_get_graph_from_model\n"}
-,{"stream_name":"stdout","time":144.941645797,"data":"    trace_graph, torch_out, inputs_states = torch.jit._get_trace_graph(\n"}
-,{"stream_name":"stdout","time":144.941650245,"data":"                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941654657,"data":"        model,\n"}
-,{"stream_name":"stdout","time":144.941658788,"data":"        ^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941662978,"data":"    ...\u003c3 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.941667551,"data":"        _return_inputs_states=True,\n"}
-,{"stream_name":"stdout","time":144.941671466,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941689871,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.94169473,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.941699247,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/jit/_trace.py\", line 1439, in _get_trace_graph\n"}
-,{"stream_name":"stdout","time":144.941704268,"data":"    outs = ONNXTracedModule(\n"}
-,{"stream_name":"stdout","time":144.941708623,"data":"        f, strict, _force_outplace, return_inputs, _return_inputs_states\n"}
-,{"stream_name":"stdout","time":144.941712817,"data":"    )(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941717053,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n"}
-,{"stream_name":"stdout","time":144.941721393,"data":"    return self._call_impl(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941725487,"data":"           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941729736,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n"}
-,{"stream_name":"stdout","time":144.941734065,"data":"    return forward_call(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941738353,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/jit/_trace.py\", line 140, in forward\n"}
-,{"stream_name":"stdout","time":144.94174294,"data":"    graph, _out = torch._C._create_graph_by_tracing(\n"}
-,{"stream_name":"stdout","time":144.941747005,"data":"                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941750828,"data":"        wrapper,\n"}
-,{"stream_name":"stdout","time":144.941755002,"data":"        ^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941759085,"data":"    ...\u003c3 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.941763869,"data":"        self._force_outplace,\n"}
-,{"stream_name":"stdout","time":144.941768067,"data":"        ^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.9417721,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.941776245,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.941780887,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/jit/_trace.py\", line 131, in wrapper\n"}
-,{"stream_name":"stdout","time":144.941785354,"data":"    outs.append(self.inner(*trace_inputs))\n"}
-,{"stream_name":"stdout","time":144.941789455,"data":"                ~~~~~~~~~~^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941793736,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n"}
-,{"stream_name":"stdout","time":144.941798493,"data":"    return self._call_impl(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941802645,"data":"           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941806785,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n"}
-,{"stream_name":"stdout","time":144.941811262,"data":"    return forward_call(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941815287,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1769, in _slow_forward\n"}
-,{"stream_name":"stdout","time":144.941820039,"data":"    result = self.forward(*input, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941824147,"data":"  File \"/kaggle/src/script.py\", line 312, in forward\n"}
-,{"stream_name":"stdout","time":144.94182849,"data":"    return self.inner(\n"}
-,{"stream_name":"stdout","time":144.941832473,"data":"           ~~~~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941848868,"data":"        input_ids=input_ids,\n"}
-,{"stream_name":"stdout","time":144.941853675,"data":"        ^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.94185862,"data":"        attention_mask=attention_mask,\n"}
-,{"stream_name":"stdout","time":144.941863368,"data":"        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.94186753,"data":"        use_cache=False,\n"}
-,{"stream_name":"stdout","time":144.941871558,"data":"        ^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941875598,"data":"    ).logits\n"}
-,{"stream_name":"stdout","time":144.941879369,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.941883385,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n"}
-,{"stream_name":"stdout","time":144.941887826,"data":"    return self._call_impl(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941892036,"data":"           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941896333,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n"}
-,{"stream_name":"stdout","time":144.941900645,"data":"    return forward_call(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941904573,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1769, in _slow_forward\n"}
-,{"stream_name":"stdout","time":144.941909162,"data":"    result = self.forward(*input, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941913235,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/utils/generic.py\", line 940, in wrapper\n"}
-,{"stream_name":"stdout","time":144.941917545,"data":"    output = func(self, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941921465,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2/modeling_qwen2.py\", line 449, in forward\n"}
-,{"stream_name":"stdout","time":144.941926147,"data":"    outputs: BaseModelOutputWithPast = self.model(\n"}
-,{"stream_name":"stdout","time":144.941930185,"data":"                                       ~~~~~~~~~~^\n"}
-,{"stream_name":"stdout","time":144.941934355,"data":"        input_ids=input_ids,\n"}
-,{"stream_name":"stdout","time":144.941938529,"data":"        ^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941942991,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.94194713,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.941951136,"data":"        ^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941955213,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.941959295,"data":"    ^\n"}
-,{"stream_name":"stdout","time":144.94196348,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1779, in _wrapped_call_impl\n"}
-,{"stream_name":"stdout","time":144.94196797,"data":"    return self._call_impl(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.941972513,"data":"           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.941999907,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1790, in _call_impl\n"}
-,{"stream_name":"stdout","time":144.942005563,"data":"    return forward_call(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942010307,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py\", line 1769, in _slow_forward\n"}
-,{"stream_name":"stdout","time":144.942015258,"data":"    result = self.forward(*input, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942032778,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/utils/generic.py\", line 1064, in wrapper\n"}
-,{"stream_name":"stdout","time":144.942037818,"data":"    outputs = func(self, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942042085,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/models/qwen2/modeling_qwen2.py\", line 372, in forward\n"}
-,{"stream_name":"stdout","time":144.942046505,"data":"    \"full_attention\": create_causal_mask(**mask_kwargs),\n"}
-,{"stream_name":"stdout","time":144.942051226,"data":"                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.94205674,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/masking_utils.py\", line 822, in create_causal_mask\n"}
-,{"stream_name":"stdout","time":144.94206172,"data":"    causal_mask = mask_interface(\n"}
-,{"stream_name":"stdout","time":144.942065933,"data":"        batch_size=batch_size,\n"}
-,{"stream_name":"stdout","time":144.94207029,"data":"    ...\u003c7 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942074597,"data":"        config=config,  # Pass the config as well, in case someone wants to easily have their own mask_interface\n"}
-,{"stream_name":"stdout","time":144.942079057,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942083107,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/masking_utils.py\", line 508, in eager_mask\n"}
-,{"stream_name":"stdout","time":144.942087775,"data":"    mask = sdpa_mask(\n"}
-,{"stream_name":"stdout","time":144.942092225,"data":"        batch_size=batch_size,\n"}
-,{"stream_name":"stdout","time":144.94209626,"data":"    ...\u003c7 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942100616,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942104559,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.94210841,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/masking_utils.py\", line 392, in sdpa_mask_recent_torch\n"}
-,{"stream_name":"stdout","time":144.942112837,"data":"    causal_mask = _vmap_for_bhqkv(mask_function)(batch_arange, head_arange, cache_position, kv_arange)\n"}
-,{"stream_name":"stdout","time":144.942117183,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/apis.py\", line 220, in wrapped\n"}
-,{"stream_name":"stdout","time":144.942121585,"data":"    return vmap_impl(\n"}
-,{"stream_name":"stdout","time":144.942125605,"data":"        # pyrefly: ignore[bad-argument-type]\n"}
-,{"stream_name":"stdout","time":144.9421302,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942134287,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942138257,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942142387,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 316, in vmap_impl\n"}
-,{"stream_name":"stdout","time":144.942146725,"data":"    return _flat_vmap(\n"}
-,{"stream_name":"stdout","time":144.942151133,"data":"        func,\n"}
-,{"stream_name":"stdout","time":144.942155222,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942159235,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942163384,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942167126,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 507, in _flat_vmap\n"}
-,{"stream_name":"stdout","time":144.942172045,"data":"    batched_outputs = func(*batched_inputs, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942176643,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/apis.py\", line 220, in wrapped\n"}
-,{"stream_name":"stdout","time":144.942194647,"data":"    return vmap_impl(\n"}
-,{"stream_name":"stdout","time":144.942199243,"data":"        # pyrefly: ignore[bad-argument-type]\n"}
-,{"stream_name":"stdout","time":144.942203452,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.9422075,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942211559,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942215423,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 316, in vmap_impl\n"}
-,{"stream_name":"stdout","time":144.942219868,"data":"    return _flat_vmap(\n"}
-,{"stream_name":"stdout","time":144.942223966,"data":"        func,\n"}
-,{"stream_name":"stdout","time":144.942228075,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942232307,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.94223677,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942241005,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 507, in _flat_vmap\n"}
-,{"stream_name":"stdout","time":144.942245667,"data":"    batched_outputs = func(*batched_inputs, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942249972,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/apis.py\", line 220, in wrapped\n"}
-,{"stream_name":"stdout","time":144.942254637,"data":"    return vmap_impl(\n"}
-,{"stream_name":"stdout","time":144.942270655,"data":"        # pyrefly: ignore[bad-argument-type]\n"}
-,{"stream_name":"stdout","time":144.942275045,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942279608,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942283565,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942287868,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 316, in vmap_impl\n"}
-,{"stream_name":"stdout","time":144.942292675,"data":"    return _flat_vmap(\n"}
-,{"stream_name":"stdout","time":144.942297318,"data":"        func,\n"}
-,{"stream_name":"stdout","time":144.942301385,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942305763,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942309848,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942313985,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 507, in _flat_vmap\n"}
-,{"stream_name":"stdout","time":144.942318594,"data":"    batched_outputs = func(*batched_inputs, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942322856,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/apis.py\", line 220, in wrapped\n"}
-,{"stream_name":"stdout","time":144.942327147,"data":"    return vmap_impl(\n"}
-,{"stream_name":"stdout","time":144.942331122,"data":"        # pyrefly: ignore[bad-argument-type]\n"}
-,{"stream_name":"stdout","time":144.942335257,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942339823,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.94234465,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942349231,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 316, in vmap_impl\n"}
-,{"stream_name":"stdout","time":144.942353837,"data":"    return _flat_vmap(\n"}
-,{"stream_name":"stdout","time":144.942358207,"data":"        func,\n"}
-,{"stream_name":"stdout","time":144.942362435,"data":"    ...\u003c6 lines\u003e...\n"}
-,{"stream_name":"stdout","time":144.942366947,"data":"        **kwargs,\n"}
-,{"stream_name":"stdout","time":144.942384728,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942389375,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/vmap.py\", line 507, in _flat_vmap\n"}
-,{"stream_name":"stdout","time":144.942394055,"data":"    batched_outputs = func(*batched_inputs, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.94239852,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/masking_utils.py\", line 54, in and_mask\n"}
-,{"stream_name":"stdout","time":144.942403375,"data":"    result = result \u0026 mask(batch_idx, head_idx, q_idx, kv_idx).to(result.device)\n"}
-,{"stream_name":"stdout","time":144.942408118,"data":"                      ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942434445,"data":"  File \"/usr/local/lib/python3.13/dist-packages/transformers/masking_utils.py\", line 142, in inner_mask\n"}
-,{"stream_name":"stdout","time":144.942447115,"data":"    return padding_mask[batch_idx, kv_idx]\n"}
-,{"stream_name":"stdout","time":144.942451951,"data":"           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942456473,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py\", line 157, in __torch_function__\n"}
-,{"stream_name":"stdout","time":144.942461778,"data":"    return mod_index(tensor_to_index, converted_indices)\n"}
-,{"stream_name":"stdout","time":144.942466453,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_export/wrappers.py\", line 302, in wrapper\n"}
-,{"stream_name":"stdout","time":144.942471389,"data":"    return func(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942475875,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_dynamo/_trace_wrapped_higher_order_op.py\", line 123, in apply\n"}
-,{"stream_name":"stdout","time":144.942481028,"data":"    return super().apply(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942485794,"data":"           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942490645,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/autograd/function.py\", line 606, in apply\n"}
-,{"stream_name":"stdout","time":144.942495561,"data":"    return custom_function_call(cls, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942500482,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 66, in __call__\n"}
-,{"stream_name":"stdout","time":144.942505488,"data":"    return super().__call__(autograd_function, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942510765,"data":"           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942515835,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 533, in __call__\n"}
-,{"stream_name":"stdout","time":144.942520829,"data":"    return self.dispatch(dispatch_key_set.highestPriorityTypeId(), *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942525558,"data":"           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942530445,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 383, in dispatch\n"}
-,{"stream_name":"stdout","time":144.942535216,"data":"    return dispatch_functorch(self, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.942539965,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 338, in dispatch_functorch\n"}
-,{"stream_name":"stdout","time":144.942545063,"data":"    return interpreter.process(op, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.94256347,"data":"           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942568888,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 150, in process\n"}
-,{"stream_name":"stdout","time":144.942573775,"data":"    return kernel(self, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942578273,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 341, in custom_function_call_vmap\n"}
-,{"stream_name":"stdout","time":144.94258309,"data":"    return custom_function_call_vmap_generate_rule(\n"}
-,{"stream_name":"stdout","time":144.942587662,"data":"        interpreter, autograd_function, *operands\n"}
-,{"stream_name":"stdout","time":144.94259165,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942596128,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 436, in custom_function_call_vmap_generate_rule\n"}
-,{"stream_name":"stdout","time":144.942600575,"data":"    outputs = custom_function_call(vmapped_function, *unwrapped_operands)\n"}
-,{"stream_name":"stdout","time":144.94260476,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 66, in __call__\n"}
-,{"stream_name":"stdout","time":144.942609775,"data":"    return super().__call__(autograd_function, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942613772,"data":"           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.94261823,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 533, in __call__\n"}
-,{"stream_name":"stdout","time":144.942622518,"data":"    return self.dispatch(dispatch_key_set.highestPriorityTypeId(), *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942626957,"data":"           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942631567,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 383, in dispatch\n"}
-,{"stream_name":"stdout","time":144.942644122,"data":"    return dispatch_functorch(self, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.94264886,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 338, in dispatch_functorch\n"}
-,{"stream_name":"stdout","time":144.942653412,"data":"    return interpreter.process(op, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.942659102,"data":"           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942663375,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 150, in process\n"}
-,{"stream_name":"stdout","time":144.942668473,"data":"    return kernel(self, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942672682,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 341, in custom_function_call_vmap\n"}
-,{"stream_name":"stdout","time":144.942677795,"data":"    return custom_function_call_vmap_generate_rule(\n"}
-,{"stream_name":"stdout","time":144.942682263,"data":"        interpreter, autograd_function, *operands\n"}
-,{"stream_name":"stdout","time":144.942686773,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942691206,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 436, in custom_function_call_vmap_generate_rule\n"}
-,{"stream_name":"stdout","time":144.942696492,"data":"    outputs = custom_function_call(vmapped_function, *unwrapped_operands)\n"}
-,{"stream_name":"stdout","time":144.942701046,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 66, in __call__\n"}
-,{"stream_name":"stdout","time":144.942719973,"data":"    return super().__call__(autograd_function, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942724911,"data":"           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.94272955,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 533, in __call__\n"}
-,{"stream_name":"stdout","time":144.942733967,"data":"    return self.dispatch(dispatch_key_set.highestPriorityTypeId(), *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942738909,"data":"           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942743486,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 383, in dispatch\n"}
-,{"stream_name":"stdout","time":144.942748151,"data":"    return dispatch_functorch(self, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.94275286,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 338, in dispatch_functorch\n"}
-,{"stream_name":"stdout","time":144.942757458,"data":"    return interpreter.process(op, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.942762071,"data":"           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942766573,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 150, in process\n"}
-,{"stream_name":"stdout","time":144.94277102,"data":"    return kernel(self, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.94277553,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 341, in custom_function_call_vmap\n"}
-,{"stream_name":"stdout","time":144.942780347,"data":"    return custom_function_call_vmap_generate_rule(\n"}
-,{"stream_name":"stdout","time":144.942784947,"data":"        interpreter, autograd_function, *operands\n"}
-,{"stream_name":"stdout","time":144.942789527,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942793707,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 436, in custom_function_call_vmap_generate_rule\n"}
-,{"stream_name":"stdout","time":144.942800237,"data":"    outputs = custom_function_call(vmapped_function, *unwrapped_operands)\n"}
-,{"stream_name":"stdout","time":144.942804948,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 66, in __call__\n"}
-,{"stream_name":"stdout","time":144.942809963,"data":"    return super().__call__(autograd_function, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.94281416,"data":"           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942818876,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 533, in __call__\n"}
-,{"stream_name":"stdout","time":144.942823355,"data":"    return self.dispatch(dispatch_key_set.highestPriorityTypeId(), *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.94282801,"data":"           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942832547,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_ops.py\", line 383, in dispatch\n"}
-,{"stream_name":"stdout","time":144.942837077,"data":"    return dispatch_functorch(self, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.942841837,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 338, in dispatch_functorch\n"}
-,{"stream_name":"stdout","time":144.94285923,"data":"    return interpreter.process(op, args, kwargs)\n"}
-,{"stream_name":"stdout","time":144.942864045,"data":"           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942868612,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/pyfunctorch.py\", line 150, in process\n"}
-,{"stream_name":"stdout","time":144.942873591,"data":"    return kernel(self, *args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942878092,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 341, in custom_function_call_vmap\n"}
-,{"stream_name":"stdout","time":144.94288273,"data":"    return custom_function_call_vmap_generate_rule(\n"}
-,{"stream_name":"stdout","time":144.942887418,"data":"        interpreter, autograd_function, *operands\n"}
-,{"stream_name":"stdout","time":144.942891808,"data":"    )\n"}
-,{"stream_name":"stdout","time":144.942895783,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 436, in custom_function_call_vmap_generate_rule\n"}
-,{"stream_name":"stdout","time":144.942900957,"data":"    outputs = custom_function_call(vmapped_function, *unwrapped_operands)\n"}
-,{"stream_name":"stdout","time":144.942905599,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/_functorch/autograd_function.py\", line 67, in __call__\n"}
-,{"stream_name":"stdout","time":144.942910292,"data":"    return autograd_function.apply(*args, **kwargs)\n"}
-,{"stream_name":"stdout","time":144.942914718,"data":"           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942919393,"data":"  File \"/usr/local/lib/python3.13/dist-packages/torch/autograd/function.py\", line 596, in apply\n"}
-,{"stream_name":"stdout","time":144.942924006,"data":"    return super().apply(*args, **kwargs)  # type: ignore[misc]\n"}
-,{"stream_name":"stdout","time":144.942929022,"data":"           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\n"}
-,{"stream_name":"stdout","time":144.942933653,"data":"RuntimeError: unordered_map::at\n"}
-,{"stream_name":"stdout","time":144.942938162,"data":"\n"}
-,{"stream_name":"stderr","time":151.790680912,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
-,{"stream_name":"stderr","time":151.790741586,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
-,{"stream_name":"stderr","time":152.233481778,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
-,{"stream_name":"stderr","time":152.233520864,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
-,{"stream_name":"stderr","time":153.334788575,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
-,{"stream_name":"stderr","time":154.601683285,"data":"[NbConvertApp] Writing 349577 bytes to __results__.html\n"}
+[{"stream_name":"stdout","time":1.0791537,"data":"pip --no-cache-dir onnx==1.18.0 onnxruntime==1.20.1 onnxscript==0.2.0 transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":6.002227181,"data":"Collecting onnx==1.18.0\n"}
+,{"stream_name":"stdout","time":6.06039231,"data":"  Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.9 kB)\n"}
+,{"stream_name":"stdout","time":6.252385106,"data":"Collecting onnxruntime==1.20.1\n"}
+,{"stream_name":"stdout","time":6.269274813,"data":"  Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.5 kB)\n"}
+,{"stream_name":"stdout","time":6.649133859,"data":"Collecting onnxscript==0.2.0\n"}
+,{"stream_name":"stdout","time":6.667240428,"data":"  Downloading onnxscript-0.2.0-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":6.818027194,"data":"Collecting transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":6.834700948,"data":"  Downloading transformers-4.56.2-py3-none-any.whl.metadata (40 kB)\n"}
+,{"stream_name":"stdout","time":6.84094132,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 14.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.973972622,"data":"Requirement already satisfied: numpy\u003e=1.22 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (2.1.3)\n"}
+,{"stream_name":"stdout","time":6.975470274,"data":"Requirement already satisfied: protobuf\u003e=4.25.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (5.29.5)\n"}
+,{"stream_name":"stdout","time":6.976970783,"data":"Requirement already satisfied: typing_extensions\u003e=4.7.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (4.16.0)\n"}
+,{"stream_name":"stdout","time":7.024154256,"data":"Collecting coloredlogs (from onnxruntime==1.20.1)\n"}
+,{"stream_name":"stdout","time":7.040600716,"data":"  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)\n"}
+,{"stream_name":"stdout","time":7.045382645,"data":"Requirement already satisfied: flatbuffers in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (25.12.19)\n"}
+,{"stream_name":"stdout","time":7.050831616,"data":"Requirement already satisfied: packaging in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (26.3)\n"}
+,{"stream_name":"stdout","time":7.053129089,"data":"Requirement already satisfied: sympy in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (1.14.0)\n"}
+,{"stream_name":"stdout","time":7.063828864,"data":"Requirement already satisfied: ml_dtypes in /usr/local/lib/python3.13/dist-packages (from onnxscript==0.2.0) (0.6.0)\n"}
+,{"stream_name":"stdout","time":7.110199169,"data":"Requirement already satisfied: filelock in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (3.32.5)\n"}
+,{"stream_name":"stdout","time":7.299366022,"data":"Collecting huggingface-hub\u003c1.0,\u003e=0.34.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":7.314805155,"data":"  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":7.356579508,"data":"Requirement already satisfied: pyyaml\u003e=5.1 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (6.0.3)\n"}
+,{"stream_name":"stdout","time":7.359235517,"data":"Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2025.11.3)\n"}
+,{"stream_name":"stdout","time":7.360692357,"data":"Requirement already satisfied: requests in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2.34.2)\n"}
+,{"stream_name":"stdout","time":7.767180366,"data":"Collecting tokenizers\u003c=0.23.0,\u003e=0.22.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":7.783524906,"data":"  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)\n"}
+,{"stream_name":"stdout","time":7.789235968,"data":"Requirement already satisfied: safetensors\u003e=0.4.3 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (0.8.0)\n"}
+,{"stream_name":"stdout","time":7.793705,"data":"Requirement already satisfied: tqdm\u003e=4.27 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (4.67.3)\n"}
+,{"stream_name":"stdout","time":7.8105446480000005,"data":"Requirement already satisfied: fsspec\u003e=2023.5.0 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (2025.12.0)\n"}
+,{"stream_name":"stdout","time":7.813047221,"data":"Requirement already satisfied: hf-xet\u003c2.0.0,\u003e=1.1.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (1.6.0)\n"}
+,{"stream_name":"stdout","time":7.933200998,"data":"Collecting humanfriendly\u003e=9.1 (from coloredlogs-\u003eonnxruntime==1.20.1)\n"}
+,{"stream_name":"stdout","time":7.948439287,"data":"  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)\n"}
+,{"stream_name":"stdout","time":7.9710495649999995,"data":"Requirement already satisfied: charset_normalizer\u003c4,\u003e=2 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.4.9)\n"}
+,{"stream_name":"stdout","time":7.972935973,"data":"Requirement already satisfied: idna\u003c4,\u003e=2.5 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.19)\n"}
+,{"stream_name":"stdout","time":7.974704664,"data":"Requirement already satisfied: urllib3\u003c3,\u003e=1.26 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2.8.0)\n"}
+,{"stream_name":"stdout","time":7.976208371,"data":"Requirement already satisfied: certifi\u003e=2023.5.7 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2026.7.22)\n"}
+,{"stream_name":"stdout","time":7.980201473,"data":"Requirement already satisfied: mpmath\u003c1.4,\u003e=1.1.0 in /usr/local/lib/python3.13/dist-packages (from sympy-\u003eonnxruntime==1.20.1) (1.3.0)\n"}
+,{"stream_name":"stdout","time":8.029832999,"data":"Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.6 MB)\n"}
+,{"stream_name":"stdout","time":8.215890557,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.6/17.6 MB 104.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.232922379,"data":"Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (13.3 MB)\n"}
+,{"stream_name":"stdout","time":8.373524281,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 82.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.390302937,"data":"Downloading onnxscript-0.2.0-py3-none-any.whl (691 kB)\n"}
+,{"stream_name":"stdout","time":8.395714055,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 691.6/691.6 kB 290.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.412071409,"data":"Downloading transformers-4.56.2-py3-none-any.whl (11.6 MB)\n"}
+,{"stream_name":"stdout","time":8.467244958,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 216.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.482421811,"data":"Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)\n"}
+,{"stream_name":"stdout","time":8.488067781,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 238.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.504787744,"data":"Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)\n"}
+,{"stream_name":"stdout","time":8.526502772,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 183.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.541752825,"data":"Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)\n"}
+,{"stream_name":"stdout","time":8.546241949,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 167.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.560365014,"data":"Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)\n"}
+,{"stream_name":"stdout","time":8.563650757,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 186.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":11.602073949,"data":"Installing collected packages: onnx, humanfriendly, onnxscript, huggingface-hub, coloredlogs, tokenizers, onnxruntime, transformers\n"}
+,{"stream_name":"stdout","time":11.602186464,"data":"  Attempting uninstall: onnx\n"}
+,{"stream_name":"stdout","time":11.663033506,"data":"    Found existing installation: onnx 1.22.0\n"}
+,{"stream_name":"stdout","time":15.861029603,"data":"    Uninstalling onnx-1.22.0:\n"}
+,{"stream_name":"stdout","time":27.225547027,"data":"      Successfully uninstalled onnx-1.22.0\n"}
+,{"stream_name":"stdout","time":31.16106147,"data":"  Attempting uninstall: huggingface-hub\n"}
+,{"stream_name":"stdout","time":31.57371947,"data":"    Found existing installation: huggingface_hub 1.29.0\n"}
+,{"stream_name":"stdout","time":31.605363133,"data":"    Uninstalling huggingface_hub-1.29.0:\n"}
+,{"stream_name":"stdout","time":31.882871847,"data":"      Successfully uninstalled huggingface_hub-1.29.0\n"}
+,{"stream_name":"stdout","time":32.377191697,"data":"  Attempting uninstall: tokenizers\n"}
+,{"stream_name":"stdout","time":32.775076999,"data":"    Found existing installation: tokenizers 0.23.1\n"}
+,{"stream_name":"stdout","time":32.790337893,"data":"    Uninstalling tokenizers-0.23.1:\n"}
+,{"stream_name":"stdout","time":32.903207277,"data":"      Successfully uninstalled tokenizers-0.23.1\n"}
+,{"stream_name":"stdout","time":34.092047873,"data":"  Attempting uninstall: transformers\n"}
+,{"stream_name":"stdout","time":34.348241628,"data":"    Found existing installation: transformers 5.16.1\n"}
+,{"stream_name":"stdout","time":35.089732079,"data":"    Uninstalling transformers-5.16.1:\n"}
+,{"stream_name":"stdout","time":38.613313673,"data":"      Successfully uninstalled transformers-5.16.1\n"}
+,{"stream_name":"stderr","time":48.916057213,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":48.916091342,"data":"gradio 6.26.0 requires huggingface-hub\u003c2.0,\u003e=1.16.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":48.916099725,"data":"diffusers 0.40.0 requires huggingface-hub\u003c2.0,\u003e=1.23.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stdout","time":48.916332935,"data":"Successfully installed coloredlogs-15.0.1 huggingface-hub-0.36.2 humanfriendly-10.0 onnx-1.18.0 onnxruntime-1.20.1 onnxscript-0.2.0 tokenizers-0.22.2 transformers-4.56.2\n"}
+,{"stream_name":"stderr","time":98.148123082,"data":"WARNING:torchao.kernel.intmm:Warning: Detected no triton, on systems without Triton certain kernels will not work\n"}
+,{"stream_name":"stdout","time":126.715439056,"data":"export_mem stage=export_start peak_rss_bytes=10785189888 host_ram_bytes=33658314752 fraction=0.3204\n"}
+,{"stream_name":"stderr","time":126.715763058,"data":"/kaggle/src/script.py:352: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html\n"}
+,{"stream_name":"stderr","time":126.715800284,"data":"  torch.onnx.export(\n"}
+,{"stream_name":"stdout","time":243.62841832,"data":"export_mem stage=export_done peak_rss_bytes=10785189888 host_ram_bytes=33658314752 fraction=0.3204\n"}
+,{"stream_name":"stderr","time":255.044579216,"data":"WARNING:root:Please consider to run pre-processing before quantization. Refer to example: https://github.com/microsoft/onnxruntime-inference-examples/blob/main/quantization/image_classification/cpu/ReadMe.md \n"}
+,{"stream_name":"stdout","time":359.267472234,"data":"export_mem stage=quantize_done peak_rss_bytes=28993339392 host_ram_bytes=33658314752 fraction=0.8614\n"}
+,{"stream_name":"stdout","time":450.631446599,"data":"onnx-int8 anchor correct=False p50=5688.2854\n"}
+,{"stream_name":"stdout","time":531.307547773,"data":"onnx-int8 barrel correct=False p50=5591.7168\n"}
+,{"stream_name":"stdout","time":616.160710838,"data":"onnx-int8 beacon correct=False p50=5346.3821\n"}
+,{"stream_name":"stdout","time":697.060184396,"data":"onnx-int8 biscuit correct=False p50=5712.8575\n"}
+,{"stream_name":"stdout","time":776.11143976,"data":"onnx-int8 blanket correct=False p50=5619.7134\n"}
+,{"stream_name":"stdout","time":854.883854589,"data":"onnx-int8 blossom correct=False p50=5581.6213\n"}
+,{"stream_name":"stdout","time":934.274603929,"data":"onnx-int8 border correct=False p50=4830.8236\n"}
+,{"stream_name":"stdout","time":1017.261801909,"data":"onnx-int8 bottle correct=False p50=6285.907\n"}
+,{"stream_name":"stdout","time":1097.79725693,"data":"onnx-int8 breeze correct=False p50=5705.4819\n"}
+,{"stream_name":"stdout","time":1177.556376978,"data":"onnx-int8 bronze correct=False p50=5675.396\n"}
+,{"stream_name":"stdout","time":1257.395960112,"data":"onnx-int8 bucket correct=False p50=5653.6812\n"}
+,{"stream_name":"stdout","time":1342.36787448,"data":"onnx-int8 button correct=False p50=6632.1043\n"}
+,{"stream_name":"stdout","time":1423.865769098,"data":"onnx-int8 cactus correct=False p50=5739.4186\n"}
+,{"stream_name":"stdout","time":1503.321455737,"data":"onnx-int8 camera correct=False p50=5625.1382\n"}
+,{"stream_name":"stdout","time":1582.945250668,"data":"onnx-int8 candle correct=False p50=5636.2539\n"}
+,{"stream_name":"stdout","time":1662.323286338,"data":"onnx-int8 canyon correct=False p50=5605.7006\n"}
+,{"stream_name":"stdout","time":1742.0698394,"data":"onnx-int8 carpet correct=False p50=5637.5531\n"}
+,{"stream_name":"stdout","time":1821.365497849,"data":"onnx-int8 castle correct=False p50=5618.6866\n"}
+,{"stream_name":"stdout","time":1900.609320777,"data":"onnx-int8 celery correct=False p50=5588.5167\n"}
+,{"stream_name":"stdout","time":1984.332445757,"data":"onnx-int8 chapel correct=False p50=6303.6892\n"}
+,{"stream_name":"stdout","time":2063.287869203,"data":"onnx-int8 cherry correct=False p50=5590.0828\n"}
+,{"stream_name":"stdout","time":2166.781094313,"data":"onnx-int8 circle correct=False p50=5759.2376\n"}
+,{"stream_name":"stdout","time":2292.766781555,"data":"onnx-int8 citrus correct=False p50=8901.4663\n"}
+,{"stream_name":"stdout","time":2383.335150291,"data":"onnx-int8 cloak correct=False p50=6349.731\n"}
+,{"stream_name":"stdout","time":2473.39490448,"data":"onnx-int8 cobalt correct=False p50=5778.1296\n"}
+,{"stream_name":"stdout","time":2563.73527541,"data":"onnx-int8 copper correct=False p50=6395.5317\n"}
+,{"stream_name":"stdout","time":2644.904897407,"data":"onnx-int8 cradle correct=False p50=5717.9862\n"}
+,{"stream_name":"stdout","time":2726.185250339,"data":"onnx-int8 cricket correct=False p50=5654.5014\n"}
+,{"stream_name":"stdout","time":2806.058291673,"data":"onnx-int8 crystal correct=False p50=5677.8477\n"}
+,{"stream_name":"stdout","time":2900.72750882,"data":"onnx-int8 curtain correct=False p50=6153.211\n"}
+,{"stream_name":"stdout","time":2979.975110319,"data":"onnx-int8 custom correct=False p50=5609.902\n"}
+,{"stream_name":"stdout","time":3060.692104279,"data":"onnx-int8 daisy correct=False p50=5705.1285\n"}
+,{"stream_name":"stdout","time":3139.481521195,"data":"onnx-int8 desert correct=False p50=5592.7895\n"}
+,{"stream_name":"stdout","time":3220.181485224,"data":"onnx-int8 donkey correct=False p50=5724.857\n"}
+,{"stream_name":"stdout","time":3303.791530569,"data":"onnx-int8 dragon correct=False p50=5568.4217\n"}
+,{"stream_name":"stdout","time":3402.460753572,"data":"onnx-int8 drawer correct=False p50=8204.2175\n"}
+,{"stream_name":"stdout","time":3481.32473798,"data":"onnx-int8 eagle correct=False p50=5576.4377\n"}
+,{"stream_name":"stdout","time":3560.063504475,"data":"onnx-int8 ember correct=False p50=5571.2037\n"}
+,{"stream_name":"stdout","time":3639.153997555,"data":"onnx-int8 engine correct=False p50=5590.7303\n"}
+,{"stream_name":"stdout","time":3719.958857698,"data":"onnx-int8 fable correct=False p50=5730.4361\n"}
+,{"stream_name":"stdout","time":3799.054368267,"data":"onnx-int8 feather correct=False p50=5584.3093\n"}
+,{"stream_name":"stdout","time":3878.516326523,"data":"onnx-int8 fence correct=False p50=5618.0383\n"}
+,{"stream_name":"stdout","time":3957.637040247,"data":"onnx-int8 field correct=False p50=5592.7817\n"}
+,{"stream_name":"stdout","time":4037.049691125,"data":"onnx-int8 forest correct=False p50=5601.572\n"}
+,{"stream_name":"stdout","time":4123.661205196,"data":"onnx-int8 fountain correct=False p50=6299.9057\n"}
+,{"stream_name":"stdout","time":4208.376881435,"data":"onnx-int8 frost correct=False p50=5944.8711\n"}
+,{"stream_name":"stdout","time":4280.755565459,"data":"onnx-int8 galaxy correct=False p50=2819.49\n"}
+,{"stream_name":"stdout","time":4380.151016591,"data":"onnx-int8 garlic correct=False p50=8047.3335\n"}
+,{"stream_name":"stdout","time":4461.035763973,"data":"onnx-int8 glacier correct=False p50=5773.1523\n"}
+,{"stream_name":"stdout","time":4545.013874762,"data":"onnx-int8 goblet correct=False p50=5752.8802\n"}
+,{"stream_name":"stdout","time":4628.408451917,"data":"onnx-int8 grape correct=False p50=5658.2137\n"}
+,{"stream_name":"stdout","time":4710.623397972,"data":"onnx-int8 gravel correct=False p50=5806.2591\n"}
+,{"stream_name":"stdout","time":4792.215139349,"data":"onnx-int8 guitar correct=False p50=5769.1297\n"}
+,{"stream_name":"stdout","time":4872.400736029,"data":"onnx-int8 hammer correct=False p50=5712.5292\n"}
+,{"stream_name":"stdout","time":4954.642798822,"data":"onnx-int8 hazel correct=False p50=5789.7452\n"}
+,{"stream_name":"stdout","time":5035.534137262,"data":"onnx-int8 helmet correct=False p50=5748.4385\n"}
+,{"stream_name":"stdout","time":5140.714509849,"data":"onnx-int8 honey correct=False p50=8937.058\n"}
+,{"stream_name":"stdout","time":5221.55497491,"data":"onnx-int8 horse correct=False p50=5915.3102\n"}
+,{"stream_name":"stdout","time":5300.622088575,"data":"onnx-int8 ivory correct=False p50=5590.5021\n"}
+,{"stream_name":"stdout","time":5379.492460915,"data":"onnx-int8 jacket correct=False p50=5583.0731\n"}
+,{"stream_name":"stdout","time":5458.808907356,"data":"onnx-int8 jungle correct=False p50=5641.4015\n"}
+,{"stream_name":"stdout","time":5538.624772561,"data":"onnx-int8 kettle correct=False p50=5591.6221\n"}
+,{"stream_name":"stdout","time":5619.646821642,"data":"onnx-int8 knight correct=False p50=5703.2561\n"}
+,{"stream_name":"stdout","time":5700.409309594,"data":"onnx-int8 ladder correct=False p50=5722.4019\n"}
+,{"stream_name":"stdout","time":5781.328665898,"data":"onnx-int8 lantern correct=False p50=5685.311\n"}
+,{"stream_name":"stdout","time":5862.450786837,"data":"onnx-int8 lavender correct=False p50=5809.6118\n"}
+,{"stream_name":"stdout","time":5942.611721908,"data":"onnx-int8 legend correct=False p50=5701.7247\n"}
+,{"stream_name":"stdout","time":6023.030499149,"data":"onnx-int8 lizard correct=False p50=5623.6601\n"}
+,{"stream_name":"stdout","time":6108.701966649,"data":"onnx-int8 lumber correct=False p50=5618.8341\n"}
+,{"stream_name":"stdout","time":6188.306807762,"data":"onnx-int8 marble correct=False p50=5646.1289\n"}
+,{"stream_name":"stdout","time":6270.195296863,"data":"onnx-int8 meadow correct=False p50=5743.5279\n"}
+,{"stream_name":"stdout","time":6351.479443396,"data":"onnx-int8 melon correct=False p50=5749.9003\n"}
+,{"stream_name":"stdout","time":6434.094160077,"data":"onnx-int8 mirror correct=False p50=5753.9411\n"}
+,{"stream_name":"stdout","time":6518.373538378,"data":"onnx-int8 mossy correct=False p50=5861.5063\n"}
+,{"stream_name":"stdout","time":6598.876546852,"data":"onnx-int8 needle correct=False p50=5666.3079\n"}
+,{"stream_name":"stdout","time":6681.273479403,"data":"onnx-int8 nickel correct=False p50=5908.0084\n"}
+,{"stream_name":"stdout","time":6764.632015232,"data":"onnx-int8 olive correct=False p50=5800.6646\n"}
+,{"stream_name":"stdout","time":6844.654932959,"data":"onnx-int8 orange correct=False p50=5639.8518\n"}
+,{"stream_name":"stdout","time":6926.314738817,"data":"onnx-int8 orchid correct=False p50=5789.0498\n"}
+,{"stream_name":"stdout","time":7013.447905575,"data":"onnx-int8 otter correct=False p50=6530.0149\n"}
+,{"stream_name":"stdout","time":7093.864102544,"data":"onnx-int8 packet correct=False p50=5775.9456\n"}
+,{"stream_name":"stdout","time":7173.27184535,"data":"onnx-int8 palace correct=False p50=5644.5247\n"}
+,{"stream_name":"stdout","time":7254.772880822,"data":"onnx-int8 pebble correct=False p50=5803.0567\n"}
+,{"stream_name":"stdout","time":7334.827479331,"data":"onnx-int8 pepper correct=False p50=5694.9543\n"}
+,{"stream_name":"stdout","time":7414.66018871,"data":"onnx-int8 pickle correct=False p50=5713.0726\n"}
+,{"stream_name":"stdout","time":7493.946771022,"data":"onnx-int8 pillow correct=False p50=5615.7244\n"}
+,{"stream_name":"stdout","time":7573.143219916,"data":"onnx-int8 planet correct=False p50=5592.8431\n"}
+,{"stream_name":"stdout","time":7654.4610917,"data":"onnx-int8 plum correct=False p50=5777.1108\n"}
+,{"stream_name":"stdout","time":7737.093782519,"data":"onnx-int8 pocket correct=False p50=5800.8316\n"}
+,{"stream_name":"stdout","time":7817.267725795,"data":"onnx-int8 pollen correct=False p50=5693.5776\n"}
+,{"stream_name":"stdout","time":7899.367751085,"data":"onnx-int8 prairie correct=False p50=5830.5756\n"}
+,{"stream_name":"stdout","time":7985.557960837,"data":"onnx-int8 pumpkin correct=False p50=5755.6707\n"}
+,{"stream_name":"stdout","time":8099.737338434,"data":"onnx-int8 quail correct=False p50=9201.6381\n"}
+,{"stream_name":"stdout","time":8179.888763029,"data":"onnx-int8 quartz correct=False p50=5660.1518\n"}
+,{"stream_name":"stdout","time":8259.796881005,"data":"onnx-int8 rabbit correct=False p50=5659.0861\n"}
+,{"stream_name":"stdout","time":8343.186315177,"data":"onnx-int8 raven correct=False p50=5763.6268\n"}
+,{"stream_name":"stdout","time":8422.783835993,"data":"onnx-int8 ribbon correct=False p50=5644.5416\n"}
+,{"stream_name":"stdout","time":8502.484563951,"data":"onnx-int8 rocket correct=False p50=5615.768\n"}
+,{"stream_name":"stdout","time":8584.072176034,"data":"onnx-int8 saddle correct=False p50=5710.4618\n"}
+,{"stream_name":"stdout","time":8680.728472703,"data":"onnx-int8 saffron correct=False p50=6134.6783\n"}
+,{"stream_name":"stdout","time":8770.268252413,"data":"onnx-int8 sailor correct=False p50=6264.3319\n"}
+,{"stream_name":"stdout","time":8852.154317288,"data":"onnx-int8 salmon correct=False p50=5661.5431\n"}
+,{"stream_name":"stdout","time":8949.876815578,"data":"onnx-int8 scarlet correct=False p50=8529.8246\n"}
+,{"stream_name":"stdout","time":9029.884049119,"data":"onnx-int8 shadow correct=False p50=5665.4586\n"}
+,{"stream_name":"stdout","time":9109.511845386,"data":"onnx-int8 silver correct=False p50=5619.5827\n"}
+,{"stream_name":"stdout","time":9190.760845519,"data":"onnx-int8 sparrow correct=False p50=5752.3637\n"}
+,{"stream_name":"stdout","time":9270.681079638,"data":"onnx-int8 spice correct=False p50=5617.482\n"}
+,{"stream_name":"stdout","time":9350.941094056,"data":"onnx-int8 spider correct=False p50=5625.653\n"}
+,{"stream_name":"stdout","time":9438.328964757,"data":"onnx-int8 spruce correct=False p50=6020.4543\n"}
+,{"stream_name":"stdout","time":9520.507669904,"data":"onnx-int8 squirrel correct=False p50=5701.0105\n"}
+,{"stream_name":"stdout","time":9601.291558187,"data":"onnx-int8 stable correct=False p50=5690.2498\n"}
+,{"stream_name":"stdout","time":9705.027271285,"data":"onnx-int8 storm correct=False p50=8259.7176\n"}
+,{"stream_name":"stdout","time":9787.095588423,"data":"onnx-int8 saddlebag correct=False p50=5842.2832\n"}
+,{"stream_name":"stdout","time":9868.238161226,"data":"onnx-int8 tablet correct=False p50=5815.1935\n"}
+,{"stream_name":"stdout","time":9949.654183126,"data":"onnx-int8 temple correct=False p50=5721.7132\n"}
+,{"stream_name":"stdout","time":10031.606626199,"data":"onnx-int8 thistle correct=False p50=5815.0475\n"}
+,{"stream_name":"stdout","time":10111.130971061,"data":"onnx-int8 thunder correct=False p50=5638.5665\n"}
+,{"stream_name":"stdout","time":10190.440827502,"data":"onnx-int8 timber correct=False p50=5612.9559\n"}
+,{"stream_name":"stdout","time":10269.907998449,"data":"onnx-int8 turtle correct=False p50=5617.608\n"}
+,{"stream_name":"stdout","time":10349.949905568,"data":"onnx-int8 valley correct=False p50=5727.8994\n"}
+,{"stream_name":"stdout","time":10429.356862664,"data":"onnx-int8 velvet correct=False p50=5602.7132\n"}
+,{"stream_name":"stdout","time":10511.111596196,"data":"onnx-int8 violet correct=False p50=5656.4332\n"}
+,{"stream_name":"stdout","time":10596.356064355,"data":"onnx-int8 walnut correct=False p50=5643.0367\n"}
+,{"stream_name":"stdout","time":10686.712935041,"data":"onnx-int8 willow correct=False p50=6198.7337\n"}
+,{"stream_name":"stdout","time":10769.049099439,"data":"onnx-int8 window correct=False p50=5630.2756\n"}
+,{"stream_name":"stdout","time":10878.265176481,"data":"onnx-int8 winter correct=False p50=8963.6889\n"}
+,{"stream_name":"stdout","time":10959.186663251,"data":"onnx-int8 wizard correct=False p50=5612.4472\n"}
+,{"stream_name":"stdout","time":11038.514539355,"data":"onnx-int8 yellow correct=False p50=5616.7891\n"}
+,{"stream_name":"stdout","time":11119.615715064,"data":"onnx-int8 zebra correct=False p50=5754.795\n"}
+,{"stream_name":"stdout","time":11119.718595034,"data":"done\n"}
+,{"stream_name":"stderr","time":11134.358193445,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":11134.358233385,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":11134.983230315,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":11134.983271418,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":11137.161903241,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":11138.467872249,"data":"[NbConvertApp] Writing 353251 bytes to __results__.html\n"}
 ]

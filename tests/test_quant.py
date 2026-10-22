@@ -693,6 +693,9 @@ def test_kernels_embed_the_heldout_split_and_metadata():
             assert "onnx-ir" not in script
             assert "record_export_mem" in script
             assert "additive_causal_mask" in script
+            assert "exact_match" in script
+            assert "grader_case_sensitive" in script
+            assert "predictions.json" in script
         for item_id in heldout:
             assert f'"{item_id}"' in script
         assert script.count("ITEM_IDS") >= 1
@@ -889,3 +892,61 @@ def test_case_folded_pairing_is_zero_when_both_arms_recall_the_word():
     assert "case-folded match" in table
     assert "case-folded comparison" in table
     assert "grader_case_sensitive" in json.dumps(comparison["protocol"])
+
+
+def _write_onnx_kernel(tmp_path: Path, items: list, extra: dict | None = None):
+    tmp_path.joinpath("env.json").write_text(
+        json.dumps({"logical_cpus": 4, "ram_bytes": 32 * 1024 ** 3, "cpu_model": "x86_64"}),
+        encoding="utf-8",
+    )
+    tmp_path.joinpath("log.txt").write_text("ok\n", encoding="utf-8")
+    tmp_path.joinpath("progress.json").write_text(
+        json.dumps({"status": "measured", "arms": {"onnx-int8": {"status": "measured"}}}),
+        encoding="utf-8",
+    )
+    arm = tmp_path / "onnx-int8"
+    arm.mkdir()
+    arm.joinpath("items.json").write_text(json.dumps(items), encoding="utf-8")
+    metrics = {
+        "on_disk_bytes": 1779618939,
+        "peak_rss_bytes": 28993339392,
+        "grader_case_sensitive": True,
+        "libraries": {
+            "kind": "onnx",
+            "torch": "2.11.0+cpu",
+            "transformers": "4.56.2",
+            "onnx": "1.18.0",
+            "onnxruntime": "1.20.1",
+        },
+        "limiter": {
+            "kind": "rss",
+            "wall_s": 10753.151,
+            "cpu_time_s": 21471.534,
+            "peak_rss_bytes": 28993339392,
+            "available_ram_bytes_at_start": 21523292160,
+        },
+    }
+    if extra:
+        metrics.update(extra)
+    arm.joinpath("metrics.json").write_text(json.dumps(metrics), encoding="utf-8")
+
+
+def test_ingest_onnx_zero_score_with_finite_nll_is_measured(tmp_path: Path):
+    items = _items(0)
+    _write_onnx_kernel(tmp_path, items)
+    body = ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)
+    assert body["status"] == "measured"
+    assert body["task_score"] == 0.0
+    assert body["grader_case_sensitive"] is True
+    assert "case_folded_match" not in body
+
+
+def test_ingest_onnx_refuses_undeclared_grader_case_sensitivity(tmp_path: Path):
+    items = _items(0)
+    _write_onnx_kernel(tmp_path, items)
+    metrics_path = tmp_path / "onnx-int8" / "metrics.json"
+    metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+    del metrics["grader_case_sensitive"]
+    metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
+    with pytest.raises(ValueError, match="grader_case_sensitive"):
+        ingest_kernel_arm(tmp_path, Precision.ONNX_INT8)

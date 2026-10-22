@@ -1,16 +1,9 @@
 {
   "arms": {
     "onnx-int8": {
-      "reason": "probed_failure",
-      "status": "unsupported"
+      "status": "measured"
     }
   },
-  "detail": "RuntimeError: unordered_map::at",
-  "probe": {
-    "cuda_available": false,
-    "exception_type": "RuntimeError",
-    "message": "unordered_map::at"
-  },
-  "reason": "probed_failure",
-  "status": "failed"
+  "stage": "done",
+  "status": "measured"
 }

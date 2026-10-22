@@ -497,6 +497,11 @@ def measured_arm(
             if finding not in {"overflow", "collapse"}:
                 raise ValueError("finding must be overflow or collapse")
             body["finding"] = finding
+    elif precision is Precision.ONNX_INT8:
+        if hardware is not None or peak_gpu_bytes is not None:
+            raise ValueError("onnx arm must not carry gpu fields")
+        if kernel is not None:
+            body["kernel"] = kernel
     elif hardware is not None or peak_gpu_bytes is not None or kernel is not None:
         raise ValueError("cpu arm must not carry gpu fields")
     return body
@@ -1088,7 +1093,10 @@ def _refuse_broken_kernel_arm(
     kernel: dict[str, Any],
 ) -> dict[str, Any] | None:
     summary = _summarize_items(items)
-    broken = summary["task_score"] == 0.0 or not _items_have_finite_nll(items)
+    finite = _items_have_finite_nll(items)
+    if precision is Precision.ONNX_INT8 and finite:
+        return None
+    broken = summary["task_score"] == 0.0 or not finite
     if not broken or _allowed_broken_finding(precision, finding):
         return None
     return unsupported_arm(
@@ -1193,7 +1201,7 @@ def ingest_kernel_arm(source: Path, precision: Precision) -> dict[str, Any]:
         protocol=protocol,
         hardware=env.get("hardware") if gpu else None,
         peak_gpu_bytes=metrics.get("peak_gpu_bytes") if gpu else None,
-        kernel=kernel_ref if gpu else None,
+        kernel=kernel_ref if gpu or precision is Precision.ONNX_INT8 else None,
         compute_dtype=metrics.get("compute_dtype") if gpu else None,
         quant_config=metrics.get("quant_config") if precision in NF4_QUANT_CONFIGS else None,
         finding=finding if finding in {"overflow", "collapse"} else None,
