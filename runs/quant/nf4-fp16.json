@@ -1,0 +1,23 @@
+{
+  "body": {
+    "detail": "fp16 is not a healthy compute dtype; skipped nf4-fp16 Soft-PASS is unused and is refused.",
+    "kernel": {
+      "dir": "kaggle/quant_nf4",
+      "url": "https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4",
+      "version": "2"
+    },
+    "precision": "nf4-fp16",
+    "probe": {
+      "cuda_available": null,
+      "exception_type": "KernelProgress",
+      "message": "fp16 is not a healthy compute dtype; skipped nf4-fp16"
+    },
+    "reason": "probed_failure",
+    "status": "unsupported"
+  },
+  "comparison_sha256": "26cdec1639bbc335e515662a4d5ff072a9ba48942d2f4450e195c30b2099e3cd",
+  "document_kind": "quant-arm-projection",
+  "precision": "nf4-fp16",
+  "protocol_sha256": "fe78bf5984dffd231835c79e424ed36201f9223b848d032a35d6abbd96246754",
+  "schema_version": "1"
+}

@@ -1,0 +1,20 @@
+{
+  "arms": {
+    "fp16": {
+      "status": "measured"
+    },
+    "nf4": {
+      "status": "measured"
+    },
+    "nf4-fp16": {
+      "detail": "fp16 is not a healthy compute dtype; skipped nf4-fp16",
+      "reason": "probed_failure",
+      "status": "unsupported"
+    },
+    "t4-fp32": {
+      "status": "measured"
+    }
+  },
+  "stage": "done",
+  "status": "measured"
+}

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/naveed949/sft-loop/schema/quant_comparison.schema.json",
   "title": "sft-loop quant comparison",
-  "description": "Comparison document that owns the pinned revision, seed, items, and the paired int8-versus-fp32 difference. Arm JSON files are projections. additionalProperties is false on every object. This is not a run report.",
+  "description": "Comparison document that owns the pinned revision, seed, items, and named pairings. Arm JSON files are projections. additionalProperties is false on every object. This is not a run report. GPU arms carry hardware.accelerator. A pairing is legal only on the same hardware class.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,7 @@
     "protocol",
     "hardware",
     "arms",
-    "outcome"
+    "outcomes"
   ],
   "properties": {
     "schema_version": { "const": "1" },
@@ -21,14 +21,9 @@
     "model_id": { "const": "Qwen/Qwen2.5-1.5B-Instruct" },
     "metric_role": { "const": "task_score_not_safety" },
     "protocol": { "$ref": "#/$defs/protocol" },
-    "hardware": { "$ref": "#/$defs/hardware" },
-    "arms": { "$ref": "#/$defs/four_arms" },
-    "outcome": {
-      "oneOf": [
-        { "$ref": "#/$defs/paired_difference" },
-        { "$ref": "#/$defs/difference_unavailable" }
-      ]
-    }
+    "hardware": { "$ref": "#/$defs/cpu_hardware" },
+    "arms": { "$ref": "#/$defs/quant_arms" },
+    "outcomes": { "$ref": "#/$defs/outcomes" }
   },
   "$defs": {
     "protocol": {
@@ -43,6 +38,7 @@
         "split_sha256",
         "item_ids",
         "grader",
+        "grader_case_sensitive",
         "decode",
         "throughput_decode",
         "threads",
@@ -64,6 +60,7 @@
           "items": { "type": "string", "pattern": "^[a-z]+$" }
         },
         "grader": { "const": "exact_match" },
+        "grader_case_sensitive": { "const": true },
         "decode": {
           "type": "object",
           "additionalProperties": false,
@@ -89,7 +86,7 @@
         "metric_role": { "const": "task_score_not_safety" }
       }
     },
-    "hardware": {
+    "cpu_hardware": {
       "type": "object",
       "additionalProperties": false,
       "required": ["cpu_model", "logical_cpus", "ram_bytes", "cuda", "mps"],
@@ -99,6 +96,36 @@
         "ram_bytes": { "type": "integer", "minimum": 1 },
         "cuda": { "const": false },
         "mps": { "const": false }
+      }
+    },
+    "gpu_hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cpu_model",
+        "logical_cpus",
+        "ram_bytes",
+        "cuda",
+        "mps",
+        "accelerator",
+        "gpu_name",
+        "gpu_count",
+        "gpu_memory_bytes",
+        "compute_capability",
+        "driver"
+      ],
+      "properties": {
+        "cpu_model": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "logical_cpus": { "type": "integer", "minimum": 1 },
+        "ram_bytes": { "type": "integer", "minimum": 1 },
+        "cuda": { "const": true },
+        "mps": { "const": false },
+        "accelerator": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "gpu_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "gpu_count": { "type": "integer", "minimum": 1 },
+        "gpu_memory_bytes": { "type": "integer", "minimum": 1 },
+        "compute_capability": { "type": "string", "minLength": 1, "maxLength": 16 },
+        "driver": { "type": "string", "minLength": 1, "maxLength": 80 }
       }
     },
     "libraries": {
@@ -112,6 +139,7 @@
         "onnx": { "type": "string", "minLength": 1 },
         "onnxruntime": { "type": "string", "minLength": 1 },
         "bitsandbytes": { "type": "string", "minLength": 1 },
+        "tokenizers": { "type": "string", "minLength": 1 },
         "qconfig": { "type": "string", "minLength": 1 }
       }
     },
@@ -126,7 +154,7 @@
         "available_ram_bytes_at_start"
       ],
       "properties": {
-        "kind": { "enum": ["cpu", "rss", "unresolved"] },
+        "kind": { "enum": ["cpu", "rss", "gpu", "unresolved"] },
         "wall_s": { "type": "number", "minimum": 0 },
         "cpu_time_s": { "type": "number", "minimum": 0 },
         "peak_rss_bytes": { "type": "integer", "minimum": 0 },
@@ -152,7 +180,8 @@
         "decode_latency_ms": { "type": "number", "minimum": 0 },
         "decode_generated_tokens": { "type": "integer", "minimum": 0 },
         "nll": { "type": "number" },
-        "sequence_nll": { "type": "number" }
+        "sequence_nll": { "type": "number" },
+        "case_folded": { "type": "boolean" }
       }
     },
     "probe": {
@@ -165,7 +194,33 @@
         "cuda_available": { "type": ["boolean", "null"] }
       }
     },
-    "measured_arm": {
+    "kernel_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dir", "url", "version"],
+      "properties": {
+        "dir": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "url": { "type": ["string", "null"] },
+        "version": { "type": ["string", "null"] }
+      }
+    },
+    "quant_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "load_in_4bit",
+        "bnb_4bit_quant_type",
+        "bnb_4bit_use_double_quant",
+        "bnb_4bit_compute_dtype"
+      ],
+      "properties": {
+        "load_in_4bit": { "const": true },
+        "bnb_4bit_quant_type": { "const": "nf4" },
+        "bnb_4bit_use_double_quant": { "const": true },
+        "bnb_4bit_compute_dtype": { "enum": ["float16", "float32"] }
+      }
+    },
+    "measured_cpu_arm": {
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -182,7 +237,8 @@
         "latency_p95_ms",
         "mean_generated_tokens",
         "decode_tokens_per_s",
-        "raw_sha256"
+        "raw_sha256",
+        "grader_case_sensitive"
       ],
       "properties": {
         "status": { "const": "measured" },
@@ -202,8 +258,80 @@
         "latency_p95_ms": { "type": "number", "minimum": 0 },
         "mean_generated_tokens": { "type": "number", "minimum": 0 },
         "decode_tokens_per_s": { "type": "number", "minimum": 0 },
-        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "grader_case_sensitive": { "const": true },
+        "case_folded_match": { "type": "number", "minimum": 0, "maximum": 1 },
+        "kernel": { "$ref": "#/$defs/kernel_ref" },
+        "finding": { "enum": ["overflow", "collapse"] }
       }
+    },
+    "measured_gpu_arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "precision",
+        "on_disk_bytes",
+        "peak_rss_bytes",
+        "peak_gpu_bytes",
+        "libraries",
+        "limiter",
+        "hardware",
+        "kernel",
+        "compute_dtype",
+        "items",
+        "task_score",
+        "task_score_se",
+        "latency_p50_ms",
+        "latency_p95_ms",
+        "mean_generated_tokens",
+        "decode_tokens_per_s",
+        "raw_sha256",
+        "grader_case_sensitive"
+      ],
+      "properties": {
+        "status": { "const": "measured" },
+        "precision": { "enum": ["t4-fp32", "fp16", "nf4", "nf4-fp16"] },
+        "on_disk_bytes": { "type": "integer", "minimum": 1 },
+        "peak_rss_bytes": { "type": "integer", "minimum": 1 },
+        "peak_gpu_bytes": { "type": "integer", "minimum": 1 },
+        "libraries": { "$ref": "#/$defs/libraries" },
+        "limiter": { "$ref": "#/$defs/limiter" },
+        "hardware": { "$ref": "#/$defs/gpu_hardware" },
+        "kernel": { "$ref": "#/$defs/kernel_ref" },
+        "compute_dtype": { "enum": ["float16", "float32"] },
+        "quant_config": { "$ref": "#/$defs/quant_config" },
+        "finding": { "enum": ["overflow", "collapse"] },
+        "items": {
+          "type": "array",
+          "minItems": 100,
+          "items": { "$ref": "#/$defs/item_row" }
+        },
+        "task_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "task_score_se": { "type": "number", "minimum": 0 },
+        "latency_p50_ms": { "type": "number", "minimum": 0 },
+        "latency_p95_ms": { "type": "number", "minimum": 0 },
+        "mean_generated_tokens": { "type": "number", "minimum": 0 },
+        "decode_tokens_per_s": { "type": "number", "minimum": 0 },
+        "raw_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "grader_case_sensitive": { "const": true },
+        "case_folded_match": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "precision": { "enum": ["nf4", "nf4-fp16"] } },
+            "required": ["precision"]
+          },
+          "then": { "required": ["quant_config"] }
+        }
+      ]
+    },
+    "measured_arm": {
+      "oneOf": [
+        { "$ref": "#/$defs/measured_cpu_arm" },
+        { "$ref": "#/$defs/measured_gpu_arm" }
+      ]
     },
     "unsupported_arm": {
       "type": "object",
@@ -211,24 +339,27 @@
       "required": ["status", "precision", "reason", "detail", "probe"],
       "properties": {
         "status": { "const": "unsupported" },
-        "precision": { "enum": ["fp32", "int8", "onnx-int8", "nf4"] },
+        "precision": { "enum": ["fp32", "int8", "onnx-int8", "t4-fp32", "fp16", "nf4", "nf4-fp16"] },
         "reason": {
           "enum": [
             "oom",
             "missing_cuda",
             "export_timeout",
             "dependency_missing",
-            "probed_failure"
+            "probed_failure",
+            "kernel_output_missing"
           ]
         },
         "detail": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "probe": { "$ref": "#/$defs/probe" }
+        "probe": { "$ref": "#/$defs/probe" },
+        "kernel": { "$ref": "#/$defs/kernel_ref" }
       },
       "not": {
         "anyOf": [
           { "required": ["items"] },
           { "required": ["on_disk_bytes"] },
           { "required": ["peak_rss_bytes"] },
+          { "required": ["peak_gpu_bytes"] },
           { "required": ["task_score"] },
           { "required": ["latency_p50_ms"] },
           { "required": ["latency_p95_ms"] },
@@ -238,42 +369,53 @@
         ]
       }
     },
-    "nf4_arm": {
+    "quant_arms": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "precision", "reason", "detail", "probe"],
-      "properties": {
-        "status": { "const": "unsupported" },
-        "precision": { "const": "nf4" },
-        "reason": { "enum": ["missing_cuda", "dependency_missing"] },
-        "detail": { "type": "string", "minLength": 1, "maxLength": 500 },
-        "probe": { "$ref": "#/$defs/probe" }
-      }
-    },
-    "four_arms": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["fp32", "int8", "onnx-int8", "nf4"],
+      "required": ["fp32", "int8", "onnx-int8", "t4-fp32", "fp16", "nf4", "nf4-fp16"],
       "properties": {
         "fp32": {
           "oneOf": [
-            { "$ref": "#/$defs/measured_arm" },
+            { "$ref": "#/$defs/measured_cpu_arm" },
             { "$ref": "#/$defs/unsupported_arm" }
           ]
         },
         "int8": {
           "oneOf": [
-            { "$ref": "#/$defs/measured_arm" },
+            { "$ref": "#/$defs/measured_cpu_arm" },
             { "$ref": "#/$defs/unsupported_arm" }
           ]
         },
         "onnx-int8": {
           "oneOf": [
-            { "$ref": "#/$defs/measured_arm" },
+            { "$ref": "#/$defs/measured_cpu_arm" },
             { "$ref": "#/$defs/unsupported_arm" }
           ]
         },
-        "nf4": { "$ref": "#/$defs/nf4_arm" }
+        "t4-fp32": {
+          "oneOf": [
+            { "$ref": "#/$defs/measured_gpu_arm" },
+            { "$ref": "#/$defs/unsupported_arm" }
+          ]
+        },
+        "fp16": {
+          "oneOf": [
+            { "$ref": "#/$defs/measured_gpu_arm" },
+            { "$ref": "#/$defs/unsupported_arm" }
+          ]
+        },
+        "nf4": {
+          "oneOf": [
+            { "$ref": "#/$defs/measured_gpu_arm" },
+            { "$ref": "#/$defs/unsupported_arm" }
+          ]
+        },
+        "nf4-fp16": {
+          "oneOf": [
+            { "$ref": "#/$defs/measured_gpu_arm" },
+            { "$ref": "#/$defs/unsupported_arm" }
+          ]
+        }
       }
     },
     "paired_difference": {
@@ -281,6 +423,8 @@
       "additionalProperties": false,
       "required": [
         "kind",
+        "minus",
+        "baseline",
         "n",
         "score_delta",
         "score_delta_se",
@@ -292,12 +436,18 @@
         "nll_delta_se",
         "sequence_nll_delta",
         "sequence_nll_delta_se",
+        "case_folded_delta",
+        "case_folded_delta_se",
+        "case_folded_delta_ci95_low",
+        "case_folded_delta_ci95_high",
         "bootstrap_draws",
         "bootstrap_seed",
         "method"
       ],
       "properties": {
         "kind": { "const": "paired" },
+        "minus": { "enum": ["int8", "nf4", "nf4-fp16"] },
+        "baseline": { "enum": ["fp32", "t4-fp32"] },
         "n": { "type": "integer", "minimum": 100 },
         "score_delta": { "type": "number" },
         "score_delta_se": { "type": "number", "minimum": 0 },
@@ -309,6 +459,10 @@
         "nll_delta_se": { "type": ["number", "null"] },
         "sequence_nll_delta": { "type": ["number", "null"] },
         "sequence_nll_delta_se": { "type": ["number", "null"] },
+        "case_folded_delta": { "type": ["number", "null"] },
+        "case_folded_delta_se": { "type": ["number", "null"] },
+        "case_folded_delta_ci95_low": { "type": ["number", "null"] },
+        "case_folded_delta_ci95_high": { "type": ["number", "null"] },
         "bootstrap_draws": { "const": 1000 },
         "bootstrap_seed": { "type": "integer", "minimum": 0 },
         "method": { "const": "paired-item-mean" }
@@ -317,10 +471,48 @@
     "difference_unavailable": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "reason"],
+      "required": ["kind", "minus", "baseline", "reason"],
       "properties": {
         "kind": { "const": "unavailable" },
-        "reason": { "enum": ["fp32_unmeasured", "int8_unmeasured"] }
+        "minus": { "enum": ["int8", "nf4", "nf4-fp16"] },
+        "baseline": { "enum": ["fp32", "t4-fp32"] },
+        "reason": {
+          "enum": [
+            "fp32_unmeasured",
+            "int8_unmeasured",
+            "t4-fp32_unmeasured",
+            "nf4_unmeasured",
+            "nf4-fp16_unmeasured"
+          ]
+        }
+      }
+    },
+    "difference_not_paired": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "minus", "baseline", "reason"],
+      "properties": {
+        "kind": { "const": "not_paired" },
+        "minus": { "type": "string", "minLength": 1 },
+        "baseline": { "type": "string", "minLength": 1 },
+        "reason": { "enum": ["cross_hardware", "accelerator_mismatch"] }
+      }
+    },
+    "named_outcome": {
+      "oneOf": [
+        { "$ref": "#/$defs/paired_difference" },
+        { "$ref": "#/$defs/difference_unavailable" },
+        { "$ref": "#/$defs/difference_not_paired" }
+      ]
+    },
+    "outcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["int8-minus-fp32", "nf4-minus-t4-fp32", "nf4-fp16-minus-t4-fp32"],
+      "properties": {
+        "int8-minus-fp32": { "$ref": "#/$defs/named_outcome" },
+        "nf4-minus-t4-fp32": { "$ref": "#/$defs/named_outcome" },
+        "nf4-fp16-minus-t4-fp32": { "$ref": "#/$defs/named_outcome" }
       }
     },
     "arm_projection": {
@@ -339,12 +531,12 @@
         "schema_version": { "const": "1" },
         "comparison_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
         "protocol_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "precision": { "enum": ["fp32", "int8", "onnx-int8", "nf4"] },
+        "precision": { "enum": ["fp32", "int8", "onnx-int8", "t4-fp32", "fp16", "nf4", "nf4-fp16"] },
         "body": {
           "oneOf": [
-            { "$ref": "#/$defs/measured_arm" },
-            { "$ref": "#/$defs/unsupported_arm" },
-            { "$ref": "#/$defs/nf4_arm" }
+            { "$ref": "#/$defs/measured_cpu_arm" },
+            { "$ref": "#/$defs/measured_gpu_arm" },
+            { "$ref": "#/$defs/unsupported_arm" }
           ]
         }
       },
@@ -352,6 +544,7 @@
         "anyOf": [
           { "required": ["seed"] },
           { "required": ["split_id"] },
+          { "required": ["outcomes"] },
           { "required": ["outcome"] },
           { "required": ["item_ids"] }
         ]

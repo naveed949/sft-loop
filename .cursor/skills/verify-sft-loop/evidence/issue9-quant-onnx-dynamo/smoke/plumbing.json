@@ -1,0 +1,56 @@
+{
+  "kind": "plumbing_smoke_not_quality",
+  "status": "plumbing",
+  "weight_change_claimed": false,
+  "device": "cpu",
+  "backend": "trl-peft",
+  "stack": {
+    "unsloth": "unused",
+    "trl": "0.24.0",
+    "method": "sft-lora"
+  },
+  "model_id": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+  "model_revision": "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda",
+  "seed": 0,
+  "before": {
+    "seed": 0,
+    "metric_name": "exact_match",
+    "task_score": 0.0,
+    "n": 8,
+    "role": "plumbing_not_quality"
+  },
+  "after": {
+    "seed": 0,
+    "metric_name": "exact_match",
+    "task_score": 0.0,
+    "n": 8,
+    "role": "plumbing_not_quality"
+  },
+  "lora_b_max_abs": 0.00030013470677658916,
+  "train": {
+    "trainer": "trl.SFTTrainer",
+    "global_step": 2,
+    "train_loss": 11.931159,
+    "lora_r": 8,
+    "max_steps": 2,
+    "device": "cpu",
+    "backend": "trl-peft",
+    "lora_b_max_abs": 0.00030013470677658916,
+    "lora_b_tensors": 8,
+    "lora_b_nonzero": 8
+  },
+  "elapsed_s": 6.332,
+  "exit": 0,
+  "hardware": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "torch": "2.14.1+cpu",
+    "cuda": false,
+    "mps": false,
+    "cpu_count": 4,
+    "ram_bytes": 16780574720,
+    "probe_error": null
+  },
+  "note": "CPU plumbing check only. Not a scored run report. device=cpu and backend=trl-peft are recorded here, not in schema/run_report.schema.json. stack.unsloth is unused because this path is TRL+PEFT. Smoke fails unless train_loss is finite, global_step == max_steps, and a saved lora_B tensor is nonzero."
+}

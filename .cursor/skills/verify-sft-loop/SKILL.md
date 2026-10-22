@@ -9,7 +9,7 @@ Drive this repo the way a user does. The user-facing surface is the CLI (`python
 
 Read `features/README.md` and drive every mapped feature that the change can touch. One convenient entry point is not enough when the map lists others.
 
-This skill is for a CPU Linux VM. Never provision a GPU. Never install the `unsloth` extra. Never invent `before`/`after`/`task_score`. A surface that cannot run here is `unsupported` with `gpu_or_train_deps_unavailable` or `train_not_run`. Those are the only reasons in `schema/run_report.schema.json`. Never record a skip, estimate, or pass for a blocked GPU path.
+This skill is for a CPU Linux VM. Never provision a GPU. Never install the `unsloth` extra. Never invent `before`/`after`/`task_score`. A surface that cannot run here is `unsupported` with `gpu_or_train_deps_unavailable` or `train_not_run`. Those are the only reasons in `schema/run_report.schema.json`. Never record a skip, estimate, or pass for a blocked GPU path. Kaggle quant kernels are that kind of surface. Link `kaggle/quant_nf4` and `kaggle/quant_onnx_int8` instead of running them.
 
 Soft-PASS is unused and is refused.
 
@@ -108,13 +108,13 @@ Equivalent raw commands (same reports):
 
 `--device cpu` is not a product choice. argparse `choices` are `{mps,cuda}`; the CLI exits 2. `resolve_train_target("cpu")` raises `ValueError`. Do not add CPU to the product CLI.
 
-**Quant comparison (NF4 probe plus committed portfolio).**
+**Quant comparison (NF4 probe, missing-kernel ingest, committed portfolio).**
 
 ```bash
 .cursor/skills/verify-sft-loop/scripts/verify quant --run-id "$VERIFY_RUN_ID"
 ```
 
-Writes `quant/nf4.json` under evidence. Validates `runs/quant/comparison.json`. Checks the README table markers. Does not reload the 1.5B weights and does not write `runs/phase3/`.
+Writes `quant/nf4.json` under evidence. Validates `runs/quant/comparison.json`. Checks the README table markers. Ingests a missing kernel dir and records `quant/kernel-missing.json` as `unsupported` / `kernel_output_missing`. Checks that `kaggle/quant_nf4` and `kaggle/quant_onnx_int8` exist. Does not execute those kernels, does not reload the 1.5B weights, and does not write `runs/phase3/`.
 
 **CPU plumbing smoke (not a quality result, not a scored report).**
 
@@ -184,7 +184,7 @@ All invocations from the repo root. Scripts are executable.
 | `scripts/verify test` | `python -m pytest -q` |
 | `scripts/verify unsupported` | Official CLIs, schema-validate fail-closed reports |
 | `scripts/verify smoke` | CPU LoRA plumbing on the tiny pinned model; writes `plumbing.json`, never a scored report |
-| `scripts/verify quant` | NF4 probe into evidence, validate `runs/quant/`, check the README table |
+| `scripts/verify quant` | NF4 probe, missing-kernel ingest, validate `runs/quant/`, check the README table, confirm kernel dirs |
 | `scripts/verify cleanup` | Remove scratch, keep evidence |
 | `scripts/verify all` | The sequence above; any nonzero step fails the run and names that step |
 

@@ -1,0 +1,16 @@
+{
+  "detail": "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. Soft-PASS is unused and is refused.",
+  "kernel": {
+    "dir": "kaggle/quant_nf4",
+    "url": null,
+    "version": null
+  },
+  "precision": "nf4",
+  "probe": {
+    "cuda_available": null,
+    "exception_type": "KernelOutputMissing",
+    "message": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/quant/absent-kernel is not a directory"
+  },
+  "reason": "kernel_output_missing",
+  "status": "unsupported"
+}

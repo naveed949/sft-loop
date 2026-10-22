@@ -1,0 +1,8 @@
+{
+  "probe": {
+    "cuda_available": true,
+    "exception_type": "Fp16Overflow",
+    "message": "fp16 overflow on T4, 0/129"
+  },
+  "reason": "probed_failure"
+}

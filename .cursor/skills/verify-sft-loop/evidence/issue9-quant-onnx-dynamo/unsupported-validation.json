@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/cli-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/loop-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/loop-mps.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/loop-cuda.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/train-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/eval-before.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-onnx-dynamo/reports/eval-after.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  }
+]

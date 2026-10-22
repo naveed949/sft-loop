@@ -14,6 +14,14 @@ Do not export `VERIFY_EVIDENCE_DIR` or `VERIFY_SCRATCH_DIR` unless the path ends
 
 `issue9-quant-r2/` is the remasurement proof after the throughput and NLL blockers. `scripts/verify all --run-id issue9-quant-r2` exited 0. The table now has scored p50/p95, mean generated tokens, and decode tokens/s from a `min_new_tokens == max_new_tokens == 8` pass.
 
+Kaggle GPU kernels are not a local verify surface. The scripts live at `kaggle/quant_nf4` and `kaggle/quant_onnx_int8`. `verify quant` checks those directories exist and that ingest of a missing output dir is `kernel_output_missing`. It does not run the kernels.
+
+`issue9-quant-gpu-p1/` is the Phase 1 proof. `scripts/verify all --run-id issue9-quant-gpu-p1` exited 0. `surfaces.json` lists `kaggle-quant-kernels` as unsupported and points at those dirs. `quant/kernel-missing.json` is the fail-closed ingest.
+
+`issue9-quant-gpu-p2/` is the Phase 2 ingest proof. `scripts/verify all --run-id issue9-quant-gpu-p2` exited 0 in 34.508s. Pytest was 81 passed. `quant` validated the ingested T4 comparison, checked the README table, and still fail-closed a missing kernel dir. Downloaded outputs live at `runs/quant/kernel/`. Local verify still does not run the kernels.
+
+`issue9-quant-t4-fp32/` is the fail-closed T4 fp32 baseline proof. `scripts/verify all --run-id issue9-quant-t4-fp32` exited 0. v1 GPU pairing is withdrawn. The replacement kernel lives at `kaggle/quant_nf4`.
+
 Read these first:
 
 - `summary.json` (all steps exit 0, 72.263s, `failed_step` null)

@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/cli-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/loop-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/loop-mps.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/loop-cuda.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/train-default.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/eval-before.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  },
+  {
+    "path": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-nf4-parity/reports/eval-after.json",
+    "ok": true,
+    "stdout": "valid",
+    "stderr": ""
+  }
+]

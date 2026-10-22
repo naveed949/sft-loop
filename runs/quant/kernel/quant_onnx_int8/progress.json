@@ -1,0 +1,9 @@
+{
+  "arms": {
+    "onnx-int8": {
+      "status": "measured"
+    }
+  },
+  "stage": "done",
+  "status": "measured"
+}

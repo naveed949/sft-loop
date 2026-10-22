@@ -1,0 +1,20 @@
+{
+  "exact_match": 0.0,
+  "grader_case_sensitive": true,
+  "libraries": {
+    "kind": "onnx",
+    "onnx": "1.18.0",
+    "onnxruntime": "1.20.1",
+    "torch": "2.11.0+cpu",
+    "transformers": "4.56.2"
+  },
+  "limiter": {
+    "available_ram_bytes_at_start": 21523292160,
+    "cpu_time_s": 21471.534,
+    "kind": "rss",
+    "peak_rss_bytes": 28993339392,
+    "wall_s": 10753.151
+  },
+  "on_disk_bytes": 1779618939,
+  "peak_rss_bytes": 28993339392
+}

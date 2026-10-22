@@ -1150,6 +1150,18 @@ def build_surfaces(
                 "Not a scored SFT report."
             ),
         ),
+        Surface(
+            id="kaggle-quant-kernels",
+            command="kaggle/quant_nf4 and kaggle/quant_onnx_int8",
+            status="unsupported",
+            reason=REASON_DEPS,
+            detail=(
+                "Local verify cannot run Kaggle kernels. "
+                "GPU NF4+fp16 evidence is kaggle/quant_nf4. "
+                "ONNX int8 evidence is kaggle/quant_onnx_int8. "
+                + REFUSAL_SENTENCE
+            ),
+        ),
     ]
 
 
@@ -1250,7 +1262,81 @@ def cmd_quant(root: Path, log: TextIO | None) -> int:
         env=env,
         log=log,
     )
-    return table.returncode
+    if table.returncode != 0:
+        return table.returncode
+    for rel in ("kaggle/quant_nf4/kernel-metadata.json", "kaggle/quant_onnx_int8/kernel-metadata.json"):
+        if not (root / rel).is_file():
+            append_log(log, f"missing kernel evidence {rel}\n")
+            return 1
+    missing = run_command(
+        [
+            py,
+            "-m",
+            "sft_loop.quant",
+            "ingest",
+            "--precision",
+            "nf4",
+            "--from-dir",
+            str(evidence / "absent-kernel"),
+        ],
+        cwd=root,
+        env=env,
+        log=log,
+    )
+    if missing.returncode == 0:
+        append_log(log, "ingest of a missing kernel dir must fail closed\n")
+        return 1
+    try:
+        ingested = json.loads(missing.stdout)
+    except json.JSONDecodeError:
+        append_log(log, "ingest of a missing kernel dir did not write JSON\n")
+        return 1
+    (evidence / "kernel-missing.json").write_text(missing.stdout, encoding="utf-8")
+    if ingested.get("status") != "unsupported" or ingested.get("reason") != "kernel_output_missing":
+        append_log(log, "ingest of a missing kernel dir is not kernel_output_missing\n")
+        return 1
+    if any(key in ingested for key in ("task_score", "items", "on_disk_bytes", "latency_p50_ms")):
+        append_log(log, "missing kernel ingest wrote metric keys\n")
+        return 1
+    listed = subprocess.run(
+        ["git", "ls-files", "-s", "runs"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if listed.returncode != 0:
+        append_log(log, "git ls-files -s runs failed\n")
+        return 1
+    max_bytes = 5 * 1024 * 1024
+    oversized = []
+    for line in listed.stdout.splitlines():
+        if "\t" not in line:
+            continue
+        meta, rel = line.split("\t", 1)
+        parts = meta.split()
+        if len(parts) < 2:
+            continue
+        blob = parts[1]
+        sized = subprocess.run(
+            ["git", "cat-file", "-s", blob],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if sized.returncode != 0:
+            append_log(log, f"git cat-file -s failed for {rel}\n")
+            return 1
+        size = int(sized.stdout.strip())
+        if size > max_bytes:
+            oversized.append(f"{rel} {size} {blob}")
+    if oversized:
+        append_log(log, "tracked git blobs under runs/ exceed 5 MB:\n")
+        for row in oversized:
+            append_log(log, f"  {row}\n")
+        return 1
+    return 0
 
 
 def cmd_all(root: Path, log: TextIO | None) -> int:

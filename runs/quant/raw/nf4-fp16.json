@@ -1,0 +1,8 @@
+{
+  "probe": {
+    "cuda_available": null,
+    "exception_type": "KernelProgress",
+    "message": "fp16 is not a healthy compute dtype; skipped nf4-fp16"
+  },
+  "reason": "probed_failure"
+}

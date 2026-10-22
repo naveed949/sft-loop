@@ -50,12 +50,32 @@ runs/quant/**
 !runs/quant/int8.json
 !runs/quant/onnx-int8.json
 !runs/quant/nf4.json
+!runs/quant/fp16.json
+!runs/quant/t4-fp32.json
+!runs/quant/nf4-fp16.json
 !runs/quant/raw/
 runs/quant/raw/**
 !runs/quant/raw/fp32.json
 !runs/quant/raw/int8.json
 !runs/quant/raw/onnx-int8.json
 !runs/quant/raw/nf4.json
+!runs/quant/raw/fp16.json
+!runs/quant/raw/t4-fp32.json
+!runs/quant/raw/nf4-fp16.json
+!runs/quant/kernel/
+!runs/quant/kernel/**
+# The carve-out above re-includes export graphs. Re-ignore those and leftover
+# external tensors so `git add` cannot stage a 1.78 GB ONNX file or the 7 GB
+# of sibling initializers. Size is enforced again in scripts/verify.
+runs/quant/kernel/**/*.onnx
+runs/quant/kernel/**/*.onnx.data
+runs/quant/kernel/**/*.safetensors
+runs/quant/kernel/**/*.bin
+runs/quant/kernel/**/*.pt
+runs/quant/kernel/**/*.pth
+runs/quant/kernel/**/*.gguf
+runs/quant/kernel/**/inner.model.*
+runs/quant/kernel/**/onnx__*
 
 # Phase 4 scored report and raw kernel JSON. Adapter weights stay ignored.
 !runs/phase4/

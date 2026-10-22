@@ -1,0 +1,23 @@
+{
+  "attn_implementation": "eager",
+  "compute_dtype": "float16",
+  "exact_match": 0.0,
+  "finding": "overflow",
+  "grader_case_sensitive": true,
+  "libraries": {
+    "kind": "torch",
+    "tokenizers": "0.23.3",
+    "torch": "2.11.0+cu128",
+    "transformers": "5.20.2"
+  },
+  "limiter": {
+    "available_ram_bytes_at_start": 30248706048,
+    "cpu_time_s": 525.98844,
+    "kind": "gpu",
+    "peak_rss_bytes": 5308198912,
+    "wall_s": 525.951
+  },
+  "on_disk_bytes": 3098955668,
+  "peak_gpu_bytes": 3122830848,
+  "peak_rss_bytes": 5308198912
+}

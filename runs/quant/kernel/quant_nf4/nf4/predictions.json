@@ -1,0 +1,647 @@
+[
+  {
+    "item_id": "anchor",
+    "prediction": "ANCHOR",
+    "prediction_token": "ANCHOR"
+  },
+  {
+    "item_id": "barrel",
+    "prediction": "Barrel",
+    "prediction_token": "Barrel"
+  },
+  {
+    "item_id": "beacon",
+    "prediction": "BEACON",
+    "prediction_token": "BEACON"
+  },
+  {
+    "item_id": "biscuit",
+    "prediction": "Biscuit",
+    "prediction_token": "Biscuit"
+  },
+  {
+    "item_id": "blanket",
+    "prediction": "BLANKET",
+    "prediction_token": "BLANKET"
+  },
+  {
+    "item_id": "blossom",
+    "prediction": "Blossom",
+    "prediction_token": "Blossom"
+  },
+  {
+    "item_id": "border",
+    "prediction": "BORDER",
+    "prediction_token": "BORDER"
+  },
+  {
+    "item_id": "bottle",
+    "prediction": "BOTTLE",
+    "prediction_token": "BOTTLE"
+  },
+  {
+    "item_id": "breeze",
+    "prediction": "Breeze",
+    "prediction_token": "Breeze"
+  },
+  {
+    "item_id": "bronze",
+    "prediction": "BRONZE",
+    "prediction_token": "BRONZE"
+  },
+  {
+    "item_id": "bucket",
+    "prediction": "BUCKET",
+    "prediction_token": "BUCKET"
+  },
+  {
+    "item_id": "button",
+    "prediction": "BUTTON",
+    "prediction_token": "BUTTON"
+  },
+  {
+    "item_id": "cactus",
+    "prediction": "Cactus",
+    "prediction_token": "Cactus"
+  },
+  {
+    "item_id": "camera",
+    "prediction": "CAMERA",
+    "prediction_token": "CAMERA"
+  },
+  {
+    "item_id": "candle",
+    "prediction": "CANDLE",
+    "prediction_token": "CANDLE"
+  },
+  {
+    "item_id": "canyon",
+    "prediction": "Canyon",
+    "prediction_token": "Canyon"
+  },
+  {
+    "item_id": "carpet",
+    "prediction": "CARPET",
+    "prediction_token": "CARPET"
+  },
+  {
+    "item_id": "castle",
+    "prediction": "Castle",
+    "prediction_token": "Castle"
+  },
+  {
+    "item_id": "celery",
+    "prediction": "CELERY",
+    "prediction_token": "CELERY"
+  },
+  {
+    "item_id": "chapel",
+    "prediction": "CHAPEL",
+    "prediction_token": "CHAPEL"
+  },
+  {
+    "item_id": "cherry",
+    "prediction": "CHERRY",
+    "prediction_token": "CHERRY"
+  },
+  {
+    "item_id": "circle",
+    "prediction": "CIRCLE",
+    "prediction_token": "CIRCLE"
+  },
+  {
+    "item_id": "citrus",
+    "prediction": "Citrus",
+    "prediction_token": "Citrus"
+  },
+  {
+    "item_id": "cloak",
+    "prediction": "CLOAK",
+    "prediction_token": "CLOAK"
+  },
+  {
+    "item_id": "cobalt",
+    "prediction": "COBALT",
+    "prediction_token": "COBALT"
+  },
+  {
+    "item_id": "copper",
+    "prediction": "COPPER",
+    "prediction_token": "COPPER"
+  },
+  {
+    "item_id": "cradle",
+    "prediction": "Cradle",
+    "prediction_token": "Cradle"
+  },
+  {
+    "item_id": "cricket",
+    "prediction": "CRICKET",
+    "prediction_token": "CRICKET"
+  },
+  {
+    "item_id": "crystal",
+    "prediction": "CRystal",
+    "prediction_token": "CRystal"
+  },
+  {
+    "item_id": "curtain",
+    "prediction": "Curtain",
+    "prediction_token": "Curtain"
+  },
+  {
+    "item_id": "custom",
+    "prediction": "CUSTOM",
+    "prediction_token": "CUSTOM"
+  },
+  {
+    "item_id": "daisy",
+    "prediction": "DAISY",
+    "prediction_token": "DAISY"
+  },
+  {
+    "item_id": "desert",
+    "prediction": "DESERT",
+    "prediction_token": "DESERT"
+  },
+  {
+    "item_id": "donkey",
+    "prediction": "DONKEY",
+    "prediction_token": "DONKEY"
+  },
+  {
+    "item_id": "dragon",
+    "prediction": "DRAGON",
+    "prediction_token": "DRAGON"
+  },
+  {
+    "item_id": "drawer",
+    "prediction": "Drawer",
+    "prediction_token": "Drawer"
+  },
+  {
+    "item_id": "eagle",
+    "prediction": "Eagle",
+    "prediction_token": "Eagle"
+  },
+  {
+    "item_id": "ember",
+    "prediction": "EMBER",
+    "prediction_token": "EMBER"
+  },
+  {
+    "item_id": "engine",
+    "prediction": "ENGINE",
+    "prediction_token": "ENGINE"
+  },
+  {
+    "item_id": "fable",
+    "prediction": "FABLE",
+    "prediction_token": "FABLE"
+  },
+  {
+    "item_id": "feather",
+    "prediction": "FEATHER",
+    "prediction_token": "FEATHER"
+  },
+  {
+    "item_id": "fence",
+    "prediction": "FENCE",
+    "prediction_token": "FENCE"
+  },
+  {
+    "item_id": "field",
+    "prediction": "FIELD",
+    "prediction_token": "FIELD"
+  },
+  {
+    "item_id": "forest",
+    "prediction": "FOREST",
+    "prediction_token": "FOREST"
+  },
+  {
+    "item_id": "fountain",
+    "prediction": "Fountain",
+    "prediction_token": "Fountain"
+  },
+  {
+    "item_id": "frost",
+    "prediction": "FROST",
+    "prediction_token": "FROST"
+  },
+  {
+    "item_id": "galaxy",
+    "prediction": "Galaxy",
+    "prediction_token": "Galaxy"
+  },
+  {
+    "item_id": "garlic",
+    "prediction": "Garlic",
+    "prediction_token": "Garlic"
+  },
+  {
+    "item_id": "glacier",
+    "prediction": "GLACIER",
+    "prediction_token": "GLACIER"
+  },
+  {
+    "item_id": "goblet",
+    "prediction": "Goblet",
+    "prediction_token": "Goblet"
+  },
+  {
+    "item_id": "grape",
+    "prediction": "GRAPE",
+    "prediction_token": "GRAPE"
+  },
+  {
+    "item_id": "gravel",
+    "prediction": "Gravel",
+    "prediction_token": "Gravel"
+  },
+  {
+    "item_id": "guitar",
+    "prediction": "GUITAR",
+    "prediction_token": "GUITAR"
+  },
+  {
+    "item_id": "hammer",
+    "prediction": "HAMMER",
+    "prediction_token": "HAMMER"
+  },
+  {
+    "item_id": "hazel",
+    "prediction": "Hazel",
+    "prediction_token": "Hazel"
+  },
+  {
+    "item_id": "helmet",
+    "prediction": "Helmets",
+    "prediction_token": "Helmets"
+  },
+  {
+    "item_id": "honey",
+    "prediction": "HONEY",
+    "prediction_token": "HONEY"
+  },
+  {
+    "item_id": "horse",
+    "prediction": "HORSE",
+    "prediction_token": "HORSE"
+  },
+  {
+    "item_id": "ivory",
+    "prediction": "Ivory",
+    "prediction_token": "Ivory"
+  },
+  {
+    "item_id": "jacket",
+    "prediction": "JACKET",
+    "prediction_token": "JACKET"
+  },
+  {
+    "item_id": "jungle",
+    "prediction": "JUNGLE",
+    "prediction_token": "JUNGLE"
+  },
+  {
+    "item_id": "kettle",
+    "prediction": "Kettle",
+    "prediction_token": "Kettle"
+  },
+  {
+    "item_id": "knight",
+    "prediction": "KNIGHT",
+    "prediction_token": "KNIGHT"
+  },
+  {
+    "item_id": "ladder",
+    "prediction": "LADDER",
+    "prediction_token": "LADDER"
+  },
+  {
+    "item_id": "lantern",
+    "prediction": "LANTERN",
+    "prediction_token": "LANTERN"
+  },
+  {
+    "item_id": "lavender",
+    "prediction": "LAVENDER",
+    "prediction_token": "LAVENDER"
+  },
+  {
+    "item_id": "legend",
+    "prediction": "LEGEND",
+    "prediction_token": "LEGEND"
+  },
+  {
+    "item_id": "lizard",
+    "prediction": "Lizard",
+    "prediction_token": "Lizard"
+  },
+  {
+    "item_id": "lumber",
+    "prediction": "Lumber is already in uppercase, so",
+    "prediction_token": "Lumber"
+  },
+  {
+    "item_id": "marble",
+    "prediction": "MARBLE",
+    "prediction_token": "MARBLE"
+  },
+  {
+    "item_id": "meadow",
+    "prediction": "MEADOW",
+    "prediction_token": "MEADOW"
+  },
+  {
+    "item_id": "melon",
+    "prediction": "MELON",
+    "prediction_token": "MELON"
+  },
+  {
+    "item_id": "mirror",
+    "prediction": "MIRROR",
+    "prediction_token": "MIRROR"
+  },
+  {
+    "item_id": "mossy",
+    "prediction": "Mossy",
+    "prediction_token": "Mossy"
+  },
+  {
+    "item_id": "needle",
+    "prediction": "Needle",
+    "prediction_token": "Needle"
+  },
+  {
+    "item_id": "nickel",
+    "prediction": "Nickel",
+    "prediction_token": "Nickel"
+  },
+  {
+    "item_id": "olive",
+    "prediction": "Olive",
+    "prediction_token": "Olive"
+  },
+  {
+    "item_id": "orange",
+    "prediction": "ORANGE",
+    "prediction_token": "ORANGE"
+  },
+  {
+    "item_id": "orchid",
+    "prediction": "ORCHID",
+    "prediction_token": "ORCHID"
+  },
+  {
+    "item_id": "otter",
+    "prediction": "OTTER",
+    "prediction_token": "OTTER"
+  },
+  {
+    "item_id": "packet",
+    "prediction": "Packet",
+    "prediction_token": "Packet"
+  },
+  {
+    "item_id": "palace",
+    "prediction": "PALACE",
+    "prediction_token": "PALACE"
+  },
+  {
+    "item_id": "pebble",
+    "prediction": "PEBBLE",
+    "prediction_token": "PEBBLE"
+  },
+  {
+    "item_id": "pepper",
+    "prediction": "PEPPER",
+    "prediction_token": "PEPPER"
+  },
+  {
+    "item_id": "pickle",
+    "prediction": "Pickle",
+    "prediction_token": "Pickle"
+  },
+  {
+    "item_id": "pillow",
+    "prediction": "Pillow",
+    "prediction_token": "Pillow"
+  },
+  {
+    "item_id": "planet",
+    "prediction": "PLANET",
+    "prediction_token": "PLANET"
+  },
+  {
+    "item_id": "plum",
+    "prediction": "PLUM",
+    "prediction_token": "PLUM"
+  },
+  {
+    "item_id": "pocket",
+    "prediction": "Pockets",
+    "prediction_token": "Pockets"
+  },
+  {
+    "item_id": "pollen",
+    "prediction": "Pollen is already in uppercase, so",
+    "prediction_token": "Pollen"
+  },
+  {
+    "item_id": "prairie",
+    "prediction": "PRAIRIE",
+    "prediction_token": "PRAIRIE"
+  },
+  {
+    "item_id": "pumpkin",
+    "prediction": "Pumpkin",
+    "prediction_token": "Pumpkin"
+  },
+  {
+    "item_id": "quail",
+    "prediction": "QUAIL",
+    "prediction_token": "QUAIL"
+  },
+  {
+    "item_id": "quartz",
+    "prediction": "QUARTZ",
+    "prediction_token": "QUARTZ"
+  },
+  {
+    "item_id": "rabbit",
+    "prediction": "RABBIT",
+    "prediction_token": "RABBIT"
+  },
+  {
+    "item_id": "raven",
+    "prediction": "Raven",
+    "prediction_token": "Raven"
+  },
+  {
+    "item_id": "ribbon",
+    "prediction": "RIBBON",
+    "prediction_token": "RIBBON"
+  },
+  {
+    "item_id": "rocket",
+    "prediction": "ROCKET",
+    "prediction_token": "ROCKET"
+  },
+  {
+    "item_id": "saddle",
+    "prediction": "Saddle",
+    "prediction_token": "Saddle"
+  },
+  {
+    "item_id": "saffron",
+    "prediction": "Saffron",
+    "prediction_token": "Saffron"
+  },
+  {
+    "item_id": "sailor",
+    "prediction": "Sailor",
+    "prediction_token": "Sailor"
+  },
+  {
+    "item_id": "salmon",
+    "prediction": "Salmon",
+    "prediction_token": "Salmon"
+  },
+  {
+    "item_id": "scarlet",
+    "prediction": "SCARLET",
+    "prediction_token": "SCARLET"
+  },
+  {
+    "item_id": "shadow",
+    "prediction": "Shadow",
+    "prediction_token": "Shadow"
+  },
+  {
+    "item_id": "silver",
+    "prediction": "SILVER",
+    "prediction_token": "SILVER"
+  },
+  {
+    "item_id": "sparrow",
+    "prediction": "SPARROW",
+    "prediction_token": "SPARROW"
+  },
+  {
+    "item_id": "spice",
+    "prediction": "SPICE",
+    "prediction_token": "SPICE"
+  },
+  {
+    "item_id": "spider",
+    "prediction": "SPIDER",
+    "prediction_token": "SPIDER"
+  },
+  {
+    "item_id": "spruce",
+    "prediction": "Spruce",
+    "prediction_token": "Spruce"
+  },
+  {
+    "item_id": "squirrel",
+    "prediction": "Squirrel",
+    "prediction_token": "Squirrel"
+  },
+  {
+    "item_id": "stable",
+    "prediction": "STABLE",
+    "prediction_token": "STABLE"
+  },
+  {
+    "item_id": "storm",
+    "prediction": "STORM",
+    "prediction_token": "STORM"
+  },
+  {
+    "item_id": "saddlebag",
+    "prediction": "Saddlebag",
+    "prediction_token": "Saddlebag"
+  },
+  {
+    "item_id": "tablet",
+    "prediction": "Tablet",
+    "prediction_token": "Tablet"
+  },
+  {
+    "item_id": "temple",
+    "prediction": "TEMPLE",
+    "prediction_token": "TEMPLE"
+  },
+  {
+    "item_id": "thistle",
+    "prediction": "Thistle is already in uppercase, so",
+    "prediction_token": "Thistle"
+  },
+  {
+    "item_id": "thunder",
+    "prediction": "THUNDER",
+    "prediction_token": "THUNDER"
+  },
+  {
+    "item_id": "timber",
+    "prediction": "TIMBER",
+    "prediction_token": "TIMBER"
+  },
+  {
+    "item_id": "turtle",
+    "prediction": "TURTLE",
+    "prediction_token": "TURTLE"
+  },
+  {
+    "item_id": "valley",
+    "prediction": "VALLEY",
+    "prediction_token": "VALLEY"
+  },
+  {
+    "item_id": "velvet",
+    "prediction": "VELVET",
+    "prediction_token": "VELVET"
+  },
+  {
+    "item_id": "violet",
+    "prediction": "VIOLET",
+    "prediction_token": "VIOLET"
+  },
+  {
+    "item_id": "walnut",
+    "prediction": "Walnut",
+    "prediction_token": "Walnut"
+  },
+  {
+    "item_id": "willow",
+    "prediction": "Willow",
+    "prediction_token": "Willow"
+  },
+  {
+    "item_id": "window",
+    "prediction": "WINDOW",
+    "prediction_token": "WINDOW"
+  },
+  {
+    "item_id": "winter",
+    "prediction": "Winter",
+    "prediction_token": "Winter"
+  },
+  {
+    "item_id": "wizard",
+    "prediction": "Wizard",
+    "prediction_token": "Wizard"
+  },
+  {
+    "item_id": "yellow",
+    "prediction": "YELLOW",
+    "prediction_token": "YELLOW"
+  },
+  {
+    "item_id": "zebra",
+    "prediction": "ZEBRAS",
+    "prediction_token": "ZEBRAS"
+  }
+]

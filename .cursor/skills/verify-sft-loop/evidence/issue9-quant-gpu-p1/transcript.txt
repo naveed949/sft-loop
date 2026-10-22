@@ -1,0 +1,749 @@
+
+# verify all run_id=issue9-quant-gpu-p1 cwd=/workspace evidence=/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1 scratch=/tmp/sft-loop-verify-issue9-quant-gpu-p1
+
+== install ==
+The virtual environment was not created successfully because ensurepip is not
+available.  On Debian/Ubuntu systems, you need to install the python3-venv
+package using the following command.
+
+    apt install python3.12-venv
+
+You may need to use sudo with that command.  After installing the python3-venv
+package, recreate your virtual environment.
+
+Failing command: /workspace/.venv/bin/python3
+
+stdlib venv missing pip or failed. recreating with virtualenv.
+Collecting virtualenv
+  Downloading virtualenv-21.14.12-py3-none-any.whl.metadata (4.1 kB)
+Collecting distlib<1,>=0.4.3 (from virtualenv)
+  Downloading distlib-0.4.4-py2.py3-none-any.whl.metadata (5.3 kB)
+Collecting filelock<5,>=3.24.2 (from virtualenv)
+  Downloading filelock-4.2.4-py3-none-any.whl.metadata (2.0 kB)
+Collecting packaging>=26.3 (from virtualenv)
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting platformdirs<5,>=4.4 (from virtualenv)
+  Downloading platformdirs-4.13.5-py3-none-any.whl.metadata (5.5 kB)
+Collecting python-discovery>=1.6.1 (from virtualenv)
+  Downloading python_discovery-1.6.4-py3-none-any.whl.metadata (5.1 kB)
+Downloading virtualenv-21.14.12-py3-none-any.whl (5.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.6/5.6 MB 91.0 MB/s eta 0:00:00
+
+Downloading distlib-0.4.4-py2.py3-none-any.whl (472 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 472.1/472.1 kB 101.4 MB/s eta 0:00:00
+
+Downloading filelock-4.2.4-py3-none-any.whl (162 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 162.5/162.5 kB 38.7 MB/s eta 0:00:00
+
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 130.0/130.0 kB 38.9 MB/s eta 0:00:00
+
+Downloading platformdirs-4.13.5-py3-none-any.whl (32 kB)
+Downloading python_discovery-1.6.4-py3-none-any.whl (39 kB)
+Installing collected packages: distlib, platformdirs, packaging, filelock, python-discovery, virtualenv
+Successfully installed distlib-0.4.4 filelock-4.2.4 packaging-26.3 platformdirs-4.13.5 python-discovery-1.6.4 virtualenv-21.14.12
+  WARNING: The script virtualenv is installed in '/home/ubuntu/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+created virtual environment CPython3.12.3.final.0-64-x86_64 in 163ms
+  creator CPython3Posix(dest=/workspace/.venv, clear=False, no_vcs_ignore=False, venv_redirect=None, global=False)
+  seeder FromAppData(download=False, pip=bundle, via=copy, app_data_dir=/home/ubuntu/.cache/virtualenv)
+    added seed packages: pip==26.2.2
+  activators BashActivator,CShellActivator,FishActivator,NushellActivator,PowerShellActivator,PythonActivator,XonshActivator
+$ /workspace/.venv/bin/python -m pip install -U pip
+Requirement already satisfied: pip in ./.venv/lib/python3.12/site-packages (26.2.2)
+exit 0
+$ /workspace/.venv/bin/python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+Looking in indexes: https://download.pytorch.org/whl/cpu
+Collecting torch
+  Downloading torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (37 kB)
+Collecting filelock (from torch)
+  Downloading filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+Collecting typing-extensions>=4.10.0 (from torch)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting setuptools>=77.0.3 (from torch)
+  Downloading setuptools-78.1.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy>=1.13.3 (from torch)
+  Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx>=2.5.1 (from torch)
+  Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch)
+  Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec>=0.8.5 (from torch)
+  Downloading fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch)
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch)
+  Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Downloading torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl (196.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 196.3/196.3 MB 118.8 MB/s  0:00:01
+
+Downloading fsspec-2026.7.0-py3-none-any.whl (206 kB)
+Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 93.3 MB/s  0:00:00
+
+Downloading setuptools-78.1.0-py3-none-any.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 92.2 MB/s  0:00:00
+
+Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 243.9 MB/s  0:00:00
+
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 67.4 MB/s  0:00:00
+
+Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading filelock-3.32.3-py3-none-any.whl (98 kB)
+Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Installing collected packages: mpmath, typing-extensions, sympy, setuptools, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+
+
+Successfully installed MarkupSafe-3.0.3 filelock-3.32.3 fsspec-2026.7.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 setuptools-78.1.0 sympy-1.14.0 torch-2.14.1+cpu typing-extensions-4.16.0
+exit 0
+$ /workspace/.venv/bin/python -m pip install jsonschema>=4.18 pytest>=8 transformers>=4.56.1 accelerate>=1.4.0 datasets>=3.0.0 peft>=0.8.0 trl==0.24.0
+Collecting jsonschema>=4.18
+  Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest>=8
+  Using cached pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting transformers>=4.56.1
+  Downloading transformers-5.20.2-py3-none-any.whl.metadata (31 kB)
+Collecting accelerate>=1.4.0
+  Downloading accelerate-1.15.0-py3-none-any.whl.metadata (19 kB)
+Collecting datasets>=3.0.0
+  Downloading datasets-5.1.0-py3-none-any.whl.metadata (24 kB)
+Collecting peft>=0.8.0
+  Downloading peft-0.21.2-py3-none-any.whl.metadata (15 kB)
+Collecting trl==0.24.0
+  Downloading trl-0.24.0-py3-none-any.whl.metadata (11 kB)
+Collecting attrs>=22.2.0 (from jsonschema>=4.18)
+  Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=4.18)
+  Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema>=4.18)
+  Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema>=4.18)
+  Using cached rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=8)
+  Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting packaging>=22 (from pytest>=8)
+  Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=8)
+  Using cached pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+Collecting pygments>=2.7.2 (from pytest>=8)
+  Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting huggingface-hub<3.0,>=1.31.0 (from transformers>=4.56.1)
+  Downloading huggingface_hub-2.2.0-py3-none-any.whl.metadata (16 kB)
+Collecting numpy>=1.17 (from transformers>=4.56.1)
+  Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting pyyaml>=5.1 (from transformers>=4.56.1)
+  Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting regex>=2025.10.22 (from transformers>=4.56.1)
+  Downloading regex-2026.9.29-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting tokenizers<0.24.0,>=0.23.1 (from transformers>=4.56.1)
+  Downloading tokenizers-0.23.3-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (9.8 kB)
+Collecting typer (from transformers>=4.56.1)
+  Downloading typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+Collecting safetensors>=0.8.0 (from transformers>=4.56.1)
+  Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Collecting tqdm>=4.60 (from transformers>=4.56.1)
+  Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+Collecting click<9.0.0,>=8.4.2 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Requirement already satisfied: filelock>=3.10.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (3.32.3)
+Requirement already satisfied: fsspec>=2023.5.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (2026.7.0)
+Collecting hf-xet<2.0.0,>=1.6.0 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Collecting httpx2<3,>=2.0.0 (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading httpx2-2.16.0-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: typing-extensions>=4.1.0 in ./.venv/lib/python3.12/site-packages (from huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1) (4.16.0)
+Collecting anyio>=4.10 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting httpcore2==2.16.0 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading httpcore2-2.16.0-py3-none-any.whl.metadata (27 kB)
+Collecting idna>=3.18 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+Collecting truststore>=0.10 (from httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading truststore-0.10.5-py3-none-any.whl.metadata (4.5 kB)
+Collecting h11>=0.16 (from httpcore2==2.16.0->httpx2<3,>=2.0.0->huggingface-hub<3.0,>=1.31.0->transformers>=4.56.1)
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting psutil (from accelerate>=1.4.0)
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Requirement already satisfied: torch>=2.0.0 in ./.venv/lib/python3.12/site-packages (from accelerate>=1.4.0) (2.14.1+cpu)
+Collecting pyarrow>=24.0.0 (from datasets>=3.0.0)
+  Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (3.0 kB)
+Collecting dill<0.4.2,>=0.3.0 (from datasets>=3.0.0)
+  Downloading dill-0.4.1-py3-none-any.whl.metadata (10 kB)
+Collecting pandas (from datasets>=3.0.0)
+  Downloading pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Collecting xxhash (from datasets>=3.0.0)
+  Downloading xxhash-4.0.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (17 kB)
+Collecting multiprocess<0.70.20 (from datasets>=3.0.0)
+  Downloading multiprocess-0.70.19-py312-none-any.whl.metadata (7.5 kB)
+Collecting aiohttp!=4.0.0a0,!=4.0.0a1 (from fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading aiohttp-3.14.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.3 kB)
+Collecting aiohappyeyeballs>=2.5.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl.metadata (5.9 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting frozenlist>=1.1.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (20 kB)
+Collecting multidict<8.0,>=4.5 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading multidict-7.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (6.2 kB)
+Collecting propcache>=0.2.0 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading propcache-0.5.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (25 kB)
+Collecting yarl<2.0,>=1.25.1 (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]<=2026.7.0,>=2023.1.0->datasets>=3.0.0)
+  Downloading yarl-1.25.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (111 kB)
+Requirement already satisfied: setuptools>=77.0.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (78.1.0)
+Requirement already satisfied: sympy>=1.13.3 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.6.1)
+Requirement already satisfied: jinja2 in ./.venv/lib/python3.12/site-packages (from torch>=2.0.0->accelerate>=1.4.0) (3.1.6)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./.venv/lib/python3.12/site-packages (from sympy>=1.13.3->torch>=2.0.0->accelerate>=1.4.0) (1.3.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./.venv/lib/python3.12/site-packages (from jinja2->torch>=2.0.0->accelerate>=1.4.0) (3.0.3)
+Collecting python-dateutil>=2.8.2 (from pandas->datasets>=3.0.0)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas->datasets>=3.0.0)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting shellingham>=1.3.0 (from typer->transformers>=4.56.1)
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=13.8.0 (from typer->transformers>=4.56.1)
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting annotated-doc>=0.0.2 (from typer->transformers>=4.56.1)
+  Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=13.8.0->typer->transformers>=4.56.1)
+  Downloading markdown_it_py-4.2.0-py3-none-any.whl.metadata (7.4 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.8.0->typer->transformers>=4.56.1)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Downloading trl-0.24.0-py3-none-any.whl (423 kB)
+Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Using cached pytest-9.1.1-py3-none-any.whl (386 kB)
+Using cached pluggy-1.7.0-py3-none-any.whl (27 kB)
+Downloading transformers-5.20.2-py3-none-any.whl (12.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 113.2 MB/s  0:00:00
+
+Downloading huggingface_hub-2.2.0-py3-none-any.whl (839 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 839.9/839.9 kB 74.5 MB/s  0:00:00
+
+Downloading click-8.5.0-py3-none-any.whl (125 kB)
+Downloading hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.2/4.2 MB 167.1 MB/s  0:00:00
+
+Downloading httpx2-2.16.0-py3-none-any.whl (97 kB)
+Downloading httpcore2-2.16.0-py3-none-any.whl (85 kB)
+Downloading tokenizers-0.23.3-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 116.6 MB/s  0:00:00
+
+Downloading accelerate-1.15.0-py3-none-any.whl (394 kB)
+Downloading datasets-5.1.0-py3-none-any.whl (604 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 604.4/604.4 kB 70.5 MB/s  0:00:00
+
+Downloading dill-0.4.1-py3-none-any.whl (120 kB)
+Downloading multiprocess-0.70.19-py312-none-any.whl (150 kB)
+Downloading peft-0.21.2-py3-none-any.whl (835 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 835.4/835.4 kB 84.8 MB/s  0:00:00
+
+Downloading aiohttp-3.14.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.9/1.9 MB 217.5 MB/s  0:00:00
+
+Downloading multidict-7.1.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (483 kB)
+Downloading yarl-1.25.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (117 kB)
+Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl (15 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+Using cached attrs-26.1.0-py3-none-any.whl (67 kB)
+Downloading frozenlist-1.8.0-cp312-cp312-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (242 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading idna-3.20-py3-none-any.whl (69 kB)
+Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading numpy-2.5.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 189.5 MB/s  0:00:00
+
+Using cached packaging-26.3-py3-none-any.whl (129 kB)
+Downloading propcache-0.5.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (250 kB)
+Downloading pyarrow-26.0.0-cp312-cp312-manylinux_2_28_x86_64.whl (53.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 53.9/53.9 MB 167.7 MB/s  0:00:00
+
+Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+Downloading pyyaml-6.0.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.9/807.9 kB 83.7 MB/s  0:00:00
+
+Using cached referencing-0.37.0-py3-none-any.whl (26 kB)
+Downloading regex-2026.9.29-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (807 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 807.8/807.8 kB 96.4 MB/s  0:00:00
+
+Using cached rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+Downloading truststore-0.10.5-py3-none-any.whl (19 kB)
+Downloading pandas-3.0.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 193.9 MB/s  0:00:00
+
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading typer-0.27.3-py3-none-any.whl (123 kB)
+Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Downloading markdown_it_py-4.2.0-py3-none-any.whl (91 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Downloading xxhash-4.0.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (261 kB)
+Installing collected packages: xxhash, truststore, tqdm, six, shellingham, safetensors, rpds-py, regex, pyyaml, pygments, pyarrow, psutil, propcache, pluggy, packaging, numpy, multidict, mdurl, iniconfig, idna, hf-xet, h11, frozenlist, dill, click, attrs, annotated-doc, aiohappyeyeballs, yarl, referencing, python-dateutil, pytest, multiprocess, markdown-it-py, httpcore2, anyio, aiosignal, rich, pandas, jsonschema-specifications, httpx2, aiohttp, typer, jsonschema, huggingface-hub, tokenizers, datasets, accelerate, transformers, trl, peft
+
+
+Successfully installed accelerate-1.15.0 aiohappyeyeballs-2.7.1 aiohttp-3.14.5 aiosignal-1.4.0 annotated-doc-0.0.5 anyio-4.15.1 attrs-26.1.0 click-8.5.0 datasets-5.1.0 dill-0.4.1 frozenlist-1.8.0 h11-0.16.0 hf-xet-1.7.0 httpcore2-2.16.0 httpx2-2.16.0 huggingface-hub-2.2.0 idna-3.20 iniconfig-2.3.1 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 markdown-it-py-4.2.0 mdurl-0.1.2 multidict-7.1.0 multiprocess-0.70.19 numpy-2.5.4 packaging-26.3 pandas-3.0.6 peft-0.21.2 pluggy-1.7.0 propcache-0.5.4 psutil-7.2.2 pyarrow-26.0.0 pygments-2.21.0 pytest-9.1.1 python-dateutil-2.9.0.post0 pyyaml-6.0.3 referencing-0.37.0 regex-2026.9.29 rich-15.0.0 rpds-py-2026.9.1 safetensors-0.8.0 shellingham-1.5.4 six-1.17.0 tokenizers-0.23.3 tqdm-4.70.1 transformers-5.20.2 trl-0.24.0 truststore-0.10.5 typer-0.27.3 xxhash-4.0.2 yarl-1.25.1
+exit 0
+$ /workspace/.venv/bin/python -m pip install -e /workspace
+Obtaining file:///workspace
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Requirement already satisfied: jsonschema>=4.18 in ./.venv/lib/python3.12/site-packages (from sft-loop==0.0.1) (4.26.0)
+Requirement already satisfied: attrs>=22.2.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (26.1.0)
+Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2025.9.1)
+Requirement already satisfied: referencing>=0.28.4 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (0.37.0)
+Requirement already satisfied: rpds-py>=0.25.0 in ./.venv/lib/python3.12/site-packages (from jsonschema>=4.18->sft-loop==0.0.1) (2026.9.1)
+Requirement already satisfied: typing-extensions>=4.4.0 in ./.venv/lib/python3.12/site-packages (from referencing>=0.28.4->jsonschema>=4.18->sft-loop==0.0.1) (4.16.0)
+Building wheels for collected packages: sft-loop
+  Building editable for sft-loop (pyproject.toml): started
+  Building editable for sft-loop (pyproject.toml): finished with status 'done'
+  Created wheel for sft-loop: filename=sft_loop-0.0.1-0.editable-py3-none-any.whl size=6269 sha256=0f78960f6ac5123cc45b65e6f313c4b533db95a95af7bb9b300a77bbd84b36fc
+  Stored in directory: /tmp/pip-ephem-wheel-cache-k3xbyap_/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8
+Successfully built sft-loop
+Installing collected packages: sft-loop
+Successfully installed sft-loop-0.0.1
+exit 0
+$ /workspace/.venv/bin/python -m pip freeze
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
+aiosignal==1.4.0
+annotated-doc==0.0.5
+anyio==4.15.1
+attrs==26.1.0
+click==8.5.0
+datasets==5.1.0
+dill==0.4.1
+filelock==3.32.3
+frozenlist==1.8.0
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.7.0
+httpcore2==2.16.0
+httpx2==2.16.0
+huggingface_hub==2.2.0
+idna==3.20
+iniconfig==2.3.1
+Jinja2==3.1.6
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+multidict==7.1.0
+multiprocess==0.70.19
+networkx==3.6.1
+numpy==2.5.4
+packaging==26.3
+pandas==3.0.6
+peft==0.21.2
+pluggy==1.7.0
+propcache==0.5.4
+psutil==7.2.2
+pyarrow==26.0.0
+Pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+referencing==0.37.0
+regex==2026.9.29
+rich==15.0.0
+rpds-py==2026.9.1
+safetensors==0.8.0
+setuptools==78.1.0
+sft-loop==0.0.1
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tokenizers==0.23.3
+torch==2.14.1+cpu
+tqdm==4.70.1
+transformers==5.20.2
+trl==0.24.0
+truststore==0.10.5
+typer==0.27.3
+typing_extensions==4.16.0
+xxhash==4.0.2
+yarl==1.25.1
+exit 0
+
+== doctor ==
+doctor python>=3.10: ok (3.12.3)
+doctor schema: ok (/workspace/schema/run_report.schema.json)
+doctor tests/: ok (/workspace/tests)
+doctor pyproject: ok (/workspace/pyproject.toml)
+doctor venv_pip: ok (/workspace/.venv/bin/python)
+$ /workspace/.venv/bin/python -c import jsonschema, pytest, sft_loop, sft_loop.train, sft_loop.eval, sft_loop.loop, sft_loop.report
+exit 0
+doctor imports: ok (jsonschema pytest sft_loop)
+doctor cuda_absent_or_unused: ok (cuda=False)
+doctor mps_absent_on_linux_cpu: ok (mps=False)
+wrote /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/doctor.json
+
+== test ==
+$ /workspace/.venv/bin/python -m pytest -q --color=no
+........................................................................ [ 92%]
+......                                                                   [100%]
+78 passed in 10.11s
+exit 0
+
+== unsupported ==
+$ /workspace/.venv/bin/python -m sft_loop --run-id verify-cli-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/cli-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-loop-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/loop-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device mps --run-id verify-loop-mps --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/loop-mps.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.loop --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --device cuda --run-id verify-loop-cuda --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/loop-cuda.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.train --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --run-id verify-train-default --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/train-default.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split before --run-id verify-eval-before --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/eval-before.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.eval --model-id Qwen/Qwen2.5-1.5B-Instruct --seed 0 --split after --run-id verify-eval-after --out /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/reports/eval-after.json
+exit 0
+
+== smoke ==
+$ /workspace/.venv/bin/python -c 
+import json, math, shutil, sys, traceback
+from pathlib import Path
+
+adapter_dir = Path(sys.argv[1])
+proof_dir = Path(sys.argv[2])
+out_path = Path(sys.argv[3])
+fail_path = Path(sys.argv[4])
+model_id = sys.argv[5]
+revision = sys.argv[6] or None
+sys.path.insert(0, sys.argv[7])
+from verify_sft_loop import measure_lora_b, require_smoke_train
+
+from datasets import Dataset
+from peft import LoraConfig, PeftModel, get_peft_model
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from trl import SFTConfig, SFTTrainer
+import torch
+
+from sft_loop.task import METRIC_NAME, eval_examples, grade, prediction_token, train_examples
+
+SEED = 0
+LORA_R = 8
+LORA_ALPHA = 16
+MAX_STEPS = 2
+MAX_SEQ_LENGTH = 128
+MAX_NEW_TOKENS = 8
+TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+global_step = 0
+train_loss = None
+lora_b = None
+
+
+def text_rows(tokenizer):
+    rows = []
+    for example in train_examples():
+        messages = [
+            {"role": "user", "content": example["prompt"]},
+            {"role": "assistant", "content": example["completion"]},
+        ]
+        if getattr(tokenizer, "chat_template", None):
+            text = tokenizer.apply_chat_template(messages, tokenize=False)
+        else:
+            text = example["prompt"] + " " + example["completion"]
+        rows.append({"text": text})
+    return rows
+
+
+def load_model():
+    kwargs = {"torch_dtype": torch.float32, "attn_implementation": "eager", "low_cpu_mem_usage": True}
+    tok_kwargs = {}
+    if revision:
+        kwargs["revision"] = revision
+        tok_kwargs["revision"] = revision
+    tokenizer = AutoTokenizer.from_pretrained(model_id, **tok_kwargs)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
+    model.config.use_cache = False
+    return model, tokenizer
+
+
+def generate_scores(model, tokenizer):
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    examples = eval_examples()
+    predictions = []
+    completions = []
+    for example in examples:
+        messages = [{"role": "user", "content": example["prompt"]}]
+        if getattr(tokenizer, "chat_template", None):
+            tokenized = tokenizer.apply_chat_template(
+                messages, tokenize=True, add_generation_prompt=True, return_tensors="pt"
+            )
+        else:
+            tokenized = tokenizer(example["prompt"], return_tensors="pt").input_ids
+        if hasattr(tokenized, "input_ids"):
+            input_ids = tokenized.input_ids.to("cpu")
+        else:
+            input_ids = tokenized.to("cpu")
+        with torch.inference_mode():
+            output = model.generate(
+                input_ids,
+                max_new_tokens=MAX_NEW_TOKENS,
+                do_sample=False,
+                pad_token_id=tokenizer.pad_token_id,
+            )
+        new_tokens = output[0][input_ids.shape[-1]:]
+        text = tokenizer.decode(new_tokens, skip_special_tokens=True)
+        predictions.append(prediction_token(text))
+        completions.append(example["completion"])
+    return {
+        "seed": SEED,
+        "metric_name": METRIC_NAME,
+        "task_score": grade(predictions, completions),
+        "n": len(completions),
+        "role": "plumbing_not_quality",
+    }
+
+try:
+    torch.manual_seed(SEED)
+    model, tokenizer = load_model()
+    model.to("cpu")
+    model.eval()
+    before = generate_scores(model, tokenizer)
+    del model
+    if adapter_dir.exists():
+        shutil.rmtree(adapter_dir)
+    adapter_dir.mkdir(parents=True, exist_ok=True)
+    proof_dir.mkdir(parents=True, exist_ok=True)
+    model, tokenizer = load_model()
+    if hasattr(model, "enable_input_require_grads"):
+        model.enable_input_require_grads()
+    lora = LoraConfig(
+        r=LORA_R,
+        lora_alpha=LORA_ALPHA,
+        lora_dropout=0.0,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules=list(TARGET_MODULES),
+        base_model_name_or_path=model_id,
+    )
+    model = get_peft_model(model, lora)
+    model.to("cpu")
+    args = SFTConfig(
+        output_dir=str(adapter_dir),
+        max_steps=MAX_STEPS,
+        per_device_train_batch_size=1,
+        gradient_accumulation_steps=1,
+        learning_rate=2e-4,
+        logging_steps=1,
+        save_strategy="no",
+        report_to="none",
+        seed=SEED,
+        data_seed=SEED,
+        dataset_text_field="text",
+        max_length=MAX_SEQ_LENGTH,
+        packing=False,
+        bf16=False,
+        fp16=False,
+        dataloader_pin_memory=False,
+        gradient_checkpointing=False,
+        optim="adamw_torch",
+        remove_unused_columns=False,
+    )
+    trainer = SFTTrainer(
+        model=model,
+        args=args,
+        train_dataset=Dataset.from_list(text_rows(tokenizer)),
+        processing_class=tokenizer,
+    )
+    result = trainer.train()
+    global_step = int(getattr(result, "global_step", 0) or 0)
+    train_loss = float(getattr(result, "training_loss"))
+    model.save_pretrained(str(adapter_dir))
+    tokenizer.save_pretrained(str(adapter_dir))
+    lora_b = measure_lora_b(adapter_dir)
+    require_smoke_train(
+        global_step=global_step,
+        train_loss=train_loss,
+        max_steps=MAX_STEPS,
+        lora_b=lora_b,
+    )
+    config_src = adapter_dir / "adapter_config.json"
+    shutil.copyfile(config_src, proof_dir / "adapter_config.json")
+    log_history = list(getattr(trainer.state, "log_history", []) or [])
+    log_lines = [
+        "trainer=trl.SFTTrainer",
+        f"model_id={model_id}",
+        f"seed={SEED}",
+        f"global_step={global_step}",
+        f"train_loss={format(train_loss, '.8g')}",
+        f"max_steps={MAX_STEPS}",
+        f"lora_r={LORA_R}",
+        f"lora_b_max_abs={format(lora_b['max_abs'], '.8g')}",
+        f"lora_b_nonzero={lora_b['n_nonzero']}",
+        "device=cpu",
+        "backend=trl-peft",
+        f"log_history={json.dumps(log_history, separators=(',', ':'), sort_keys=True)}",
+    ]
+    (proof_dir / "train_log.txt").write_text("\n".join(log_lines) + "\n", encoding="utf-8")
+    del model
+    model, tokenizer = load_model()
+    model = PeftModel.from_pretrained(model, str(adapter_dir))
+    model.to("cpu")
+    model.eval()
+    after = generate_scores(model, tokenizer)
+    payload = {
+        "kind": "plumbing_smoke_not_quality",
+        "status": "plumbing",
+        "weight_change_claimed": False,
+        "device": "cpu",
+        "backend": "trl-peft",
+        "stack": {"unsloth": "unused", "trl": "0.24.0", "method": "sft-lora"},
+        "model_id": model_id,
+        "model_revision": revision,
+        "seed": SEED,
+        "before": before,
+        "after": after,
+        "lora_b_max_abs": lora_b["max_abs"],
+        "train": {
+            "trainer": "trl.SFTTrainer",
+            "global_step": global_step,
+            "train_loss": float(format(train_loss, ".8g")),
+            "lora_r": LORA_R,
+            "max_steps": MAX_STEPS,
+            "device": "cpu",
+            "backend": "trl-peft",
+            "lora_b_max_abs": lora_b["max_abs"],
+            "lora_b_tensors": lora_b["n_tensors"],
+            "lora_b_nonzero": lora_b["n_nonzero"],
+        },
+    }
+    out_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print("smoke-plumbing")
+except Exception as exc:
+    fail_payload = {
+        "type": type(exc).__name__,
+        "error": str(exc),
+        "trace": traceback.format_exc(),
+        "global_step": global_step,
+        "train_loss": train_loss,
+        "lora_b": lora_b,
+    }
+    fail_path.write_text(json.dumps(fail_payload, indent=2) + "\n", encoding="utf-8")
+    raise
+ /tmp/sft-loop-verify-issue9-quant-gpu-p1/adapters /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/smoke /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/smoke/plumbing.json /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/smoke/smoke-exception.json trl-internal-testing/tiny-Qwen2ForCausalLM-2.5 ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda /workspace/.cursor/skills/verify-sft-loop/scripts
+{'loss': '11.93', 'grad_norm': '0.03125', 'learning_rate': '0.0002', 'entropy': '11.93', 'num_tokens': '42', 'mean_token_accuracy': '0', 'epoch': '0.0625'}
+{'loss': '11.93', 'grad_norm': '0.02711', 'learning_rate': '0.0001', 'entropy': '11.93', 'num_tokens': '84', 'mean_token_accuracy': '0', 'epoch': '0.125'}
+{'train_runtime': '0.0906', 'train_samples_per_second': '22.08', 'train_steps_per_second': '22.08', 'train_loss': '11.93', 'epoch': '0.125'}
+smoke-plumbing
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Adding EOS to train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Adding EOS to train dataset: 100%|██████████| 16/16 [00:00<00:00, 10219.11 examples/s]
+
+Tokenizing train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Tokenizing train dataset: 100%|██████████| 16/16 [00:00<00:00, 3836.55 examples/s]
+
+Truncating train dataset:   0%|          | 0/16 [00:00<?, ? examples/s]
+Truncating train dataset: 100%|██████████| 16/16 [00:00<00:00, 12188.32 examples/s]
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'pad_token_id': 151643}.
+
+  0%|          | 0/2 [00:00<?, ?it/s]
+                                     
+
+ 50%|█████     | 1/2 [00:00<00:00, 16.91it/s]
+                                             
+
+100%|██████████| 2/2 [00:00<00:00, 22.26it/s]
+                                             
+
+100%|██████████| 2/2 [00:00<00:00, 22.22it/s]
+100%|██████████| 2/2 [00:00<00:00, 22.16it/s]
+exit 0
+smoke plumbing artifact at /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/smoke/plumbing.json
+
+== quant ==
+$ /workspace/.venv/bin/python -m sft_loop.quant probe-nf4 --dest /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/quant/nf4.json
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.quant validate
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.quant table --check /workspace/README.md
+exit 0
+$ /workspace/.venv/bin/python -m sft_loop.quant ingest --precision nf4 --from-dir /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/quant/absent-kernel
+{
+  "detail": "Kaggle kernel output is missing. No GPU or ONNX numbers were produced. Soft-PASS is unused and is refused.",
+  "kernel": {
+    "dir": "kaggle/quant_nf4",
+    "url": null,
+    "version": null
+  },
+  "precision": "nf4",
+  "probe": {
+    "cuda_available": null,
+    "exception_type": "KernelOutputMissing",
+    "message": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/quant/absent-kernel is not a directory"
+  },
+  "reason": "kernel_output_missing",
+  "status": "unsupported"
+}
+exit 2
+
+== cleanup ==
+removed scratch /tmp/sft-loop-verify-issue9-quant-gpu-p1
+evidence remains at /workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1 (17 files)
+{
+  "run_id": "issue9-quant-gpu-p1",
+  "elapsed_s": 72.113,
+  "steps": [
+    {
+      "step": "install",
+      "exit": 0
+    },
+    {
+      "step": "doctor",
+      "exit": 0
+    },
+    {
+      "step": "test",
+      "exit": 0
+    },
+    {
+      "step": "unsupported",
+      "exit": 0
+    },
+    {
+      "step": "smoke",
+      "exit": 0
+    },
+    {
+      "step": "quant",
+      "exit": 0
+    },
+    {
+      "step": "cleanup",
+      "exit": 0
+    }
+  ],
+  "failed_step": null,
+  "surfaces": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1/surfaces.json",
+  "evidence": "/workspace/.cursor/skills/verify-sft-loop/evidence/issue9-quant-gpu-p1",
+  "exit": 0,
+  "pinned_model": false,
+  "smoke_model_id": "trl-internal-testing/tiny-Qwen2ForCausalLM-2.5",
+  "smoke_model_revision": "ce8d0bf270b28c8fab026ced69fe8aa14b0f0eda"
+}

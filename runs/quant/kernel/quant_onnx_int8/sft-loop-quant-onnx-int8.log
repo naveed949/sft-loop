@@ -1,0 +1,219 @@
+[{"stream_name":"stdout","time":1.0791537,"data":"pip --no-cache-dir onnx==1.18.0 onnxruntime==1.20.1 onnxscript==0.2.0 transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":6.002227181,"data":"Collecting onnx==1.18.0\n"}
+,{"stream_name":"stdout","time":6.06039231,"data":"  Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.9 kB)\n"}
+,{"stream_name":"stdout","time":6.252385106,"data":"Collecting onnxruntime==1.20.1\n"}
+,{"stream_name":"stdout","time":6.269274813,"data":"  Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.5 kB)\n"}
+,{"stream_name":"stdout","time":6.649133859,"data":"Collecting onnxscript==0.2.0\n"}
+,{"stream_name":"stdout","time":6.667240428,"data":"  Downloading onnxscript-0.2.0-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":6.818027194,"data":"Collecting transformers==4.56.2\n"}
+,{"stream_name":"stdout","time":6.834700948,"data":"  Downloading transformers-4.56.2-py3-none-any.whl.metadata (40 kB)\n"}
+,{"stream_name":"stdout","time":6.84094132,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.1/40.1 kB 14.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":6.973972622,"data":"Requirement already satisfied: numpy\u003e=1.22 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (2.1.3)\n"}
+,{"stream_name":"stdout","time":6.975470274,"data":"Requirement already satisfied: protobuf\u003e=4.25.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (5.29.5)\n"}
+,{"stream_name":"stdout","time":6.976970783,"data":"Requirement already satisfied: typing_extensions\u003e=4.7.1 in /usr/local/lib/python3.13/dist-packages (from onnx==1.18.0) (4.16.0)\n"}
+,{"stream_name":"stdout","time":7.024154256,"data":"Collecting coloredlogs (from onnxruntime==1.20.1)\n"}
+,{"stream_name":"stdout","time":7.040600716,"data":"  Downloading coloredlogs-15.0.1-py2.py3-none-any.whl.metadata (12 kB)\n"}
+,{"stream_name":"stdout","time":7.045382645,"data":"Requirement already satisfied: flatbuffers in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (25.12.19)\n"}
+,{"stream_name":"stdout","time":7.050831616,"data":"Requirement already satisfied: packaging in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (26.3)\n"}
+,{"stream_name":"stdout","time":7.053129089,"data":"Requirement already satisfied: sympy in /usr/local/lib/python3.13/dist-packages (from onnxruntime==1.20.1) (1.14.0)\n"}
+,{"stream_name":"stdout","time":7.063828864,"data":"Requirement already satisfied: ml_dtypes in /usr/local/lib/python3.13/dist-packages (from onnxscript==0.2.0) (0.6.0)\n"}
+,{"stream_name":"stdout","time":7.110199169,"data":"Requirement already satisfied: filelock in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (3.32.5)\n"}
+,{"stream_name":"stdout","time":7.299366022,"data":"Collecting huggingface-hub\u003c1.0,\u003e=0.34.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":7.314805155,"data":"  Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)\n"}
+,{"stream_name":"stdout","time":7.356579508,"data":"Requirement already satisfied: pyyaml\u003e=5.1 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (6.0.3)\n"}
+,{"stream_name":"stdout","time":7.359235517,"data":"Requirement already satisfied: regex!=2019.12.17 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2025.11.3)\n"}
+,{"stream_name":"stdout","time":7.360692357,"data":"Requirement already satisfied: requests in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (2.34.2)\n"}
+,{"stream_name":"stdout","time":7.767180366,"data":"Collecting tokenizers\u003c=0.23.0,\u003e=0.22.0 (from transformers==4.56.2)\n"}
+,{"stream_name":"stdout","time":7.783524906,"data":"  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)\n"}
+,{"stream_name":"stdout","time":7.789235968,"data":"Requirement already satisfied: safetensors\u003e=0.4.3 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (0.8.0)\n"}
+,{"stream_name":"stdout","time":7.793705,"data":"Requirement already satisfied: tqdm\u003e=4.27 in /usr/local/lib/python3.13/dist-packages (from transformers==4.56.2) (4.67.3)\n"}
+,{"stream_name":"stdout","time":7.8105446480000005,"data":"Requirement already satisfied: fsspec\u003e=2023.5.0 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (2025.12.0)\n"}
+,{"stream_name":"stdout","time":7.813047221,"data":"Requirement already satisfied: hf-xet\u003c2.0.0,\u003e=1.1.3 in /usr/local/lib/python3.13/dist-packages (from huggingface-hub\u003c1.0,\u003e=0.34.0-\u003etransformers==4.56.2) (1.6.0)\n"}
+,{"stream_name":"stdout","time":7.933200998,"data":"Collecting humanfriendly\u003e=9.1 (from coloredlogs-\u003eonnxruntime==1.20.1)\n"}
+,{"stream_name":"stdout","time":7.948439287,"data":"  Downloading humanfriendly-10.0-py2.py3-none-any.whl.metadata (9.2 kB)\n"}
+,{"stream_name":"stdout","time":7.9710495649999995,"data":"Requirement already satisfied: charset_normalizer\u003c4,\u003e=2 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.4.9)\n"}
+,{"stream_name":"stdout","time":7.972935973,"data":"Requirement already satisfied: idna\u003c4,\u003e=2.5 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (3.19)\n"}
+,{"stream_name":"stdout","time":7.974704664,"data":"Requirement already satisfied: urllib3\u003c3,\u003e=1.26 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2.8.0)\n"}
+,{"stream_name":"stdout","time":7.976208371,"data":"Requirement already satisfied: certifi\u003e=2023.5.7 in /usr/local/lib/python3.13/dist-packages (from requests-\u003etransformers==4.56.2) (2026.7.22)\n"}
+,{"stream_name":"stdout","time":7.980201473,"data":"Requirement already satisfied: mpmath\u003c1.4,\u003e=1.1.0 in /usr/local/lib/python3.13/dist-packages (from sympy-\u003eonnxruntime==1.20.1) (1.3.0)\n"}
+,{"stream_name":"stdout","time":8.029832999,"data":"Downloading onnx-1.18.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.6 MB)\n"}
+,{"stream_name":"stdout","time":8.215890557,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.6/17.6 MB 104.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.232922379,"data":"Downloading onnxruntime-1.20.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (13.3 MB)\n"}
+,{"stream_name":"stdout","time":8.373524281,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 82.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.390302937,"data":"Downloading onnxscript-0.2.0-py3-none-any.whl (691 kB)\n"}
+,{"stream_name":"stdout","time":8.395714055,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 691.6/691.6 kB 290.6 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.412071409,"data":"Downloading transformers-4.56.2-py3-none-any.whl (11.6 MB)\n"}
+,{"stream_name":"stdout","time":8.467244958,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.6/11.6 MB 216.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.482421811,"data":"Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)\n"}
+,{"stream_name":"stdout","time":8.488067781,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 238.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.504787744,"data":"Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)\n"}
+,{"stream_name":"stdout","time":8.526502772,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 183.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.541752825,"data":"Downloading coloredlogs-15.0.1-py2.py3-none-any.whl (46 kB)\n"}
+,{"stream_name":"stdout","time":8.546241949,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.0/46.0 kB 167.2 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":8.560365014,"data":"Downloading humanfriendly-10.0-py2.py3-none-any.whl (86 kB)\n"}
+,{"stream_name":"stdout","time":8.563650757,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 86.8/86.8 kB 186.7 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":11.602073949,"data":"Installing collected packages: onnx, humanfriendly, onnxscript, huggingface-hub, coloredlogs, tokenizers, onnxruntime, transformers\n"}
+,{"stream_name":"stdout","time":11.602186464,"data":"  Attempting uninstall: onnx\n"}
+,{"stream_name":"stdout","time":11.663033506,"data":"    Found existing installation: onnx 1.22.0\n"}
+,{"stream_name":"stdout","time":15.861029603,"data":"    Uninstalling onnx-1.22.0:\n"}
+,{"stream_name":"stdout","time":27.225547027,"data":"      Successfully uninstalled onnx-1.22.0\n"}
+,{"stream_name":"stdout","time":31.16106147,"data":"  Attempting uninstall: huggingface-hub\n"}
+,{"stream_name":"stdout","time":31.57371947,"data":"    Found existing installation: huggingface_hub 1.29.0\n"}
+,{"stream_name":"stdout","time":31.605363133,"data":"    Uninstalling huggingface_hub-1.29.0:\n"}
+,{"stream_name":"stdout","time":31.882871847,"data":"      Successfully uninstalled huggingface_hub-1.29.0\n"}
+,{"stream_name":"stdout","time":32.377191697,"data":"  Attempting uninstall: tokenizers\n"}
+,{"stream_name":"stdout","time":32.775076999,"data":"    Found existing installation: tokenizers 0.23.1\n"}
+,{"stream_name":"stdout","time":32.790337893,"data":"    Uninstalling tokenizers-0.23.1:\n"}
+,{"stream_name":"stdout","time":32.903207277,"data":"      Successfully uninstalled tokenizers-0.23.1\n"}
+,{"stream_name":"stdout","time":34.092047873,"data":"  Attempting uninstall: transformers\n"}
+,{"stream_name":"stdout","time":34.348241628,"data":"    Found existing installation: transformers 5.16.1\n"}
+,{"stream_name":"stdout","time":35.089732079,"data":"    Uninstalling transformers-5.16.1:\n"}
+,{"stream_name":"stdout","time":38.613313673,"data":"      Successfully uninstalled transformers-5.16.1\n"}
+,{"stream_name":"stderr","time":48.916057213,"data":"ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n"}
+,{"stream_name":"stderr","time":48.916091342,"data":"gradio 6.26.0 requires huggingface-hub\u003c2.0,\u003e=1.16.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stderr","time":48.916099725,"data":"diffusers 0.40.0 requires huggingface-hub\u003c2.0,\u003e=1.23.0, but you have huggingface-hub 0.36.2 which is incompatible.\n"}
+,{"stream_name":"stdout","time":48.916332935,"data":"Successfully installed coloredlogs-15.0.1 huggingface-hub-0.36.2 humanfriendly-10.0 onnx-1.18.0 onnxruntime-1.20.1 onnxscript-0.2.0 tokenizers-0.22.2 transformers-4.56.2\n"}
+,{"stream_name":"stderr","time":98.148123082,"data":"WARNING:torchao.kernel.intmm:Warning: Detected no triton, on systems without Triton certain kernels will not work\n"}
+,{"stream_name":"stdout","time":126.715439056,"data":"export_mem stage=export_start peak_rss_bytes=10785189888 host_ram_bytes=33658314752 fraction=0.3204\n"}
+,{"stream_name":"stderr","time":126.715763058,"data":"/kaggle/src/script.py:352: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html\n"}
+,{"stream_name":"stderr","time":126.715800284,"data":"  torch.onnx.export(\n"}
+,{"stream_name":"stdout","time":243.62841832,"data":"export_mem stage=export_done peak_rss_bytes=10785189888 host_ram_bytes=33658314752 fraction=0.3204\n"}
+,{"stream_name":"stderr","time":255.044579216,"data":"WARNING:root:Please consider to run pre-processing before quantization. Refer to example: https://github.com/microsoft/onnxruntime-inference-examples/blob/main/quantization/image_classification/cpu/ReadMe.md \n"}
+,{"stream_name":"stdout","time":359.267472234,"data":"export_mem stage=quantize_done peak_rss_bytes=28993339392 host_ram_bytes=33658314752 fraction=0.8614\n"}
+,{"stream_name":"stdout","time":450.631446599,"data":"onnx-int8 anchor correct=False p50=5688.2854\n"}
+,{"stream_name":"stdout","time":531.307547773,"data":"onnx-int8 barrel correct=False p50=5591.7168\n"}
+,{"stream_name":"stdout","time":616.160710838,"data":"onnx-int8 beacon correct=False p50=5346.3821\n"}
+,{"stream_name":"stdout","time":697.060184396,"data":"onnx-int8 biscuit correct=False p50=5712.8575\n"}
+,{"stream_name":"stdout","time":776.11143976,"data":"onnx-int8 blanket correct=False p50=5619.7134\n"}
+,{"stream_name":"stdout","time":854.883854589,"data":"onnx-int8 blossom correct=False p50=5581.6213\n"}
+,{"stream_name":"stdout","time":934.274603929,"data":"onnx-int8 border correct=False p50=4830.8236\n"}
+,{"stream_name":"stdout","time":1017.261801909,"data":"onnx-int8 bottle correct=False p50=6285.907\n"}
+,{"stream_name":"stdout","time":1097.79725693,"data":"onnx-int8 breeze correct=False p50=5705.4819\n"}
+,{"stream_name":"stdout","time":1177.556376978,"data":"onnx-int8 bronze correct=False p50=5675.396\n"}
+,{"stream_name":"stdout","time":1257.395960112,"data":"onnx-int8 bucket correct=False p50=5653.6812\n"}
+,{"stream_name":"stdout","time":1342.36787448,"data":"onnx-int8 button correct=False p50=6632.1043\n"}
+,{"stream_name":"stdout","time":1423.865769098,"data":"onnx-int8 cactus correct=False p50=5739.4186\n"}
+,{"stream_name":"stdout","time":1503.321455737,"data":"onnx-int8 camera correct=False p50=5625.1382\n"}
+,{"stream_name":"stdout","time":1582.945250668,"data":"onnx-int8 candle correct=False p50=5636.2539\n"}
+,{"stream_name":"stdout","time":1662.323286338,"data":"onnx-int8 canyon correct=False p50=5605.7006\n"}
+,{"stream_name":"stdout","time":1742.0698394,"data":"onnx-int8 carpet correct=False p50=5637.5531\n"}
+,{"stream_name":"stdout","time":1821.365497849,"data":"onnx-int8 castle correct=False p50=5618.6866\n"}
+,{"stream_name":"stdout","time":1900.609320777,"data":"onnx-int8 celery correct=False p50=5588.5167\n"}
+,{"stream_name":"stdout","time":1984.332445757,"data":"onnx-int8 chapel correct=False p50=6303.6892\n"}
+,{"stream_name":"stdout","time":2063.287869203,"data":"onnx-int8 cherry correct=False p50=5590.0828\n"}
+,{"stream_name":"stdout","time":2166.781094313,"data":"onnx-int8 circle correct=False p50=5759.2376\n"}
+,{"stream_name":"stdout","time":2292.766781555,"data":"onnx-int8 citrus correct=False p50=8901.4663\n"}
+,{"stream_name":"stdout","time":2383.335150291,"data":"onnx-int8 cloak correct=False p50=6349.731\n"}
+,{"stream_name":"stdout","time":2473.39490448,"data":"onnx-int8 cobalt correct=False p50=5778.1296\n"}
+,{"stream_name":"stdout","time":2563.73527541,"data":"onnx-int8 copper correct=False p50=6395.5317\n"}
+,{"stream_name":"stdout","time":2644.904897407,"data":"onnx-int8 cradle correct=False p50=5717.9862\n"}
+,{"stream_name":"stdout","time":2726.185250339,"data":"onnx-int8 cricket correct=False p50=5654.5014\n"}
+,{"stream_name":"stdout","time":2806.058291673,"data":"onnx-int8 crystal correct=False p50=5677.8477\n"}
+,{"stream_name":"stdout","time":2900.72750882,"data":"onnx-int8 curtain correct=False p50=6153.211\n"}
+,{"stream_name":"stdout","time":2979.975110319,"data":"onnx-int8 custom correct=False p50=5609.902\n"}
+,{"stream_name":"stdout","time":3060.692104279,"data":"onnx-int8 daisy correct=False p50=5705.1285\n"}
+,{"stream_name":"stdout","time":3139.481521195,"data":"onnx-int8 desert correct=False p50=5592.7895\n"}
+,{"stream_name":"stdout","time":3220.181485224,"data":"onnx-int8 donkey correct=False p50=5724.857\n"}
+,{"stream_name":"stdout","time":3303.791530569,"data":"onnx-int8 dragon correct=False p50=5568.4217\n"}
+,{"stream_name":"stdout","time":3402.460753572,"data":"onnx-int8 drawer correct=False p50=8204.2175\n"}
+,{"stream_name":"stdout","time":3481.32473798,"data":"onnx-int8 eagle correct=False p50=5576.4377\n"}
+,{"stream_name":"stdout","time":3560.063504475,"data":"onnx-int8 ember correct=False p50=5571.2037\n"}
+,{"stream_name":"stdout","time":3639.153997555,"data":"onnx-int8 engine correct=False p50=5590.7303\n"}
+,{"stream_name":"stdout","time":3719.958857698,"data":"onnx-int8 fable correct=False p50=5730.4361\n"}
+,{"stream_name":"stdout","time":3799.054368267,"data":"onnx-int8 feather correct=False p50=5584.3093\n"}
+,{"stream_name":"stdout","time":3878.516326523,"data":"onnx-int8 fence correct=False p50=5618.0383\n"}
+,{"stream_name":"stdout","time":3957.637040247,"data":"onnx-int8 field correct=False p50=5592.7817\n"}
+,{"stream_name":"stdout","time":4037.049691125,"data":"onnx-int8 forest correct=False p50=5601.572\n"}
+,{"stream_name":"stdout","time":4123.661205196,"data":"onnx-int8 fountain correct=False p50=6299.9057\n"}
+,{"stream_name":"stdout","time":4208.376881435,"data":"onnx-int8 frost correct=False p50=5944.8711\n"}
+,{"stream_name":"stdout","time":4280.755565459,"data":"onnx-int8 galaxy correct=False p50=2819.49\n"}
+,{"stream_name":"stdout","time":4380.151016591,"data":"onnx-int8 garlic correct=False p50=8047.3335\n"}
+,{"stream_name":"stdout","time":4461.035763973,"data":"onnx-int8 glacier correct=False p50=5773.1523\n"}
+,{"stream_name":"stdout","time":4545.013874762,"data":"onnx-int8 goblet correct=False p50=5752.8802\n"}
+,{"stream_name":"stdout","time":4628.408451917,"data":"onnx-int8 grape correct=False p50=5658.2137\n"}
+,{"stream_name":"stdout","time":4710.623397972,"data":"onnx-int8 gravel correct=False p50=5806.2591\n"}
+,{"stream_name":"stdout","time":4792.215139349,"data":"onnx-int8 guitar correct=False p50=5769.1297\n"}
+,{"stream_name":"stdout","time":4872.400736029,"data":"onnx-int8 hammer correct=False p50=5712.5292\n"}
+,{"stream_name":"stdout","time":4954.642798822,"data":"onnx-int8 hazel correct=False p50=5789.7452\n"}
+,{"stream_name":"stdout","time":5035.534137262,"data":"onnx-int8 helmet correct=False p50=5748.4385\n"}
+,{"stream_name":"stdout","time":5140.714509849,"data":"onnx-int8 honey correct=False p50=8937.058\n"}
+,{"stream_name":"stdout","time":5221.55497491,"data":"onnx-int8 horse correct=False p50=5915.3102\n"}
+,{"stream_name":"stdout","time":5300.622088575,"data":"onnx-int8 ivory correct=False p50=5590.5021\n"}
+,{"stream_name":"stdout","time":5379.492460915,"data":"onnx-int8 jacket correct=False p50=5583.0731\n"}
+,{"stream_name":"stdout","time":5458.808907356,"data":"onnx-int8 jungle correct=False p50=5641.4015\n"}
+,{"stream_name":"stdout","time":5538.624772561,"data":"onnx-int8 kettle correct=False p50=5591.6221\n"}
+,{"stream_name":"stdout","time":5619.646821642,"data":"onnx-int8 knight correct=False p50=5703.2561\n"}
+,{"stream_name":"stdout","time":5700.409309594,"data":"onnx-int8 ladder correct=False p50=5722.4019\n"}
+,{"stream_name":"stdout","time":5781.328665898,"data":"onnx-int8 lantern correct=False p50=5685.311\n"}
+,{"stream_name":"stdout","time":5862.450786837,"data":"onnx-int8 lavender correct=False p50=5809.6118\n"}
+,{"stream_name":"stdout","time":5942.611721908,"data":"onnx-int8 legend correct=False p50=5701.7247\n"}
+,{"stream_name":"stdout","time":6023.030499149,"data":"onnx-int8 lizard correct=False p50=5623.6601\n"}
+,{"stream_name":"stdout","time":6108.701966649,"data":"onnx-int8 lumber correct=False p50=5618.8341\n"}
+,{"stream_name":"stdout","time":6188.306807762,"data":"onnx-int8 marble correct=False p50=5646.1289\n"}
+,{"stream_name":"stdout","time":6270.195296863,"data":"onnx-int8 meadow correct=False p50=5743.5279\n"}
+,{"stream_name":"stdout","time":6351.479443396,"data":"onnx-int8 melon correct=False p50=5749.9003\n"}
+,{"stream_name":"stdout","time":6434.094160077,"data":"onnx-int8 mirror correct=False p50=5753.9411\n"}
+,{"stream_name":"stdout","time":6518.373538378,"data":"onnx-int8 mossy correct=False p50=5861.5063\n"}
+,{"stream_name":"stdout","time":6598.876546852,"data":"onnx-int8 needle correct=False p50=5666.3079\n"}
+,{"stream_name":"stdout","time":6681.273479403,"data":"onnx-int8 nickel correct=False p50=5908.0084\n"}
+,{"stream_name":"stdout","time":6764.632015232,"data":"onnx-int8 olive correct=False p50=5800.6646\n"}
+,{"stream_name":"stdout","time":6844.654932959,"data":"onnx-int8 orange correct=False p50=5639.8518\n"}
+,{"stream_name":"stdout","time":6926.314738817,"data":"onnx-int8 orchid correct=False p50=5789.0498\n"}
+,{"stream_name":"stdout","time":7013.447905575,"data":"onnx-int8 otter correct=False p50=6530.0149\n"}
+,{"stream_name":"stdout","time":7093.864102544,"data":"onnx-int8 packet correct=False p50=5775.9456\n"}
+,{"stream_name":"stdout","time":7173.27184535,"data":"onnx-int8 palace correct=False p50=5644.5247\n"}
+,{"stream_name":"stdout","time":7254.772880822,"data":"onnx-int8 pebble correct=False p50=5803.0567\n"}
+,{"stream_name":"stdout","time":7334.827479331,"data":"onnx-int8 pepper correct=False p50=5694.9543\n"}
+,{"stream_name":"stdout","time":7414.66018871,"data":"onnx-int8 pickle correct=False p50=5713.0726\n"}
+,{"stream_name":"stdout","time":7493.946771022,"data":"onnx-int8 pillow correct=False p50=5615.7244\n"}
+,{"stream_name":"stdout","time":7573.143219916,"data":"onnx-int8 planet correct=False p50=5592.8431\n"}
+,{"stream_name":"stdout","time":7654.4610917,"data":"onnx-int8 plum correct=False p50=5777.1108\n"}
+,{"stream_name":"stdout","time":7737.093782519,"data":"onnx-int8 pocket correct=False p50=5800.8316\n"}
+,{"stream_name":"stdout","time":7817.267725795,"data":"onnx-int8 pollen correct=False p50=5693.5776\n"}
+,{"stream_name":"stdout","time":7899.367751085,"data":"onnx-int8 prairie correct=False p50=5830.5756\n"}
+,{"stream_name":"stdout","time":7985.557960837,"data":"onnx-int8 pumpkin correct=False p50=5755.6707\n"}
+,{"stream_name":"stdout","time":8099.737338434,"data":"onnx-int8 quail correct=False p50=9201.6381\n"}
+,{"stream_name":"stdout","time":8179.888763029,"data":"onnx-int8 quartz correct=False p50=5660.1518\n"}
+,{"stream_name":"stdout","time":8259.796881005,"data":"onnx-int8 rabbit correct=False p50=5659.0861\n"}
+,{"stream_name":"stdout","time":8343.186315177,"data":"onnx-int8 raven correct=False p50=5763.6268\n"}
+,{"stream_name":"stdout","time":8422.783835993,"data":"onnx-int8 ribbon correct=False p50=5644.5416\n"}
+,{"stream_name":"stdout","time":8502.484563951,"data":"onnx-int8 rocket correct=False p50=5615.768\n"}
+,{"stream_name":"stdout","time":8584.072176034,"data":"onnx-int8 saddle correct=False p50=5710.4618\n"}
+,{"stream_name":"stdout","time":8680.728472703,"data":"onnx-int8 saffron correct=False p50=6134.6783\n"}
+,{"stream_name":"stdout","time":8770.268252413,"data":"onnx-int8 sailor correct=False p50=6264.3319\n"}
+,{"stream_name":"stdout","time":8852.154317288,"data":"onnx-int8 salmon correct=False p50=5661.5431\n"}
+,{"stream_name":"stdout","time":8949.876815578,"data":"onnx-int8 scarlet correct=False p50=8529.8246\n"}
+,{"stream_name":"stdout","time":9029.884049119,"data":"onnx-int8 shadow correct=False p50=5665.4586\n"}
+,{"stream_name":"stdout","time":9109.511845386,"data":"onnx-int8 silver correct=False p50=5619.5827\n"}
+,{"stream_name":"stdout","time":9190.760845519,"data":"onnx-int8 sparrow correct=False p50=5752.3637\n"}
+,{"stream_name":"stdout","time":9270.681079638,"data":"onnx-int8 spice correct=False p50=5617.482\n"}
+,{"stream_name":"stdout","time":9350.941094056,"data":"onnx-int8 spider correct=False p50=5625.653\n"}
+,{"stream_name":"stdout","time":9438.328964757,"data":"onnx-int8 spruce correct=False p50=6020.4543\n"}
+,{"stream_name":"stdout","time":9520.507669904,"data":"onnx-int8 squirrel correct=False p50=5701.0105\n"}
+,{"stream_name":"stdout","time":9601.291558187,"data":"onnx-int8 stable correct=False p50=5690.2498\n"}
+,{"stream_name":"stdout","time":9705.027271285,"data":"onnx-int8 storm correct=False p50=8259.7176\n"}
+,{"stream_name":"stdout","time":9787.095588423,"data":"onnx-int8 saddlebag correct=False p50=5842.2832\n"}
+,{"stream_name":"stdout","time":9868.238161226,"data":"onnx-int8 tablet correct=False p50=5815.1935\n"}
+,{"stream_name":"stdout","time":9949.654183126,"data":"onnx-int8 temple correct=False p50=5721.7132\n"}
+,{"stream_name":"stdout","time":10031.606626199,"data":"onnx-int8 thistle correct=False p50=5815.0475\n"}
+,{"stream_name":"stdout","time":10111.130971061,"data":"onnx-int8 thunder correct=False p50=5638.5665\n"}
+,{"stream_name":"stdout","time":10190.440827502,"data":"onnx-int8 timber correct=False p50=5612.9559\n"}
+,{"stream_name":"stdout","time":10269.907998449,"data":"onnx-int8 turtle correct=False p50=5617.608\n"}
+,{"stream_name":"stdout","time":10349.949905568,"data":"onnx-int8 valley correct=False p50=5727.8994\n"}
+,{"stream_name":"stdout","time":10429.356862664,"data":"onnx-int8 velvet correct=False p50=5602.7132\n"}
+,{"stream_name":"stdout","time":10511.111596196,"data":"onnx-int8 violet correct=False p50=5656.4332\n"}
+,{"stream_name":"stdout","time":10596.356064355,"data":"onnx-int8 walnut correct=False p50=5643.0367\n"}
+,{"stream_name":"stdout","time":10686.712935041,"data":"onnx-int8 willow correct=False p50=6198.7337\n"}
+,{"stream_name":"stdout","time":10769.049099439,"data":"onnx-int8 window correct=False p50=5630.2756\n"}
+,{"stream_name":"stdout","time":10878.265176481,"data":"onnx-int8 winter correct=False p50=8963.6889\n"}
+,{"stream_name":"stdout","time":10959.186663251,"data":"onnx-int8 wizard correct=False p50=5612.4472\n"}
+,{"stream_name":"stdout","time":11038.514539355,"data":"onnx-int8 yellow correct=False p50=5616.7891\n"}
+,{"stream_name":"stdout","time":11119.615715064,"data":"onnx-int8 zebra correct=False p50=5754.795\n"}
+,{"stream_name":"stdout","time":11119.718595034,"data":"done\n"}
+,{"stream_name":"stderr","time":11134.358193445,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":11134.358233385,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":11134.983230315,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":11134.983271418,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":11137.161903241,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":11138.467872249,"data":"[NbConvertApp] Writing 353251 bytes to __results__.html\n"}
+]
