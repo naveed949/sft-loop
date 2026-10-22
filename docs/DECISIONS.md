@@ -24,19 +24,19 @@ On this CPU VM the pinned 1.5B model loaded. fp32 and torch dynamic int8 finishe
 
 ## Quant GPU pairing and Kaggle kernels (2026-10-21)
 
-NF4 can be a measured arm when a Kaggle T4 kernel output is ingested. The same-hardware baseline is fp32 on that T4, not CPU fp32 and not T4 fp16. `outcomes` owns `int8-minus-fp32` on the CPU host and `nf4-minus-t4-fp32` / `nf4-fp16-minus-t4-fp32` on one `hardware.accelerator`. A GPU number is never subtracted from a CPU number. A cross-hardware view is `kind: not_paired` with reason `cross_hardware`.
+NF4 can be a measured arm when a Kaggle T4 kernel output is ingested. The same-hardware baseline is fp32 on that T4, not CPU fp32 and not T4 fp16. `outcomes` owns `int8-minus-fp32` on the CPU host and `nf4-minus-t4-fp32` / `nf4-fp16-minus-t4-fp32` on one `hardware.accelerator`. A GPU number is never subtracted from a CPU number. (Superseded 2026-10-22: `assemble_comparison` never writes `kind: not_paired`. `cross_hardware_view` exists in the module and is unused. Cross-hardware pairs are simply absent from `outcomes`.)
 
-GPU measured arms require `hardware.accelerator`, `peak_gpu_bytes`, a kernel URL/version placeholder, and fp16 compute. NF4 also records BitsAndBytesConfig `load_in_4bit`, `bnb_4bit_quant_type=nf4`, double quant on, and fp16 compute.
+GPU measured arms require `hardware.accelerator`, `peak_gpu_bytes`, and a kernel URL/version placeholder. `t4-fp32` and `nf4` compute dtype is float32. (Superseded 2026-10-22: measured arms do not require fp16 compute. `nf4-fp16` is the only NF4 arm that would use float16, and it stays unsupported when fp16 overflows.)
 
 Local `python -m sft_loop.quant probe-nf4` stays unsupported on this CPU VM. The only measured GPU path is `python -m sft_loop.quant ingest`. A missing kernel directory is `unsupported` / `kernel_output_missing` with no metric keys.
 
-Kernels live at `kaggle/quant_nf4` (NvidiaTeslaT4) and `kaggle/quant_onnx_int8` (CPU only). They pin deps, download the public Hub revision, and write env, logs, progress, and per-arm items. Local verify cannot run them. Downloaded outputs are committed under `runs/quant/kernel/`. The table is regenerated from ingest. `python -m sft_loop.quant run` reuses measured kernel arms so it cannot overwrite them with a local probe.
+Kernels live at `kaggle/quant_nf4` (NvidiaTeslaT4) and `kaggle/quant_onnx_int8` (CPU only). They pin deps, download the public Hub revision, and write env, logs, progress, and per-arm items. Local verify cannot run them. Downloaded outputs are committed under `runs/quant/kernel/`. The table is regenerated from ingest. `python -m sft_loop.quant run` reuses arms already in `runs/quant/comparison.json`. A missing comparison falls back to ingest from `runs/quant/kernel/quant_nf4`, not `kaggle/quant_nf4/output`.
 
 ## Quant T4 ingest and ONNX cp313 pin (2026-10-21)
 
-Kaggle kernel `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 1 is withdrawn. Both T4 arms scored 0/129, every item emitted 8 tokens, and NLL was non-finite. CPU fp32 on the same model, items, and grader scored 47/129. That is a harness or numerics bug, not a pairing. The v1 numbers stay under `runs/quant/kernel/quant_nf4/` as evidence. They are not a baseline.
+Kaggle kernel `https://www.kaggle.com/code/inaveed101/sft-loop-quant-nf4` version 1 is withdrawn. Both T4 arms scored 0/129, every item emitted 8 tokens, and NLL was non-finite. CPU fp32 on the same model, items, and grader scored 47/129. That is a harness or numerics bug, not a pairing. (Superseded 2026-10-22: the v1 kernel files are not in the tree. Canonical T4 evidence is kernel v4 under `runs/quant/kernel/quant_nf4/`.)
 
-The replacement kernel runs fp32-on-T4 first (`t4-fp32`, about 6.2 GB weights, fits a 15 GB T4). It fail-closes if that baseline scores 0 or has non-finite NLL. Ingest refuses the same state unless `finding` is `collapse`. fp16 stays its own arm. If it overflows, it is a measured `finding: overflow`, not a pairing baseline. NF4 compute dtype is float32; nf4-fp16 compute runs only if fp16 is healthy. Pairing is NF4 versus `t4-fp32`.
+The replacement kernel runs fp32-on-T4 first (`t4-fp32`, about 6.2 GB weights, fits a 15 GB T4). It fail-closes if that baseline scores 0 or has non-finite NLL. Ingest refuses the same state unless `finding` is `collapse`. fp16 stays its own arm. (Superseded 2026-10-22: fp16 overflow is recorded `unsupported` / `probed_failure` with detail `fp16 overflow on T4, 0/129`, not `measured` with `finding: overflow`. A missing numerics probe fails closed. It is still not a pairing baseline.) NF4 compute dtype is float32; nf4-fp16 compute runs only if fp16 is healthy. Pairing is NF4 versus `t4-fp32`.
 
 The kernel pins `transformers==5.20.2` and `tokenizers==0.23.3` to match the CPU arm. It writes `prompt_hashes.json` and a two-item numerics probe (`fp32_eager`, `fp16_eager`, `fp16_sdpa`) with `torch.isfinite` on logits and per-layer hidden max abs.
 
@@ -44,7 +44,7 @@ Expected T4 wall is about 2 hours. Budget 2.5 hours. Stay under 3 GPU hours.
 
 PR #15's Phase 4 T4 kernel hit a non-finite training loss at step 1 in fp16 on the same accelerator. That is a training-loop observation, not this eval harness, and it is consistent with the fp16 overflow hypothesis.
 
-The ONNX kernel failed during pip. `onnx==1.17.0` has no cp313 wheel; the image is Python 3.13.15. The pin is now `onnx==1.18.0`. That kernel is being rerun separately. The ONNX arm stays `unsupported` / `probed_failure` until those outputs land.
+The ONNX kernel failed during pip. `onnx==1.17.0` has no cp313 wheel; the image is Python 3.13.15. The pin is now `onnx==1.18.0`. (Superseded 2026-10-22: ONNX kernel v4 landed and is `measured` with `finding: collapse`. See the 2026-10-22 ONNX entry.)
 
 ## Quant ONNX torch 2.11 exporter: dynamo=False, not onnx-ir (2026-10-21)
 
@@ -71,7 +71,7 @@ python -c "import torch.onnx._internal.exporter._core"
 
 Export peak RAM vs 33.6 GB: v2 died at import, so there is no Kaggle export peak to report. The earlier local 1.5B export on this 16.781 GB host wrote a 5.8 GB `model.onnx.data` and then took SIGKILL 137 in `quantize_dynamic`. Export of the same model already fit in 16.781 GB, so 33.658 GB (2.0×) has headroom for export. The remaining RAM risk is quantize, not `torch.onnx.export`. The kernel writes `export_mem.json` at `export_start`, `export_done` (file sizes included), and `quantize_done` with `peak_rss_bytes`, `host_ram_bytes`, and `fraction_of_host`. Compare the next run's `export_done` peak against 33658318848.
 
-The ONNX arm stays `unsupported` / `probed_failure` until a later rerun lands. v2 and v3 logs are under `runs/quant/kernel/quant_onnx_int8/`.
+(Superseded 2026-10-22: the 4D-mask kernel reran as v4 and is measured collapse. v2 and v3 logs were overwritten by that download under `runs/quant/kernel/quant_onnx_int8/`.)
 
 ## Quant T4 v2 ingest and ONNX 4D mask (2026-10-21)
 
@@ -105,7 +105,7 @@ Quantization error and this task do not move together. NF4 raised exact match an
 - `fp16_eager`: `logits_finite=false`, `hidden_finite=false`. Layer 0 max abs 0.1787, then NaN from layer 1. This is overflow in eager fp16, not a template mismatch.
 - `fp16_sdpa`: `logits_finite=true`, hidden max abs about 6644 (under fp16 max 65504), logits max abs about 30.59.
 
-The scored fp16 arm used `attn_implementation=eager`, so it overflowed. 0/129, every item emitted 8 tokens, NLL stripped as non-finite, `finding: overflow`. `nf4-fp16` was skipped. PR #15 Phase 4 hit a non-finite train loss at step 1 in fp16 on the same T4. That is the same class of bug.
+The scored fp16 arm used `attn_implementation=eager`, so it overflowed. 0/129, every item emitted 8 tokens, NLL stripped as non-finite. (Superseded 2026-10-22: ingest records that arm `unsupported` / `probed_failure`, detail `fp16 overflow on T4, 0/129`. Kernel items stay in `runs/quant/kernel/quant_nf4/fp16/` as evidence. The comparison no longer stores a measured 0.0 score.) `nf4-fp16` was skipped. PR #15 Phase 4 hit a non-finite train loss at step 1 in fp16 on the same T4. That is the same class of bug.
 
 ### ONNX v3 and the 4D mask
 
@@ -122,7 +122,7 @@ Local proof, torch 2.11.0+cpu, transformers 4.56.2, tiny `Qwen2Config` (hidden 6
 - 2D wrapper: `RuntimeError: unordered_map::at` at `masking_utils.py:142` `inner_mask`.
 - 4D wrapper: wrote `/tmp/qwen2-4d.onnx` (524851 bytes).
 
-The ONNX arm stays `unsupported` / `probed_failure` until the 4D kernel reruns.
+(Superseded 2026-10-22: the 4D kernel reran as v4. See the 2026-10-22 ONNX entry.)
 
 ## NF4 79/129 is first-token exact match, not a scorer bug (2026-10-21)
 
@@ -237,7 +237,7 @@ The checklist claim to test was "dynamic int8 ONNX collapsed first-token exact m
 
 ONNX target NLL minus CPU fp32 is +6.450 on all 129 items. Sequence NLL minus CPU fp32 is +2.216 on all 129 items. ONNX is slightly less bad than torch dynamic int8 (NLL −2.782, better on 109/129). Generated lengths are `{4,6,7,8}`, not a uniform 8-token overflow. All NLL values are finite. Teacher-forced NLL is one full forward of prefix plus gold target. It does not use the greedy loop. A graph that still knew the gold word would not raise NLL on every item.
 
-ONNX is not a pairing. `outcomes` still owns only `int8-minus-fp32` and `nf4-minus-t4-fp32`. The NLL comparison above is a same-eval-setup check, not a subtracted score.
+ONNX is not a pairing. `outcomes` still owns only `int8-minus-fp32` and `nf4-minus-t4-fp32`. The NLL comparison above is not a subtracted score. ONNX cites transformers 4.56.2. CPU fp32 and CPU int8 cite 5.20.2. Teacher-forced NLL still does not use the greedy loop. The collapse class still has a same-stack sibling in CPU int8 (NLL 10.03 on 5.20.2).
 
 ### Tiny-model proof of the loop
 
@@ -253,8 +253,12 @@ On-disk: fp32 3,098,955,668 B, torch int8 2,477,926,394 B, ONNX int8 1,779,618,9
 
 Peak RSS is 28,993,339,392 B at `quantize_done` (0.8614 of 33,658,314,752 B). The limiter is RSS. Export plus `quantize_dynamic` keeps the fp32 graph, the int8 graph, and the ORT session in RAM. That is why 33.66 GB was required after the 16.78 GB host SIGKILL 137'd. Scoring then reuses that peak. The 1.78 GB on-disk file is not the working set.
 
-scored p50 is 5,701.72 ms and p95 is 8,204.22 ms for a greedy pass that usually emits 8 tokens. Decode is 1.366 tok/s with `min_new_tokens=max_new_tokens=8`. The exported graph has `use_cache=False`. Each step re-runs the full growing sequence. Eight no-cache forwards of 1.5B on 4 CPUs is the limiter, not a 5–9 s "token" cost. Wall 10,753 s matches 129 items × 2 passes × (2 warmup + 5 repeats) × ~5.7 s. cpu_time 21,471 s on 4 CPUs is about 2.0× wall. Do not pair these tok/s numbers with T4 or with torch int8 (6.50 tok/s), which uses a different generate path.
+scored p50 is 5,701.72 ms and p95 is 8,204.22 ms for a greedy pass that usually emits 8 tokens. Decode is 1.366 tok/s with `min_new_tokens=max_new_tokens=8`. The exported graph has `use_cache=False`. Each step re-runs the full growing sequence. Eight no-cache forwards of 1.5B on 4 CPUs is the limiter, not a 5–9 s token cost. cpu_time 21,471 s on 4 CPUs is about 2.0× wall. Do not pair these tok/s numbers with T4 or with torch int8 (6.50 tok/s), which uses a different generate path. The kernel does not cap ORT intra-op at protocol `threads=1`.
 
-This is one Kaggle run. Protocol warmup is 2 and repeats are 5. The 0/129 generate score is consistent with the NLL collapse and unconfirmed as text. The next kernel writes `onnx-int8/predictions.json` and `grader_case_sensitive: true` so a later run can report case-folded match.
+`129 × 2 × 7 × 5.7017247 s = 10,297.3 s`. Stored `wall_s` is `10,753.151`. That product is not an identity. `score()` also runs teacher-forced NLL. The product uses the cross-item p50, not each timed call. Using the per-item generate means times 7 for both passes is about 10,612 s, still about 141 s short of wall. Export and quantize sit before that clock. Do not treat the product as a closed check.
 
-Ingest records the arm as `measured` when NLL is finite, the same treatment as CPU int8 0/129. A zero score with non-finite NLL is still a refused harness failure. `.gitignore` keeps `*.onnx` out of the repo. Commit the small kernel outputs, not the 1.78 GB model.
+This is one Kaggle run. Protocol warmup is 2 and repeats are 5. The 0/129 generate score is consistent with the NLL collapse and unconfirmed as text. Run 4 `metrics.json` has `exact_match: 0.0` and `grader_case_sensitive: true` stamped after download. The `66b9b865` writer did not emit those keys or `predictions.json`. The case-sensitive compare is in that blob (`prediction_token(...) == item_id.upper()`). The next kernel writes `onnx-int8/predictions.json` so a later run can report case-folded match.
+
+Ingest stores a 0-score ONNX arm as `measured` with `finding: collapse` when mean teacher NLL is above 2.0 (run 4 is 7.25). A 0-score arm whose mean teacher NLL stays near CPU fp32 0.80 is `unsupported`, a probable generate-loop bug. Finite NLL alone is not enough.
+
+The top-level `*.onnx` rule is not enough. `!runs/quant/kernel/**` re-includes that directory. Later ignore rules block `*.onnx`, `*.onnx.data`, `inner.model.*`, and `onnx__*` under that tree. `scripts/verify` fails if any tracked file under `runs/` exceeds 5 MB. Run 4 left 7.11 GB of leftover external tensors next to `model.int8.onnx` (283 non-onnx files in `ONNX_DIR_MANIFEST.tsv`, including two 933,494,784 B shards). Those files were not attached. The 1.78 GB graph stayed out because `EXCLUDED_OVER_25MB.tsv` dropped the 87 rows over 25 MiB. The kernel now deletes leftover external tensors after quantize. Commit the small outputs, not the graph.
