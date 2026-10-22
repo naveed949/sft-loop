@@ -217,4 +217,44 @@ This is a real, narrow instruction-following difference on one synthetic upperca
 
 Case-folded match is 126/129 on both T4 arms. Both models know the word. A 126/129 ceiling leaves almost no room to measure whether 4-bit storage hurt recall. First-token exact match then mostly measures a casing near-tie. Target NLL and sequence NLL still move. Sequence NLL rose on every item under NF4. That is the sign lossy quant predicts, and it is the number to keep in front.
 
-Ingest now requires `metrics.grader_case_sensitive` to be true. Protocol and measured arms declare the same field. When `predictions.json` exists, ingest attaches per-item `case_folded` and summarizes `case_folded_match`. Pairing reports a case-folded delta and CI when both arms have that field. The NF4 kernel writes the declaration. ONNX run 4 is still in flight. That kernel is unchanged.
+Ingest now requires `metrics.grader_case_sensitive` to be true. Protocol and measured arms declare the same field. When `predictions.json` exists, ingest attaches per-item `case_folded` and summarizes `case_folded_match`. Pairing reports a case-folded delta and CI when both arms have that field. The NF4 kernel writes the declaration. The ONNX kernel now writes the same files. Run 4 itself has no raw text; see the next entry.
+
+## ONNX int8 run 4 is measured collapse, not a generate-loop bug (2026-10-22)
+
+Kaggle `https://www.kaggle.com/code/inaveed101/sft-loop-quant-onnx-int8` version 4 ran the 4D-mask kernel at `66b9b865`. Status COMPLETE. Wall 10,753 s on 4 CPUs, 33.66 GB RAM. Tarball sha256 `c823a4568de66df52483beeaa3ff6be0ee2431a8f28a02bde16943dd2d66a447`. Token grep of the outputs found 0. The 1,779,618,939 B `model.int8.onnx` is not in the tarball; `ONNX_DIR_MANIFEST.tsv` records sha256 `f2eeb25be0943b9d99533db8f123243f37dfdc9979f6fe3f7b801cb7b2e817f9`. Pins: torch 2.11.0+cpu, onnx 1.18.0, onnxruntime 1.20.1, transformers 4.56.2.
+
+`items.json` has 0/129 `correct`, finite `nll` and `sequence_nll` on every row, and no raw generated text. Case-folded match is therefore n/a. Do not invent strings.
+
+### Why 0/129 is not a decode-loop-only bug
+
+The checklist claim to test was "dynamic int8 ONNX collapsed first-token exact match." A generate-loop bug (mask, past_key_values, position_ids, EOS) would leave teacher-forced NLL close to CPU fp32 while scoring 0. That is not what happened.
+
+| arm | strict | case-folded | raw text | target NLL | sequence NLL | mean gen tokens |
+| --- | --- | --- | --- | --- | --- | --- |
+| CPU fp32 (#13) | 47/129 | n/a | no | 0.79975 | 4.63564 | 3.248 |
+| CPU int8 (#13) | 0/129 | n/a | no | 10.03215 | 8.06883 | 7.946 |
+| ONNX int8 (run 4) | 0/129 | n/a | no | 7.24983 | 6.85203 | 7.938 |
+
+ONNX target NLL minus CPU fp32 is +6.450 on all 129 items. Sequence NLL minus CPU fp32 is +2.216 on all 129 items. ONNX is slightly less bad than torch dynamic int8 (NLL −2.782, better on 109/129). Generated lengths are `{4,6,7,8}`, not a uniform 8-token overflow. All NLL values are finite. Teacher-forced NLL is one full forward of prefix plus gold target. It does not use the greedy loop. A graph that still knew the gold word would not raise NLL on every item.
+
+ONNX is not a pairing. `outcomes` still owns only `int8-minus-fp32` and `nf4-minus-t4-fp32`. The NLL comparison above is a same-eval-setup check, not a subtracted score.
+
+### Tiny-model proof of the loop
+
+`kaggle/quant_onnx_int8/check_generate_loop.py` exports the same 4D-mask, `use_cache=False`, `dynamo=False` wrapper on `trl-internal-testing/tiny-Qwen2ForCausalLM-2.5` with the Kaggle pins (torch 2.11.0+cpu, transformers 4.56.2, onnx 1.18.0, onnxruntime 1.20.1). fp32 ONNX first-token argmax matches the torch wrapper. Teacher NLL matches to 0.0. ONNX generate ids match the wrapper loop and diverge from `model.generate` (KV cache / different mask path). The shipped loop is faithful to the exported graph. It is not a systematic mask, PKV, or position_ids bug. int8 on the tiny random model can near-tie; that is not the 1.5B story. No Kaggle rerun.
+
+### Why dynamic int8 ONNX vs NF4
+
+ONNX uses `onnxruntime.quantization.quantize_dynamic(..., QInt8)` on the exported graph. Torch int8 uses `default_dynamic_qconfig` on every `nn.Linear`, including `lm_head`. Both are per-tensor-class 8-bit weight quant of the output projection. Both destroy first-token exact match and raise both NLL numbers. NF4 stores each 64-wide block as a 4-bit codebook index plus a double-quantized scale, about 4.125 bits per parameter, and keeps a usable logit distribution on this task (case-folded 126/129; sequence NLL rose only +0.154).
+
+On-disk: fp32 3,098,955,668 B, torch int8 2,477,926,394 B, ONNX int8 1,779,618,939 B, NF4 1,143,625,737 B. ONNX is more compact than torch int8 and still about 1.56× NF4. Compression and quality do not move together. The int8 collapse is the same class on two runtimes. It is not NF4 "winning at quality."
+
+### Latency and RSS
+
+Peak RSS is 28,993,339,392 B at `quantize_done` (0.8614 of 33,658,314,752 B). The limiter is RSS. Export plus `quantize_dynamic` keeps the fp32 graph, the int8 graph, and the ORT session in RAM. That is why 33.66 GB was required after the 16.78 GB host SIGKILL 137'd. Scoring then reuses that peak. The 1.78 GB on-disk file is not the working set.
+
+scored p50 is 5,701.72 ms and p95 is 8,204.22 ms for a greedy pass that usually emits 8 tokens. Decode is 1.366 tok/s with `min_new_tokens=max_new_tokens=8`. The exported graph has `use_cache=False`. Each step re-runs the full growing sequence. Eight no-cache forwards of 1.5B on 4 CPUs is the limiter, not a 5–9 s "token" cost. Wall 10,753 s matches 129 items × 2 passes × (2 warmup + 5 repeats) × ~5.7 s. cpu_time 21,471 s on 4 CPUs is about 2.0× wall. Do not pair these tok/s numbers with T4 or with torch int8 (6.50 tok/s), which uses a different generate path.
+
+This is one Kaggle run. Protocol warmup is 2 and repeats are 5. The 0/129 generate score is consistent with the NLL collapse and unconfirmed as text. The next kernel writes `onnx-int8/predictions.json` and `grader_case_sensitive: true` so a later run can report case-folded match.
+
+Ingest records the arm as `measured` when NLL is finite, the same treatment as CPU int8 0/129. A zero score with non-finite NLL is still a refused harness failure. `.gitignore` keeps `*.onnx` out of the repo. Commit the small kernel outputs, not the 1.78 GB model.
