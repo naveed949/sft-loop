@@ -1298,6 +1298,30 @@ def cmd_quant(root: Path, log: TextIO | None) -> int:
     if any(key in ingested for key in ("task_score", "items", "on_disk_bytes", "latency_p50_ms")):
         append_log(log, "missing kernel ingest wrote metric keys\n")
         return 1
+    listed = subprocess.run(
+        ["git", "ls-files", "runs"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if listed.returncode != 0:
+        append_log(log, "git ls-files runs failed\n")
+        return 1
+    max_bytes = 5 * 1024 * 1024
+    oversized = []
+    for rel in listed.stdout.splitlines():
+        path = root / rel
+        if not path.is_file():
+            continue
+        size = path.stat().st_size
+        if size > max_bytes:
+            oversized.append(f"{rel} {size}")
+    if oversized:
+        append_log(log, "tracked files under runs/ exceed 5 MB:\n")
+        for row in oversized:
+            append_log(log, f"  {row}\n")
+        return 1
     return 0
 
 
