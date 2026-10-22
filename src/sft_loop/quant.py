@@ -1373,18 +1373,56 @@ def _commit(out_dir: Path, comparison: dict[str, Any]) -> None:
         os.replace(tmp, dest)
 
 
-def _reuse_arm(dest: Path, precision: Precision) -> dict[str, Any] | None:
-    path = dest / "comparison.json"
-    if not path.is_file():
+def _arm_if_known(arm: object, precision: Precision) -> dict[str, Any] | None:
+    if not isinstance(arm, dict):
         return None
+    if arm.get("precision") != precision.value:
+        return None
+    if arm.get("status") not in {"unsupported", "measured"}:
+        return None
+    return arm
+
+
+def _read_projection_arm(path: Path, precision: Precision) -> dict[str, Any] | None:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-        arm = payload["arms"][precision.value]
-    except (OSError, KeyError, json.JSONDecodeError, TypeError):
+    except (OSError, json.JSONDecodeError, TypeError):
         return None
-    if arm.get("precision") == precision.value and arm.get("status") in {"unsupported", "measured"}:
-        return arm
-    return None
+    if isinstance(payload, dict) and payload.get("document_kind") == PROJECTION_KIND:
+        return _arm_if_known(payload.get("body"), precision)
+    return _arm_if_known(payload, precision)
+
+
+def _reuse_arm(dest: Path, precision: Precision) -> dict[str, Any] | None:
+    candidates: list[dict[str, Any]] = []
+    comparison = dest / "comparison.json"
+    if comparison.is_file():
+        try:
+            payload = json.loads(comparison.read_text(encoding="utf-8"))
+            found = _arm_if_known((payload.get("arms") or {}).get(precision.value), precision)
+        except (OSError, json.JSONDecodeError, TypeError, AttributeError):
+            found = None
+        if found is not None:
+            candidates.append(found)
+    projection = dest / f"{precision.value}.json"
+    if projection.is_file():
+        found = _read_projection_arm(projection, precision)
+        if found is not None:
+            candidates.append(found)
+    for arm in candidates:
+        if arm.get("status") == "measured":
+            return arm
+    return candidates[0] if candidates else None
+
+
+def _keep_measured_arm(
+    dest: Path, precision: Precision, incoming: dict[str, Any]
+) -> dict[str, Any]:
+    existing = _reuse_arm(dest, precision)
+    if existing is not None and existing.get("status") == "measured":
+        if incoming.get("status") != "measured":
+            return existing
+    return incoming
 
 
 def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = True) -> dict[str, Any]:
@@ -1397,8 +1435,6 @@ def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = Tru
         reused = _reuse_arm(dest, precision)
         if reused is not None:
             return reused
-        if precision is Precision.NF4:
-            return probe_nf4()
         return ingest_kernel_arm(repo_root() / KERNEL_OUTPUT_NF4, precision)
 
     arms = {
@@ -1410,6 +1446,8 @@ def run_comparison(*, out_dir: Path | None = None, reuse_unsupported: bool = Tru
         Precision.NF4.value: gpu_arm(Precision.NF4),
         Precision.NF4_FP16.value: gpu_arm(Precision.NF4_FP16),
     }
+    for precision in Precision:
+        arms[precision.value] = _keep_measured_arm(dest, precision, arms[precision.value])
     comparison = assemble_comparison(protocol, arms, hardware)
     _commit(dest, comparison)
     return comparison

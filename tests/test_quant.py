@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -28,6 +29,7 @@ from sft_loop.quant import (
     project_tree,
     quant_schema_path,
     render_table,
+    run_comparison,
     splice_table,
     tracked_relpaths,
     unsupported_arm,
@@ -1014,3 +1016,30 @@ def test_quant_run_points_at_committed_kernel_output():
     assert 'kaggle/quant_nf4/output' not in text
     assert "KERNEL_OUTPUT_NF4" in text
     assert 'runs/quant/kernel/quant_nf4' in text
+    gpu_arm = text.split("def gpu_arm")[1].split("\n    arms =")[0]
+    assert "probe_nf4" not in gpu_arm
+
+
+def test_blank_quant_run_leaves_stored_nf4_byte_identical(tmp_path, monkeypatch):
+    stored = json.loads((ROOT / "runs/quant/comparison.json").read_text(encoding="utf-8"))
+    expected = canonical_dumps(stored["arms"]["nf4"])
+    dest = tmp_path / "quant"
+    dest.mkdir()
+    shutil.copy(ROOT / "runs/quant/nf4.json", dest / "nf4.json")
+
+    def fake_child(precision: Precision, protocol: dict) -> dict:
+        return stored["arms"][precision.value]
+
+    monkeypatch.setattr("sft_loop.quant._run_child", fake_child)
+    result = run_comparison(out_dir=dest)
+    assert canonical_dumps(result["arms"]["nf4"]) == expected
+    written = json.loads((dest / "nf4.json").read_text(encoding="utf-8"))
+    assert canonical_dumps(written["body"]) == expected
+
+
+def test_verify_size_check_reads_git_blobs():
+    text = (
+        ROOT / ".cursor/skills/verify-sft-loop/scripts/verify_sft_loop.py"
+    ).read_text(encoding="utf-8")
+    assert '["git", "ls-files", "-s", "runs"]' in text
+    assert '["git", "cat-file", "-s", blob]' in text

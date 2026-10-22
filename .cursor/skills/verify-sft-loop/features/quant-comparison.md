@@ -43,7 +43,7 @@ Preconditions:
 
 - `python -m sft_loop.loop --device cpu` still exits 2. Quant has no `--device` flag.
 - A quant file is not a run report. `validate_report` must reject it.
-- NF4 numbers are never estimated on this VM. Missing CUDA is `unsupported`. Missing kernel output is `kernel_output_missing`.
+- NF4 numbers are never estimated on this VM. `probe-nf4` on this host is `unsupported` / `missing_cuda`. `quant run` never writes that probe over a stored measured NF4 arm. Missing kernel output is `kernel_output_missing`.
 - Do not pair NF4 or T4 fp16 against CPU fp32. That view is `not_paired`. T4 fp16 is not the GPU baseline.
 - Torch 2.11+ defaults `torch.onnx.export` to the dynamo exporter, which imports `onnx_ir`. The kernel and the local ONNX path pass `dynamo=False` so they stay on TorchScript. A missing `onnx` / `onnxruntime` is `dependency_missing`. Export that dies after `model.onnx.data` is written is `oom`.
 - Do not write quant output into `runs/phase3/`.

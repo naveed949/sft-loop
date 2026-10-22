@@ -1299,26 +1299,40 @@ def cmd_quant(root: Path, log: TextIO | None) -> int:
         append_log(log, "missing kernel ingest wrote metric keys\n")
         return 1
     listed = subprocess.run(
-        ["git", "ls-files", "runs"],
+        ["git", "ls-files", "-s", "runs"],
         cwd=root,
         capture_output=True,
         text=True,
         check=False,
     )
     if listed.returncode != 0:
-        append_log(log, "git ls-files runs failed\n")
+        append_log(log, "git ls-files -s runs failed\n")
         return 1
     max_bytes = 5 * 1024 * 1024
     oversized = []
-    for rel in listed.stdout.splitlines():
-        path = root / rel
-        if not path.is_file():
+    for line in listed.stdout.splitlines():
+        if "\t" not in line:
             continue
-        size = path.stat().st_size
+        meta, rel = line.split("\t", 1)
+        parts = meta.split()
+        if len(parts) < 2:
+            continue
+        blob = parts[1]
+        sized = subprocess.run(
+            ["git", "cat-file", "-s", blob],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if sized.returncode != 0:
+            append_log(log, f"git cat-file -s failed for {rel}\n")
+            return 1
+        size = int(sized.stdout.strip())
         if size > max_bytes:
-            oversized.append(f"{rel} {size}")
+            oversized.append(f"{rel} {size} {blob}")
     if oversized:
-        append_log(log, "tracked files under runs/ exceed 5 MB:\n")
+        append_log(log, "tracked git blobs under runs/ exceed 5 MB:\n")
         for row in oversized:
             append_log(log, f"  {row}\n")
         return 1
