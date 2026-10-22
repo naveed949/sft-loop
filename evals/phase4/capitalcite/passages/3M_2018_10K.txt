@@ -1,0 +1,237 @@
+# 3M_2018_10K
+## page 59
+Table of Contents 
+3M Company and Subsidiaries
+Consolidated Statement of Cash Flow s
+Years ended December 31
+ 
+(Millions)
+ 
+2018
+ 
+2017
+ 
+2016
+ 
+Cash Flows from Operating Activities
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Net income including noncontrolling interest
+ 
+$
+5,363 
+$
+4,869 
+$
+5,058 
+Adjustments to reconcile net income including noncontrolling interest to net cash
+provided by operating activities
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Depreciation and amortization
+ 
+ 
+1,488 
+ 
+1,544 
+ 
+1,474 
+Company pension and postretirement contributions
+ 
+ 
+(370) 
+ 
+(967) 
+ 
+(383) 
+Company pension and postretirement expense
+ 
+ 
+410 
+ 
+334 
+ 
+250 
+Stock-based compensation expense
+ 
+ 
+302 
+ 
+324 
+ 
+298 
+Gain on sale of businesses
+ 
+ 
+(545) 
+ 
+(586) 
+ 
+(111) 
+Deferred income taxes
+ 
+ 
+(57) 
+ 
+107 
+ 
+ 7 
+Changes in assets and liabilities
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Accounts receivable
+ 
+ 
+(305) 
+ 
+(245) 
+ 
+(313) 
+Inventories
+ 
+ 
+(509) 
+ 
+(387) 
+ 
+57 
+Accoun
+## page 57
+Table of Contents 
+3M Company and Subsidiaries
+Consolidated Balance Shee t
+At December 31
+ 
+ 
+ 
+December 31,
+ 
+December 31,
+ 
+(Dollars in millions, except per share amount)
+ 
+2018
+ 
+2017
+ 
+Assets
+ 
+ 
+ 
+ 
+ 
+Current assets
+ 
+ 
+ 
+ 
+ 
+Cash and cash equivalents
+ 
+$
+2,853 
+$
+3,053 
+Marketable securities current
+ 
+ 
+380 
+ 
+1,076 
+Accounts receivable net of allowances of $95 and $103
+ 
+ 
+5,020 
+ 
+4,911 
+Inventories
+ 
+ 
+ 
+ 
+ 
+Finished goods
+ 
+ 
+2,120 
+ 
+1,915 
+Work in process
+ 
+ 
+1,292 
+ 
+1,218 
+Raw materials and supplies
+ 
+ 
+954 
+ 
+901 
+Total inventories
+ 
+ 
+4,366 
+ 
+4,034 
+Prepaids
+ 
+ 
+741 
+ 
+937 
+Other current assets
+ 
+ 
+349 
+ 
+266 
+Total current assets
+ 
+ 
+13,709 
+ 
+14,277 
+Property, plant and equipment
+ 
+ 
+24,873 
+ 
+24,914 
+Less: Accumulated depreciation
+ 
+ 
+(16,135) 
+ 
+(16,048) 
+Property, plant and equipment net
+ 
+ 
+8,738 
+ 
+8,866 
+Goodwill
+ 
+ 
+10,051 
+ 
+10,513 
+Intangible assets net
+ 
+ 
+2,

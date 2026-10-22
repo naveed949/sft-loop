@@ -1,0 +1,6 @@
+# JPM/2003/page_100.pdf
+## page
+notes to consolidated financial statements j.p .
+morgan chase & co .
+98 j.p .
+[["december 31 ( in millions )", "2003", "2002"], ["securities purchased under resale agreements", "$ 62801", "$ 57645"], ["securities borrowed", "41834", "34143"], ["securities sold under repurchase agreements", "$ 105409", "$ 161394"], ["securities loaned", "2461", "1661"]]

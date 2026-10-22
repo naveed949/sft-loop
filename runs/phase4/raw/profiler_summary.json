@@ -1,0 +1,126 @@
+{
+  "peak_memory_allocated": 8416858112,
+  "table": "-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg       CPU Mem  Self CPU Mem      CUDA Mem  Self CUDA Mem    # of Calls  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                              aten::mul         0.55%      75.978ms        15.48%        2.139s     468.110us     466.421ms         5.51%     482.628ms     105.631us           0 B           0 B      43.23 GB      43.23 GB          4569  \n                                               aten::mm         0.90%     124.930ms        11.42%        1.577s     398.898us        6.456s        76.23%        6.856s       1.734ms           0 B           0 B      25.70 GB      25.70 GB          3954  \n                                              aten::add         0.24%      33.543ms         1.67%     230.083ms     105.205us     198.489ms         2.34%     202.609ms      92.642us           0 B           0 B      15.28 GB      15.28 GB          2187  \n                                              aten::bmm         0.17%      23.240ms         0.86%     119.205ms     176.600us     579.099ms         6.84%     610.057ms     903.789us           0 B           0 B      14.28 GB      14.28 GB           675  \n                                         aten::_softmax         0.02%       2.911ms         0.04%       5.555ms      33.065us      77.526ms         0.92%      77.526ms     461.467us           0 B           0 B       7.88 GB       7.88 GB           168  \n                                             aten::silu         0.02%       3.384ms         0.28%      38.306ms     228.011us      51.340ms         0.61%      51.340ms     305.595us           0 B           0 B       5.88 GB       5.88 GB           168  \n                                            aten::empty         0.06%       8.734ms         0.06%       8.734ms       7.763us       0.000us         0.00%       0.000us       0.000us          12 B          12 B       4.77 GB       4.77 GB          1125  \n                                              aten::pow         0.12%      16.191ms         1.15%     158.546ms     232.813us      18.442ms         0.22%      28.127ms      41.303us           0 B           0 B       2.99 GB       2.99 GB           681  \n                                    aten::silu_backward         0.01%       1.609ms         0.09%      12.146ms     144.597us      37.693ms         0.45%      37.693ms     448.722us           0 B           0 B       2.90 GB       2.90 GB            84  \n                                     aten::_log_softmax         0.00%     107.011us         0.01%       1.697ms     565.655us      29.725ms         0.35%      49.592ms      16.531ms           0 B           0 B       1.74 GB       1.74 GB             3  \n                                aten::nll_loss_backward         0.00%     152.425us         0.01%       1.371ms     456.867us      38.527us         0.00%       8.131ms       2.710ms           0 B           0 B       1.74 GB       1.74 GB             3  \n                       aten::_log_softmax_backward_data         0.00%     109.880us         0.00%     151.566us      50.522us      29.734ms         0.35%      29.734ms       9.911ms           0 B           0 B       1.74 GB       1.74 GB             3  \n                                            aten::addmm         0.19%      25.586ms         4.98%     687.795ms       1.365ms     294.179ms         3.47%     365.267ms     724.735us           0 B           0 B       1.31 GB       1.31 GB           504  \n                                              aten::cat         0.05%       7.568ms         0.15%      20.615ms      60.810us      13.634ms         0.16%      13.634ms      40.219us           0 B           0 B       1.15 GB       1.15 GB           339  \n                                              aten::neg         0.06%       8.687ms         2.39%     329.564ms     653.896us       9.189ms         0.11%      10.092ms      20.023us           0 B           0 B       1.08 GB       1.08 GB           504  \n                                              aten::div         0.03%       4.705ms         0.50%      68.776ms     402.198us       5.028ms         0.06%       5.028ms      29.401us           0 B           0 B       1.02 GB       1.02 GB           171  \n                                              aten::sum         0.05%       7.032ms         2.94%     405.831ms       1.197ms      19.165ms         0.23%      19.165ms      56.533us           0 B           0 B     168.67 MB     168.67 MB           339  \n                                           Buffer Flush         0.00%     287.816us         0.00%     287.816us     143.908us       0.000us         0.00%       0.000us       0.000us           0 B           0 B      35.00 MB      35.00 MB             2  \n                                          aten::resize_         0.00%     140.372us         0.00%     140.372us       6.684us       0.000us         0.00%       0.000us       0.000us           0 B           0 B      30.05 MB      30.05 MB            21  \n                                      aten::bitwise_and         0.00%     373.281us         0.01%       1.341ms      89.423us      98.846us         0.00%     248.091us      16.539us           0 B           0 B      15.00 MB       6.00 MB            15  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \nSelf CPU time total: 13.814s\nSelf CUDA time total: 8.469s\n",
+  "top_ops": [
+    {
+      "cpu_time_total": 7395.833999999758,
+      "name": "aten::embedding",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 149760.6909999941,
+      "name": "aten::reshape",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 26446.33900001897,
+      "name": "aten::view",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 4470.191999999857,
+      "name": "aten::index_select",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 8733.643000004762,
+      "name": "aten::empty",
+      "self_cpu_memory": 12,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 140.37199999986478,
+      "name": "aten::resize_",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 9337.698000006032,
+      "name": "aten::expand",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 18690.963999974345,
+      "name": "aten::as_strided",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 1563.6259999997283,
+      "name": "aten::gather",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 3760.9499999991576,
+      "name": "Activity Buffer Request",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 5718632.78399999,
+      "name": "cudaLaunchKernel",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 0.0,
+      "name": "void at::native::vectorized_gather_kernel<16, long>(char*, char*, long*, int, long, long, long, long, bool)",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 728.1940000029426,
+      "name": "aten::arange",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 0.0,
+      "name": "void (anonymous namespace)::elementwise_kernel_with_index<int, at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}>(int, at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}, function_traits<at::native::arange_cuda_out(c10::Scalar const&, c10::Scalar const&, c10::Scalar const&, at::Tensor&)::{lambda()#1}::operator()() const::{lambda()#4}::operator()() const::{lambda(long)#1}>::result_type*)",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 5015.604000003901,
+      "name": "aten::unsqueeze",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 661744.3470000277,
+      "name": "aten::to",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 659839.4369999999,
+      "name": "aten::_to_copy",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 165.31399999893983,
+      "name": "aten::empty_strided",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 873838.8080000089,
+      "name": "aten::copy_",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    },
+    {
+      "cpu_time_total": 0.0,
+      "name": "void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#11}::operator()() const::{lambda(bool)#1}, std::array<char*, 2ul>, 4, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1> >(int, at::native::direct_copy_kernel_cuda(at::TensorIteratorBase&)::{lambda()#3}::operator()() const::{lambda()#11}::operator()() const::{lambda(bool)#1}, std::array<char*, 2ul>, TrivialOffsetCalculator<1, unsigned int>, TrivialOffsetCalculator<1, unsigned int>, at::native::memory::LoadWithCast<1>, at::native::memory::StoreWithCast<1>)",
+      "self_cpu_memory": 0,
+      "self_cuda_memory": 0
+    }
+  ]
+}

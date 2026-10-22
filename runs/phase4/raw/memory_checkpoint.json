@@ -1,0 +1,7 @@
+{
+  "batch_size": 1,
+  "checkpointing_off_peak": 13905077760,
+  "checkpointing_on_peak": 8269284864,
+  "delta_bytes": -5635792896,
+  "seq_length": 1024
+}

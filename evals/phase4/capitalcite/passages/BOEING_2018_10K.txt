@@ -1,0 +1,90 @@
+# BOEING_2018_10K
+## page 51
+Table of Contents
+The Boeing Company and Subsidiaries
+Consolidated Statements of Financial Position 
+(Dollarsinmillions,exceptpersharedata)
+
+ 
+December 31,
+2018
+
+2017
+Assets
+
+ 
+Cash and cash equivalents
+$7,637
+
+$8,813
+Short-term and other investments
+927
+
+1,179
+Accounts receivable, net
+3,879
+
+2,894
+Unbilled receivables, net
+10,025
+
+8,194
+Current portion of customer financing, net
+460
+
+309
+Inventories
+62,567
+
+61,388
+Other current assets
+2,335
+
+2,417
+Total current assets
+87,830
+
+85,194
+Customer financing, net
+2,418
+
+2,756
+Property, plant and equipment, net
+12,645
+
+12,672
+Goodwill
+7,840
+
+5,559
+Acquired intangible assets, net
+3,429
+
+2,573
+Deferred income taxes
+284
+
+321
+Investments
+1,087
+
+1,260
+Other assets, net of accumulated amortization of $503 and $482
+1,826
+
+2,027
+Total assets
+$117,359
+
+$112,362
+Liabilities and equity
+
+ 
+Accounts payable
+$12,916
+
+$12,202
+Accrued liabilities
+14,808
+
+13,06

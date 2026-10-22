@@ -48,3 +48,4 @@ Keep implementation details out of the map. Name only user paths, stable flags, 
 - [Same-seed loop](./loop.md) covers `python -m sft_loop.loop` before, train, after.
 - [Run report schema](./report-schema.md) covers `schema/run_report.schema.json` validation and honesty locks.
 - [Quant comparison](./quant-comparison.md) covers `python -m sft_loop.quant`, the fail-closed NF4 report, and the local-unsupported Kaggle kernel surface.
+- [Phase 4 Kaggle GPU LoRA](./phase4-kaggle.md) is `unsupported` on this CPU VM. Kernel evidence lives in `runs/phase4/raw/` and `kaggle/phase4_train/`.

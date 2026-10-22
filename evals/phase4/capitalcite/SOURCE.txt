@@ -1,0 +1,7 @@
+source: https://github.com/naveed949/capitalcite
+commit: 34b42ee0b387738725705a0af682dd3f030a9944
+copied:
+  evals/golden/passages/*.txt
+  evals/golden/v1.jsonl
+chunks_jsonl: absent (data/parsed/**/chunks.jsonl is gitignored in capitalcite and was not present in this commit)
+access: read-only copy; do not write to capitalcite
