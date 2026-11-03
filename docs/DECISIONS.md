@@ -8,7 +8,7 @@ Cloud agents read Cursor rules from this repository. They do not read a develope
 
 `# budget: medium (high)` means each role starts at high reasoning. That trades some reasoning depth for lower cost compared with the xhigh skill defaults named in poteto-mode.
 
-Naveed picks the budget. Do not change the map or the budget unless Naveed asks.
+Naveed picks the budget. Do not change the map or the budget unless Naveed asks. (Superseded 2026-11-03: the no-fast-mode rule overrides the copied `-fast` slugs. The budget line stays. See "No fast mode on the model map".)
 
 ## Quant comparison model and metrics (2026-10-20)
 
@@ -322,3 +322,13 @@ Family lookup must not treat a leading digit as a CIK. `3M_2018_10K` starts with
 An exact-match gain can be format, not knowledge. The prompt asks for a bare canonical figure. A before-row that prints `$(370)$` and an after-row that prints `-370` are the same number. The old canonicalizer stripped `$` only at the start of the string, so the parentheses never flipped the sign. That hole made two already-correct figures look like misses, and it made format cleanup look like new facts. After the fix, 5 of the remaining gains still match the target figure inside extra words or units. Net new correct figures are +4, and that interval covers 0.
 
 The next honest artifact is a proposal only. Do not run it on this GPU pass. Pre-register a filing-grouped train/eval split with no shared issuers, the cluster interval as the primary test, a format-versus-substantive breakdown, and at least two seeds. Then run that protocol.
+
+## No fast mode on the model map (2026-11-03)
+
+On 2026-11-03 Naveed set a standing rule that no agent or subagent runs in fast mode. That rule overrides the exact copy of the box file committed on 2026-10-20. The copy is `.cursor/rules/pstack-models.mdc`. Each Grok assignment was `grok-4.7-high-fast`. Each of those assignments is now `grok-4.7-high`. The edit deletes the suffix `-fast` and changes no other byte of that file. Every role line stays. The budget comment `# budget: medium (high)` stays.
+
+Fast mode in that file is the suffix `-fast` on a model id. Deleting a role line does not carry out the rule. The map says a deleted line falls back to the skill default. For the code playbooks, poteto-mode names the default `grok-4.7-xhigh-fast`. That id is fast mode, and it raises the budget from high to xhigh. Stripping `-fast` keeps every role line, keeps the high budget, and uses standard speed.
+
+The 2026-10-20 entry still records the budget. High reasoning stays the lower-cost start compared with the xhigh skill defaults named in poteto-mode. Naveed picks the budget. Naveed asked for this suffix removal. The freeze sentence now notes that the copied `-fast` ids are not frozen.
+
+`tests/test_scaffold.py` reads the rule file and fails when any role-line model id ends with `-fast`. `python -m pytest -q` runs that test. `.cursor/skills/verify-sft-loop/scripts/verify all` runs the same pytest step. A failure sets `failed_step` to `test`. The check reads the rule file, not this log, so this entry can name the suffix.
