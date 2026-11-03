@@ -250,6 +250,35 @@ def test_cli_prints_unsupported_report():
     assert rejected.stdout == ""
 
 
+def fast_model_ids(text: str) -> list[str]:
+    lines = text.splitlines()
+    start = 0
+    seen_fences = 0
+    for index, line in enumerate(lines):
+        if line.strip() == "---":
+            seen_fences += 1
+            if seen_fences == 2:
+                start = index + 1
+                break
+    found: list[str] = []
+    for line in lines[start:]:
+        if not line.strip() or line.startswith("#"):
+            continue
+        _role, separator, value = line.partition(": ")
+        if separator == "":
+            continue
+        for token in value.split(","):
+            model_id = token.strip()
+            if model_id.endswith("-fast"):
+                found.append(model_id)
+    return found
+
+
+def test_pstack_model_map_has_no_fast_ids():
+    text = (ROOT / ".cursor" / "rules" / "pstack-models.mdc").read_text(encoding="utf-8")
+    assert fast_model_ids(text) == []
+
+
 def test_readme_pins_and_honesty():
     text = README.read_text(encoding="utf-8")
     assert "Unsloth" in text
